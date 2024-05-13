@@ -70,24 +70,9 @@ class WidgetGallery(QMainWindow):
 
         self.openAction = QAction("Open Playback session",self)
         self.openAction.triggered.connect(self.openFile)
-
-        self.newImagingAction = QAction("New Imaging session",self)
-        self.newImagingAction.triggered.connect(self.openNewImagingSession)
         
         closeAction = QAction('Exit', self)  
         closeAction.triggered.connect(self.close) 
-
-        self.fileMenu.addAction(self.openAction)
-        self.fileMenu.addSeparator()
-        self.fileMenu.addAction(self.newImagingAction)
-        self.fileMenu.addSeparator()
-        self.fileMenu.addAction(closeAction)
-
-
-        exportMenu = QMenu("Export", self)
-        exportMenu.addAction(QAction("&Export",self))
-
-        machinelearningMenu = QMenu("Machine Learning", self)
 
         self.mlModelAction = QAction("Select ML model")
         self.mlModelAction.triggered.connect(self.openMachineLearningModel)
@@ -95,17 +80,25 @@ class WidgetGallery(QMainWindow):
         self.mlDatasetAction = QAction("Select Dataset")
         self.mlDatasetAction.triggered.connect(self.openMLDataset)
 
-        machinelearningMenu.addAction(self.mlModelAction)
-        machinelearningMenu.addAction(self.mlDatasetAction)
+        self.fileMenu.addAction(self.openAction)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(self.mlModelAction)
+        self.fileMenu.addAction(self.mlDatasetAction)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(closeAction)
+
+
+
+
 
         helpMenu = QMenu("Help", self)
         helpMenu.addAction(QAction("&About",self))
 
 
         self.mainMenuBar.addMenu(self.fileMenu)
-        self.mainMenuBar.addMenu(exportMenu)
         self.mainMenuBar.addMenu(helpMenu)
-        self.mainMenuBar.addMenu(machinelearningMenu)
 
         self.setMenuBar(self.mainMenuBar)
 
@@ -130,35 +123,6 @@ class WidgetGallery(QMainWindow):
             #self.mainWindow.lstDatasetList
             pass
         
-        #Calibration Data folder
-        #   - expose times
-        #       - background and light field images
-
-        #Generated Data folder 
-        #   - binary core mask
-
-        #imaging Data folder
-        #   - Data folders
-        #       - Tissue images
-
-
-    def openNewImagingSession(self):
-
-        newSession = newImagingSession()
-
-        newSession.exec_()
-
-        # if self.mainWindow.cameraInitialised == False:
-        #     #Disable option in menu
-        #     self.newImagingAction.setEnabled(False)
-        #     print('No cammera connected') # Change to error widget
-        #     self.mainWindow.createErrorMessage('Error creating new imaging session, check camera is connected.')
-        # else:
-        #     #create new instance of newImagingSession.py
-        #     newSession = newImagingSession()
-
-        #     newSession.exec_()
-        #     pass
 
     def openMachineLearningModel(self):
         dialog = QFileDialog(self)
