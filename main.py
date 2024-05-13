@@ -199,10 +199,6 @@ class Window(QWidget):
         #----- GLOBAL VARIABLES -----
         self.imageSingleScene = QGraphicsScene()
 
-        self.imageCombinedScene = QGraphicsScene()
-        self.imageGreenScene = QGraphicsScene()
-        self.imageRedScene = QGraphicsScene()
-        self.imageNIRScene = QGraphicsScene()
 
         #Black large display
         self.displayImage = np.zeros((720,1080))
@@ -210,20 +206,10 @@ class Window(QWidget):
         bytesPerLine = 3*width
         self.displayImage = QImage(self.displayImage.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
         self.displayImage = QPixmap.fromImage(self.displayImage)
-
-        #Black small display
-        self.displayImageSmall = np.zeros((360,540))
-        height, width = self.displayImageSmall.shape
-        bytesPerLine = 3*width
-        self.displayImageSmall = QImage(self.displayImageSmall.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
-        self.displayImageSmall = QPixmap.fromImage(self.displayImageSmall)
-
         self.imageSingleScene.addPixmap(self.displayImage)
 
-        self.imageCombinedScene.addPixmap(self.displayImageSmall)
-        self.imageGreenScene.addPixmap(self.displayImageSmall)
-        self.imageRedScene.addPixmap(self.displayImageSmall)
-        self.imageNIRScene.addPixmap(self.displayImageSmall)
+
+
 
         self.sessionDirectory = ""
 
@@ -231,9 +217,7 @@ class Window(QWidget):
 
         self.globalDisplayMode = 1 # 1 = playback, 2 = acquisition
 
-        self.blueDisplaySettings = displaySettings()
-        self.redDisplaySettings = displaySettings()
-        self.NIRDisplaySettings = displaySettings()
+
 
         self.playbackPipeline = playbackMethod()
         self.processingThread = QThread()
@@ -250,7 +234,6 @@ class Window(QWidget):
 
         #SIGNALS
         # self.beginCapture.connect(self.cameraFunctions.run_single_camera)
-        self.beginPlayback.connect(self.playbackPipeline.GetCombinedImage)
         self.beginMLPlayback.connect(self.MLPipeline.runML)
         
 
@@ -258,7 +241,6 @@ class Window(QWidget):
         # self.cameraFunctions.imageAcquired.connect(self.updateSingleDisplay)
         # self.cameraFunctions.updateFPS.connect(self.fpsCounter)
 
-        self.playbackPipeline.updateImage.connect(self.handleImageProcessed)
         self.MLPipeline.updateImageML.connect(self.handleSingleImageProcessed)
         #----------------------------
 
@@ -267,53 +249,48 @@ class Window(QWidget):
         # Create a QGridLayout instance
         layout = QGridLayout()
 
+        #Horizontal grid box for mode selection
         self.modeSelectionGroup = QGroupBox()
         self.modeSelectionGroupLayout = QHBoxLayout()
         self.modeSelectionGroup.setLayout(self.modeSelectionGroupLayout)
 
+        #Radio buttons for each mode
         self.modeButtonGroup = QButtonGroup()
-        self.radioPlaybackMode = QRadioButton('Playback')
-        self.radioPlaybackMode.setChecked(True)
-        self.radioAcquisitionMode = QRadioButton('Acquisition')
-        self.radioPlaybackMode.setChecked(True)
         self.radioMLMode = QRadioButton('Machine Learning')
-        self.modeButtonGroup.addButton(self.radioPlaybackMode,1)
+        self.radioMLMode.setChecked(True)
+        self.radioAcquisitionMode = QRadioButton('Acquisition')
+
+        #Add buttons to group so radio function works correctly
+        self.modeButtonGroup.addButton(self.radioMLMode,1)
         self.modeButtonGroup.addButton(self.radioAcquisitionMode,2)
-        self.modeButtonGroup.addButton(self.radioMLMode,3)
-        self.modeSelectionGroupLayout.addWidget(self.radioPlaybackMode)
-        self.modeSelectionGroupLayout.addWidget(self.radioAcquisitionMode)
+
+        #Add buttons into mode selection layout to display buttons
         self.modeSelectionGroupLayout.addWidget(self.radioMLMode)
+        self.modeSelectionGroupLayout.addWidget(self.radioAcquisitionMode)
 
-        self.radioPlaybackMode.clicked.connect(self.changeDisplayMode)
-        self.radioAcquisitionMode.clicked.connect(self.changeDisplayMode)
+        #Connect buttons to functions when clicked
         self.radioMLMode.clicked.connect(self.changeDisplayMode)
+        self.radioAcquisitionMode.clicked.connect(self.changeDisplayMode)
 
-
+        #Add the mode selection onto main page layout
         layout.addWidget(self.modeSelectionGroup,0,0)
 
 
-        self.triggerModeSelection = QGroupBox()
-        self.triggerModeSelectionLayout = QHBoxLayout()
-        self.triggerModeSelection.setLayout(self.triggerModeSelectionLayout)
-
-        self.triggerModeSelectionGroup = QButtonGroup()
-        self.softwareTrigger = QRadioButton('Software')
-        self.softwareTrigger.setChecked(True)
-        self.hardwareTrigger = QRadioButton('Hardware')
-        self.triggerModeSelectionGroup.addButton(self.softwareTrigger,1)
-        self.triggerModeSelectionGroup.addButton(self.hardwareTrigger,2)
-        self.triggerModeSelectionLayout.addWidget(self.softwareTrigger)
-        self.triggerModeSelectionLayout.addWidget(self.hardwareTrigger)
-
-        self.softwareTrigger.clicked.connect(self.changeTriggerMode)
-        self.hardwareTrigger.clicked.connect(self.changeTriggerMode)
-
-        layout.addWidget(self.triggerModeSelection,0,1)
+        
 
 
-        self.displayTabs = QTabWidget()
-        self.tabSingleDisplay()
-        self.tabMultiDisplay()
+        self.singleDisplay = QWidget()
+        singleDisplayLayout = QGridLayout()
+        self.singleDisplay.setLayout(singleDisplayLayout)
+
+        self.imageSingleDisplay = QGraphicsView()
+        self.imageSingleDisplay.setScene(self.imageSingleScene)
+        # self.imageSingleDisplay.setPixmap(self.displayImage.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
+        # self.imageSingleDisplay.setStyleSheet("border: 1px solid black;")
+
+        singleDisplayLayout.addWidget(self.imageSingleDisplay,0,0)
+
+        layout.addWidget(self.singleDisplay,1,0,5,5)
 
 
 
@@ -375,11 +352,13 @@ class Window(QWidget):
         self.createContrastTab()
         self.settingsTabs.addTab(self.contrastTab, "Contrast")
 
-        self.colourMapTab = QWidget()
-        self.settingsTabs.addTab(self.colourMapTab, "ColourMap")
+        self.createMachineLearningTab()
+        self.settingsTabs.addTab(self.machineLearningTab, "ML settings")
 
-        self.machinelearningTab = QWidget()
-        self.settingsTabs.addTab(self.machinelearningTab, "ML settings")
+        self.createCameraTab()
+        self.settingsTabs.addTab(self.cameraSettingsTab, "Camera Settings")
+
+        
 
 
         # PLAY PAUSE BUTTON TO BEGIN PROCESSING
@@ -387,7 +366,6 @@ class Window(QWidget):
         self.btnPlayPause.clicked.connect(self.handlePlayPause)
 
         # Add widgets to the layout
-        layout.addWidget(self.displayTabs,1,0,5,5)
         layout.addWidget(self.grpSessionSettings,1,5,1,2)
         layout.addWidget(self.settingsTabs, 2,5,1,2)
         layout.addWidget(self.btnPlayPause, 3,5)
@@ -435,15 +413,6 @@ class Window(QWidget):
         self.checkBlueAutoContrast.clicked.connect(self.updateImageSettings)
         self.btnBlueChannelOnOff.clicked.connect(self.updateImageSettings)
 
-        self.checkRedNormalise.clicked.connect(self.updateImageSettings)
-        self.checkRedSubtrackBkg.clicked.connect(self.updateImageSettings)
-        self.checkRedAutoContrast.clicked.connect(self.updateImageSettings)
-        self.btnRedChannelOnOff.clicked.connect(self.updateImageSettings)
-
-        self.checkNIRNormalise.clicked.connect(self.updateImageSettings)
-        self.checkNIRSubtrackBkg.clicked.connect(self.updateImageSettings)
-        self.checkNIRAutoContrast.clicked.connect(self.updateImageSettings)
-        self.btnNIRChannelOnOff.clicked.connect(self.updateImageSettings)
 
         #PROCESSING METHOD SIGNALS AND SLOTS
         self.radioBlueBasic.clicked.connect(self.updateImageSettings)
@@ -451,19 +420,11 @@ class Window(QWidget):
         self.radioBlueInterpolation.clicked.connect(self.updateImageSettings)
         self.radioBlueBinning.clicked.connect(self.updateImageSettings)
 
-        self.radioRedGaussian.clicked.connect(self.updateImageSettings)
-
-        self.radioNIRGaussian.clicked.connect(self.updateImageSettings)
 
         #SIGNALS AND SLOTS FOR CONTRAST SETTINGS
         self.sliderBlueMin.valueChanged.connect(self.updateImageSettings)
         self.sliderBlueMax.valueChanged.connect(self.updateImageSettings)
 
-        self.sliderRedMin.valueChanged.connect(self.updateImageSettings)
-        self.sliderRedMax.valueChanged.connect(self.updateImageSettings)
-
-        self.sliderNIRMin.valueChanged.connect(self.updateImageSettings)
-        self.sliderNIRMax.valueChanged.connect(self.updateImageSettings)
 
 
         
@@ -549,46 +510,7 @@ class Window(QWidget):
             print('Error changing trigger mode.')
 
 
-    def tabSingleDisplay(self):
-        self.singleDisplay = QWidget()
 
-        singleDisplayLayout = QGridLayout()
-        self.singleDisplay.setLayout(singleDisplayLayout)
-
-        self.imageSingleDisplay = QGraphicsView()
-        self.imageSingleDisplay.setScene(self.imageSingleScene)
-        # self.imageSingleDisplay.setPixmap(self.displayImage.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
-        # self.imageSingleDisplay.setStyleSheet("border: 1px solid black;")
-
-        singleDisplayLayout.addWidget(self.imageSingleDisplay,0,0)
-
-        self.displayTabs.addTab(self.singleDisplay, "singleDisplay")
-
-
-    def tabMultiDisplay(self):
-        self.multiDisplay = QWidget()
-
-        multiDisplayLayout = QGridLayout()
-        self.multiDisplay.setLayout(multiDisplayLayout)
-
-        self.imageTopLeftDisplay = QGraphicsView()
-        self.imageTopLeftDisplay.setScene(self.imageCombinedScene)
-
-        self.imageTopRightDisplay = QGraphicsView()
-        self.imageTopRightDisplay.setScene(self.imageGreenScene)
-
-        self.imageBottomLeftDisplay = QGraphicsView()
-        self.imageBottomLeftDisplay.setScene(self.imageRedScene)
-
-        self.imageBottomRightDisplay = QGraphicsView()
-        self.imageBottomRightDisplay.setScene(self.imageNIRScene)
-
-        multiDisplayLayout.addWidget(self.imageTopLeftDisplay,0,0)
-        multiDisplayLayout.addWidget(self.imageTopRightDisplay,0,1)
-        multiDisplayLayout.addWidget(self.imageBottomLeftDisplay,1,0)
-        multiDisplayLayout.addWidget(self.imageBottomRightDisplay,1,1)
-
-        self.displayTabs.addTab(self.multiDisplay, "multiDisplay")
 
 
 
@@ -665,143 +587,47 @@ class Window(QWidget):
         self.grpBlueChannelLayout.addWidget(self.checkBlueAutoContrast)
         self.grpBlueChannelLayout.addWidget(self.btnBlueChannelOnOff)
 
-        
-
-        #----- RED CHANNEL GUI -----
-        self.grpRedChannel = QGroupBox('Red')
-        self.grpRedChannelLayout = QVBoxLayout()
-        self.grpRedChannel.setLayout(self.grpRedChannelLayout)
-
-        self.grpRedProcesingSteps = QGroupBox('Processing steps')
-        self.grpRedProcesingStepsLayout = QVBoxLayout()
-        self.grpRedProcesingSteps.setLayout(self.grpRedProcesingStepsLayout)
-        self.checkRedSubtrackBkg = QCheckBox('Subtract Background')
-        self.checkRedNormalise = QCheckBox('Normalise')
-        self.grpRedProcesingStepsLayout.addWidget(self.checkRedSubtrackBkg)
-        self.grpRedProcesingStepsLayout.addWidget(self.checkRedNormalise)
-        self.grpRedChannelLayout.addWidget(self.grpRedProcesingSteps)
-
-        self.grpRedDisplay = QGroupBox('Display')
-        self.grpRedDisplayLayout = QVBoxLayout()
-        self.grpRedDisplay.setLayout(self.grpRedDisplayLayout)
-        self.btngrpRedDisplay = QButtonGroup()
-        self.radioRedBasic = QRadioButton('Basic')
-        self.radioRedBasic.setChecked(True)
-        self.radioRedGaussian = QRadioButton('Gaussian')
-        self.radioRedInterpolation = QRadioButton('Interpolation')
-        self.radioRedBinning = QRadioButton('Binning')
-
-        self.btngrpRedDisplay.addButton(self.radioRedBasic,1)
-        self.btngrpRedDisplay.addButton(self.radioRedGaussian,2)
-        self.btngrpRedDisplay.addButton(self.radioRedInterpolation,3)
-        self.btngrpRedDisplay.addButton(self.radioRedBinning,4)
-
-        self.grpRedDisplayLayout.addWidget(self.radioRedBasic)
-        self.grpRedDisplayLayout.addWidget(self.radioRedGaussian)
-        self.grpRedDisplayLayout.addWidget(self.radioRedInterpolation)
-        self.grpRedDisplayLayout.addWidget(self.radioRedBinning)
-        self.grpRedChannelLayout.addWidget(self.grpRedDisplay)
-
-        self.grpRedSliders = QGroupBox('Contrast')
-        self.grpRedSlidersLayout = QHBoxLayout()
-        self.grpRedSliders.setLayout(self.grpRedSlidersLayout)
-        self.sliderRedMin = QSlider()
-        self.sliderRedMin.setMaximum(255)
-        self.sliderRedMin.setMinimum(0)
-        self.sliderRedMax = QSlider()
-        self.sliderRedMax.setMaximum(255)
-        self.sliderRedMax.setMinimum(0)
-        self.sliderRedMax.setValue(255)
-        self.lblRedMin = QLabel('0')
-        self.lblRedMin.setFont(self.contrastLabelFont)
-        self.lblRedMax = QLabel('255')
-        self.lblRedMax.setFont(self.contrastLabelFont)
-        self.grpRedSlidersLayout.addWidget(self.lblRedMin)
-        self.grpRedSlidersLayout.addWidget(self.sliderRedMin)
-        self.grpRedSlidersLayout.addWidget(self.sliderRedMax)
-        self.grpRedSlidersLayout.addWidget(self.lblRedMax)
-        self.grpRedChannelLayout.addWidget(self.grpRedSliders)
-
-        self.checkRedAutoContrast = QCheckBox('Auto contrast')
-        self.btnRedChannelOnOff = QPushButton('ON')
-        self.btnRedChannelOnOff.setCheckable(True)
-        self.btnRedChannelOnOff.setChecked(True)
-        self.grpRedChannelLayout.addWidget(self.checkRedAutoContrast)
-        self.grpRedChannelLayout.addWidget(self.btnRedChannelOnOff)
-        
-
-        
-        #----- NIR CHANNEL GUI -----
-        self.grpNIRChannel = QGroupBox('NIR')
-        self.grpNIRChannelLayout = QVBoxLayout()
-        self.grpNIRChannel.setLayout(self.grpNIRChannelLayout)
-
-        self.grpNIRProcesingSteps = QGroupBox('Processing steps')
-        self.grpNIRProcesingStepsLayout = QVBoxLayout()
-        self.grpNIRProcesingSteps.setLayout(self.grpNIRProcesingStepsLayout)
-        self.checkNIRSubtrackBkg = QCheckBox('Subtract Background')
-        self.checkNIRNormalise = QCheckBox('Normalise')
-        self.grpNIRProcesingStepsLayout.addWidget(self.checkNIRSubtrackBkg)
-        self.grpNIRProcesingStepsLayout.addWidget(self.checkNIRNormalise)
-        self.grpNIRChannelLayout.addWidget(self.grpNIRProcesingSteps)
-
-        self.grpNIRDisplay = QGroupBox('Display')
-        self.grpNIRDisplayLayout = QVBoxLayout()
-        self.grpNIRDisplay.setLayout(self.grpNIRDisplayLayout) #radioNIRGaussian
-        self.btngrpNIRDisplay = QButtonGroup()
-        self.radioNIRBasic = QRadioButton('Basic')
-        self.radioNIRBasic.setChecked(True)
-        self.radioNIRGaussian = QRadioButton('Gaussian')
-        self.radioNIRInterpolation = QRadioButton('Interpolation')
-        self.radioNIRBinning = QRadioButton('Binning')
-
-        self.btngrpNIRDisplay.addButton(self.radioNIRBasic,1)
-        self.btngrpNIRDisplay.addButton(self.radioNIRGaussian,2)
-        self.btngrpNIRDisplay.addButton(self.radioNIRInterpolation,3)
-        self.btngrpNIRDisplay.addButton(self.radioNIRBinning,4)
-        
-        self.grpNIRDisplayLayout.addWidget(self.radioNIRBasic)
-        self.grpNIRDisplayLayout.addWidget(self.radioNIRGaussian)
-        self.grpNIRDisplayLayout.addWidget(self.radioNIRInterpolation)
-        self.grpNIRDisplayLayout.addWidget(self.radioNIRBinning)
-        self.grpNIRChannelLayout.addWidget(self.grpNIRDisplay)
-
-        self.grpNIRSliders = QGroupBox('Contrast')
-        self.grpNIRSlidersLayout = QHBoxLayout()
-        self.grpNIRSliders.setLayout(self.grpNIRSlidersLayout)
-        self.sliderNIRMin = QSlider()
-        self.sliderNIRMin.setMaximum(255)
-        self.sliderNIRMin.setMinimum(0)
-        self.sliderNIRMax = QSlider()
-        self.sliderNIRMax.setMaximum(255)
-        self.sliderNIRMax.setMinimum(0)
-        self.sliderNIRMax.setValue(255)
-        self.lblNIRMin = QLabel('0')
-        self.lblNIRMin.setFont(self.contrastLabelFont)
-        self.lblNIRMax = QLabel('255')
-        self.lblNIRMax.setFont(self.contrastLabelFont)
-        self.grpNIRSlidersLayout.addWidget(self.lblNIRMin)
-        self.grpNIRSlidersLayout.addWidget(self.sliderNIRMin)
-        self.grpNIRSlidersLayout.addWidget(self.sliderNIRMax)
-        self.grpNIRSlidersLayout.addWidget(self.lblNIRMax)
-        self.grpNIRChannelLayout.addWidget(self.grpNIRSliders)
-
-        self.checkNIRAutoContrast = QCheckBox('Auto contrast')
-        self.btnNIRChannelOnOff = QPushButton('ON')
-        self.btnNIRChannelOnOff.setCheckable(True)
-        self.btnNIRChannelOnOff.setChecked(True)
-        self.grpNIRChannelLayout.addWidget(self.checkNIRAutoContrast)
-        self.grpNIRChannelLayout.addWidget(self.btnNIRChannelOnOff)
-        
         #----- CONTRAST TEB GUI -----
         self.contrastTabLayout.addWidget(self.grpBlueChannel)
-        self.contrastTabLayout.addWidget(self.grpRedChannel)
-        self.contrastTabLayout.addWidget(self.grpNIRChannel)
+
+    def createCameraTab(self):
+        #Layout for entire camera settings tab
+        self.cameraSettingsTab = QWidget()
+        self.cameraSettingsLayout = QHBoxLayout()
+        self.cameraSettingsTab.setLayout(self.cameraSettingsLayout)
+
+        #Layout for trigger mode selector
+        self.triggerModeSelection = QGroupBox()
+        self.triggerModeSelectionLayout = QHBoxLayout()
+        self.triggerModeSelection.setLayout(self.triggerModeSelectionLayout)
+
+        #Create radio buttons for mode selector
+        self.triggerModeSelectionGroup = QButtonGroup()
+        self.softwareTrigger = QRadioButton('Software')
+        self.softwareTrigger.setChecked(True)
+        self.hardwareTrigger = QRadioButton('Hardware')
+
+        #Add buttons to group for radio to function
+        self.triggerModeSelectionGroup.addButton(self.softwareTrigger,1)
+        self.triggerModeSelectionGroup.addButton(self.hardwareTrigger,2)
+
+        #Add buttons to mode selector layout
+        self.triggerModeSelectionLayout.addWidget(self.softwareTrigger)
+        self.triggerModeSelectionLayout.addWidget(self.hardwareTrigger)
+
+        #Connect buttons to functions
+        self.softwareTrigger.clicked.connect(self.changeTriggerMode)
+        self.hardwareTrigger.clicked.connect(self.changeTriggerMode)
+
+        #Add trigger mode to tab layout
+        self.cameraSettingsLayout.addWidget(self.triggerModeSelection)
+
+
 
     def createMachineLearningTab(self):
-        self.mlTab = QWidget()
-        self.mlTabLayout = QHBoxLayout()
-        self.mlTab.setLayout(self.mlTabLayout)
+        self.machineLearningTab = QWidget()
+        self.machineLearningTabLayout = QHBoxLayout()
+        self.machineLearningTab.setLayout(self.machineLearningTabLayout)
 
         #Text box for ML directory
 
@@ -1107,68 +933,26 @@ class Window(QWidget):
 
     def updateImageSettings(self):
         #Blue channel settings
-        self.blueDisplaySettings.LEDisEnabled = self.btnBlueChannelOnOff.isChecked()
-        self.blueDisplaySettings.autocontrast = self.checkBlueAutoContrast.isChecked()
-        self.blueDisplaySettings.minValue = self.sliderBlueMin.value()
-        self.blueDisplaySettings.maxValue = self.sliderBlueMax.value()
-        self.blueDisplaySettings.displayMode = self.btngrpBlueDisplay.checkedId()
-        self.blueDisplaySettings.subtractBackground = self.checkBlueSubtrackBkg.isChecked()
-        self.blueDisplaySettings.normaliseByLightfield = self.checkBlueNormalise.isChecked()
+        # self.blueDisplaySettings.LEDisEnabled = self.btnBlueChannelOnOff.isChecked()
+        # self.blueDisplaySettings.autocontrast = self.checkBlueAutoContrast.isChecked()
+        # self.blueDisplaySettings.minValue = self.sliderBlueMin.value()
+        # self.blueDisplaySettings.maxValue = self.sliderBlueMax.value()
+        # self.blueDisplaySettings.displayMode = self.btngrpBlueDisplay.checkedId()
+        # self.blueDisplaySettings.subtractBackground = self.checkBlueSubtrackBkg.isChecked()
+        # self.blueDisplaySettings.normaliseByLightfield = self.checkBlueNormalise.isChecked()
 
-        self.playbackPipeline.setAllValues(LED_Channel=1, channelSettings=self.blueDisplaySettings)
+        # self.playbackPipeline.setAllValues(LED_Channel=1, channelSettings=self.blueDisplaySettings)
 
-        self.lblBlueMin.setText(str(self.blueDisplaySettings.minValue))
-        self.lblBlueMax.setText(str(self.blueDisplaySettings.maxValue))
-        print(self.btnBlueChannelOnOff.isChecked())
-        if self.btnBlueChannelOnOff.isChecked():
-            self.btnBlueChannelOnOff.setText("OFF")
-        else:
-            self.btnBlueChannelOnOff.setText("ON")
-
-        #Red channel settings
-        self.redDisplaySettings.LEDisEnabled = self.btnRedChannelOnOff.isChecked()
-        self.redDisplaySettings.autocontrast = self.checkRedAutoContrast.isChecked()
-        self.redDisplaySettings.minValue = self.sliderRedMin.value()
-        self.redDisplaySettings.maxValue = self.sliderRedMax.value()
-        self.redDisplaySettings.displayMode = self.btngrpRedDisplay.checkedId()
-        self.redDisplaySettings.subtractBackground = self.checkRedSubtrackBkg.isChecked()
-        self.redDisplaySettings.normaliseByLightfield = self.checkRedNormalise.isChecked()
-
-        self.playbackPipeline.setAllValues(LED_Channel=2, channelSettings=self.redDisplaySettings)
-
-        self.lblRedMin.setText(str(self.redDisplaySettings.minValue))
-        self.lblRedMax.setText(str(self.redDisplaySettings.maxValue))
-        print(self.btnRedChannelOnOff.isChecked())
-        if self.btnRedChannelOnOff.isChecked():
-            self.btnRedChannelOnOff.setText("OFF")
-        else:
-            self.btnRedChannelOnOff.setText("ON")
-
-        
-        #NIR channel settings
-        self.NIRDisplaySettings.LEDisEnabled = self.btnNIRChannelOnOff.isChecked()
-        self.NIRDisplaySettings.autocontrast = self.checkNIRAutoContrast.isChecked()
-        self.NIRDisplaySettings.minValue = self.sliderNIRMin.value()
-        self.NIRDisplaySettings.maxValue = self.sliderNIRMax.value()
-        self.NIRDisplaySettings.displayMode = self.btngrpNIRDisplay.checkedId()
-        self.NIRDisplaySettings.subtractBackground = self.checkNIRSubtrackBkg.isChecked()
-        self.NIRDisplaySettings.normaliseByLightfield = self.checkNIRNormalise.isChecked()
-
-        self.playbackPipeline.setAllValues(LED_Channel = 3, channelSettings=self.NIRDisplaySettings)
+        # self.lblBlueMin.setText(str(self.blueDisplaySettings.minValue))
+        # self.lblBlueMax.setText(str(self.blueDisplaySettings.maxValue))
+        # print(self.btnBlueChannelOnOff.isChecked())
+        # if self.btnBlueChannelOnOff.isChecked():
+        #     self.btnBlueChannelOnOff.setText("OFF")
+        # else:
+        #     self.btnBlueChannelOnOff.setText("ON")
 
 
-        self.lblNIRMin.setText(str(self.NIRDisplaySettings.minValue))
-        self.lblNIRMax.setText(str(self.NIRDisplaySettings.maxValue))
-        #auto contrast
-        #on off button
-        print(self.btnNIRChannelOnOff.isChecked())
-        if self.btnNIRChannelOnOff.isChecked():
-            self.btnNIRChannelOnOff.setText("OFF")
-        else:
-            self.btnNIRChannelOnOff.setText("ON")
-
-        
-        #ass new values to processing pipeline
+        #Pass new values to processing pipeline
         print('Values changed')
         pass
 
