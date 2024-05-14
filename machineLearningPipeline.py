@@ -35,6 +35,7 @@ class machineLearningPipeline(QObject):
         try:
             self.modelML = tf.keras.models.load_model(self.model_path, compile=False)
             self.modelML.compile(optimizer='adam',loss='mse')
+            print('Model loaded')
             return 'Model loaded'
         
         except:
@@ -43,20 +44,16 @@ class machineLearningPipeline(QObject):
 
 
     def loadDataset(self, dataset_fp):
-        self.dataset_path = dataset_fp
-        self.dataset = np.load(self.dataset_path)
-
-        print('dataset loaded')
-
-        # try:
-        #     self.dataset = np.load(self.dataset_path)
-        # except:
-        #     print('Error loading data')
+        self.dataset_path = dataset_fp   
+        try:
+            self.dataset = np.load(self.dataset_path)
+            print('dataset loaded')
+        except:
+            print('Error loading data')
 
     def stopMLPlayback(self):
         self.stop_pressed = True
 
-    @pyqtSlot()
     def runML(self):
 
         print('running ML reconstruction')

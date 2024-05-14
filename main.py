@@ -14,6 +14,7 @@ from initImagingSession import newImagingSession
 
 try:
     from machineLearningPipeline import machineLearningPipeline
+    print('ML pipeline loaded')
 except:
     print('Could not initalise ML pipeline')
 
@@ -36,28 +37,8 @@ class WidgetGallery(QMainWindow):
         self.datasetFilepath = ''
 
 
-        # create tool bar (Menu, Export, Help)
+        # create tool bar
         self.createMenuBar()
-
-        #Two columns
-        #Left column - Main display with two tabs
-            #- single image display
-            #- multi image display
-
-        #Right column - application settings (3 rows)
-        #first row - image settings
-            #- calculation method
-            # Exposure time
-            # image file
-
-        #Second row - Channel settings
-            #two tabs 
-                #- channel settings
-                    #3 columns
-                        #Blue settings
-                        #Red settings
-                        #NIR settings
-                # colourmap   
 
         self.mainWindow = Window()
         self.setCentralWidget(self.mainWindow)
@@ -214,22 +195,24 @@ class Window(QWidget):
 
         self.playTF = True #Initalise play stop button as true
 
-        self.globalDisplayMode = 1 # 1 = playback, 2 = acquisition
+        self.globalDisplayMode = 1 # 1 = ML playback, 2 = acquisition
 
+        # ---- THREAD INSTANCES ---- #
+        # ML THREAD #
+        #Create instance of ML pipeline
+        self.MLPipeline = machineLearningPipeline()
+        #Create QThread to store pipeline
+        self.MLThread = QThread()
+        self.MLPipeline.moveToThread(self.MLThread)
+        #Start the thread as ML playback is default
+        self.MLThread.start()
 
-
-        self.playbackPipeline = playbackMethod()
-        self.processingThread = QThread()
-        self.playbackPipeline.moveToThread(self.processingThread)
-        self.processingThread.start() #Starting thread as playback is default on start
-
+        # CAMERA THREAD #
         # self.cameraFunctions = CameraThread()
         # self.cameraThread = QThread()
         # self.cameraFunctions.moveToThread(self.cameraThread)
 
-        self.MLPipeline = machineLearningPipeline()
-        self.MLThread = QThread()
-        self.MLPipeline.moveToThread(self.MLThread)
+        
 
         #SIGNALS
         # self.beginCapture.connect(self.cameraFunctions.run_single_camera)
@@ -245,50 +228,18 @@ class Window(QWidget):
 
 
 
+        
+        
         # Create a QGridLayout instance
         layout = QGridLayout()
 
-        #Horizontal grid box for mode selection
-        self.modeSelectionGroup = QGroupBox()
-        self.modeSelectionGroupLayout = QHBoxLayout()
-        self.modeSelectionGroup.setLayout(self.modeSelectionGroupLayout)
-
-        #Radio buttons for each mode
-        self.modeButtonGroup = QButtonGroup()
-        self.radioMLMode = QRadioButton('Machine Learning')
-        self.radioMLMode.setChecked(True)
-        self.radioAcquisitionMode = QRadioButton('Acquisition')
-
-        #Add buttons to group so radio function works correctly
-        self.modeButtonGroup.addButton(self.radioMLMode,1)
-        self.modeButtonGroup.addButton(self.radioAcquisitionMode,2)
-
-        #Add buttons into mode selection layout to display buttons
-        self.modeSelectionGroupLayout.addWidget(self.radioMLMode)
-        self.modeSelectionGroupLayout.addWidget(self.radioAcquisitionMode)
-
-        #Connect buttons to functions when clicked
-        self.radioMLMode.clicked.connect(self.changeDisplayMode)
-        self.radioAcquisitionMode.clicked.connect(self.changeDisplayMode)
-
-        #Add the mode selection onto main page layout
+        #Create software function mode (ML playback or Acquisition)
+        self.createSoftwareFunctionMode()
         layout.addWidget(self.modeSelectionGroup,0,0)
 
 
-        
-
-
-        self.singleDisplay = QWidget()
-        singleDisplayLayout = QGridLayout()
-        self.singleDisplay.setLayout(singleDisplayLayout)
-
-        self.imageSingleDisplay = QGraphicsView()
-        self.imageSingleDisplay.setScene(self.imageSingleScene)
-        # self.imageSingleDisplay.setPixmap(self.displayImage.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
-        # self.imageSingleDisplay.setStyleSheet("border: 1px solid black;")
-
-        singleDisplayLayout.addWidget(self.imageSingleDisplay,0,0)
-
+        #Create display image
+        self.createDisplayImage()
         layout.addWidget(self.singleDisplay,1,0,5,5)
 
 
@@ -359,12 +310,6 @@ class Window(QWidget):
 
 
 
-        
-
-
-
-        
-
         # #TRIGGERING
         # try:
         #     self.task = nidaqmx.Task()
@@ -385,6 +330,46 @@ class Window(QWidget):
 
         #Initalise all settings on open
         self.updateImageSettings() 
+
+
+
+
+    def createSoftwareFunctionMode(self):
+        #Horizontal grid box for mode selection
+        self.modeSelectionGroup = QGroupBox()
+        self.modeSelectionGroupLayout = QHBoxLayout()
+        self.modeSelectionGroup.setLayout(self.modeSelectionGroupLayout)
+
+        #Radio buttons for each mode
+        self.modeButtonGroup = QButtonGroup()
+        self.radioMLMode = QRadioButton('Machine Learning')
+        self.radioMLMode.setChecked(True)
+        self.radioAcquisitionMode = QRadioButton('Acquisition')
+
+        #Add buttons to group so radio function works correctly
+        self.modeButtonGroup.addButton(self.radioMLMode,1)
+        self.modeButtonGroup.addButton(self.radioAcquisitionMode,2)
+
+        #Add buttons into mode selection layout to display buttons
+        self.modeSelectionGroupLayout.addWidget(self.radioMLMode)
+        self.modeSelectionGroupLayout.addWidget(self.radioAcquisitionMode)
+
+        #Connect buttons to functions when clicked
+        self.radioMLMode.clicked.connect(self.changeDisplayMode)
+        self.radioAcquisitionMode.clicked.connect(self.changeDisplayMode)
+
+    def createDisplayImage(self):
+        #Layout to contain image display
+        self.singleDisplay = QWidget()
+        singleDisplayLayout = QGridLayout()
+        self.singleDisplay.setLayout(singleDisplayLayout)
+
+        #Graphics view widget to display image
+        self.imageSingleDisplay = QGraphicsView()
+        self.imageSingleDisplay.setScene(self.imageSingleScene)
+
+        #Add graphics view to layout
+        singleDisplayLayout.addWidget(self.imageSingleDisplay,0,0)
 
     def changeDisplayMode(self):
         displayMode = self.modeButtonGroup.checkedId()
@@ -429,6 +414,7 @@ class Window(QWidget):
             print('Trigger mode set to hardware')
         else:
             print('Error changing trigger mode.')
+
 
 
 
@@ -583,6 +569,7 @@ class Window(QWidget):
 
 
 
+
     def newSessionOpened(self, directoryPath):
         #Obtain path to selected dataset folder
         self.sessionDirectory = directoryPath
@@ -611,13 +598,15 @@ class Window(QWidget):
 
     def newMLDatasetOpened(self, datasetPath):
         # Check file is .npy
-        try:
-            self.MLPipeline.loadDataset(datasetPath)
-        except:
-            print('Error loading chosen dataset')
+        txtLoadDataset = self.MLPipeline.loadDataset(datasetPath)
+
+        self.txtInfo.setText(txtLoadDataset)
         # Set class variable dataset path to selected path
         # Set text field in ML settings
         pass
+
+
+
 
     def initaliseCamera(self):
         # #CAMERA INITALISATION
@@ -670,9 +659,6 @@ class Window(QWidget):
         #         self.task.is_task_done()
         
         
-    def settingChanged(self):
-        #Change setting to use Manual or from Metadata settings
-        pass
 
 
     def checkDirectoryFolders(self, folderPath):
@@ -698,7 +684,6 @@ class Window(QWidget):
 
         return True
     
-
     def loadDataset(self):
         #get selected item
         try:
@@ -720,24 +705,21 @@ class Window(QWidget):
 
 
     def handlePlayPause(self):
-        # self.globalDisplayMode:   1 - Playback   2 - Camera   3 - Machine learning
+        # self.globalDisplayMode:   1 - ML Playback   2 - Camera Acquisition
         if self.globalDisplayMode == 1:
         # try:
             if self.playTF==True:
-                self.beginPlayback.emit() #Tell playback thread to run
-
+                self.beginMLPlayback.emit() #Emit signal to begin thread
                 #Set button to display stop
                 self.btnPlayPause.setText('Stop')
                 self.playTF = False
-                print(f'Play pressed - TF = {self.playTF}')
+                print('starting playing in ML mode')
             else:
-                self.playbackPipeline.endPlayback()
-
+                self.MLPipeline.stopMLPlayback()
                 #Change button to display Play
                 self.btnPlayPause.setText('Play')
                 self.playTF = True
-                print(f'Stop pressed - TF = {self.playTF}')
-                pass
+                print('ML playback paused')
 
         # elif self.globalDisplayMode == 2:
         #     if self.playTF==True:
@@ -754,19 +736,7 @@ class Window(QWidget):
         #         self.btnPlayPause.setText('Play')
         #         self.playTF = True
 
-        elif self.globalDisplayMode == 3:
-            print('starting playing in ML mode')
-            if self.playTF==True:
-                self.beginMLPlayback.emit() #Emit signal to begin thread
-                #Set button to display stop
-                self.btnPlayPause.setText('Stop')
-                self.playTF = False
 
-            else:
-                self.MLPipeline.stopMLPlayback()
-                #Change button to display Play
-                self.btnPlayPause.setText('Play')
-                self.playTF = True
         else:
             print('unknown playback option.')
 
@@ -775,81 +745,7 @@ class Window(QWidget):
         #     QMessageBox.critical(self, "Error playing dataset", "Error playing dataset. \nMake sure a dataset is selected and try again.")
         pass
 
-    def updateSingleDisplay(self, imagePixmap):
-        self.imageSingleScene.clear()
-        self.imageSingleScene.addPixmap(imagePixmap.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
-        self.imageSingleScene.update()
 
-        self.imageSingleDisplay.resetTransform()
-
-        self.imageSingleDisplay.setScene(self.imageSingleScene)
-        # self.imageSingleDisplay.setSceneRect(1080,720)
-        # self.imageSingleDisplay.scale(256,256)
-        # self.imageSingleDisplay.fitInView(self.imageScene.sceneRect(), Qt.KeepAspectRatio)
-        self.imageSingleDisplay.setAlignment(Qt.AlignCenter)
-        self.imageSingleDisplay.show()
-        # self.imageSingleDisplay.setPixmap(imagePixmap.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
-
-
-    def handleImageProcessed(self, imgOut_Combined, imgOut_Red, imgOut_Blue, imgOut_NIR):
-
-        print('image emitted')
-
-        self.imageSingleScene.clear()
-        self.imageSingleScene.addPixmap(imgOut_Combined.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
-        self.imageSingleScene.update()
-        self.imageSingleDisplay.setScene(self.imageSingleScene)
-
-        self.imageCombinedScene.clear()
-        self.imageGreenScene.clear()
-        self.imageRedScene.clear()
-        self.imageNIRScene.clear()
-
-        self.imageCombinedScene.addPixmap(imgOut_Combined.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio))
-        self.imageGreenScene.addPixmap(imgOut_Blue.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio))
-        self.imageRedScene.addPixmap(imgOut_Red.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio))
-        self.imageNIRScene.addPixmap(imgOut_NIR.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio))
-
-        self.imageCombinedScene.update()
-        self.imageGreenScene.update()
-        self.imageRedScene.update()
-        self.imageNIRScene.update()
-
-        self.imageTopLeftDisplay.setScene(self.imageCombinedScene)
-        self.imageTopRightDisplay.setScene(self.imageGreenScene)
-        self.imageBottomLeftDisplay.setScene(self.imageRedScene)
-        self.imageBottomRightDisplay.setScene(self.imageNIRScene)
-
-
-
-        # height, width, channels = imgOut_Combined.shape
-        # bytesPerLine = 3*width
-
-        # arrCombined = np.require(imgOut_Combined, np.uint8, 'C')
-        # arrRed = np.require(imgOut_Red, np.uint8, 'C')
-        # arrBlue = np.require(imgOut_Blue, np.uint8, 'C')
-        # arrNIR = np.require(imgOut_NIR, np.uint8, 'C')
-
-        # qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_RGB888)
-        # pixmap = QPixmap.fromImage(qImg)
-        # self.imageSingleDisplay.setPixmap(pixmap.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
-
-        # #multi dsiplay merged image
-        # qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_RGB888)
-        # pixmap = QPixmap.fromImage(qImg)
-        # self.imageTopLeftDisplay.setPixmap(pixmap.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio)) #Small multi display (combined image)
-
-        # qImgBlue = QImage(arrBlue.data, width, height, bytesPerLine, QImage.Format_RGB888)
-        # pixmapBlue = QPixmap.fromImage(qImgBlue)
-        # self.imageTopRightDisplay.setPixmap(pixmapBlue.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio))
-
-        # qImgRed = QImage(arrRed.data, width, height, bytesPerLine, QImage.Format_RGB888)
-        # pixmapRed = QPixmap.fromImage(qImgRed)
-        # self.imageBottomLeftDisplay.setPixmap(pixmapRed.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio))
-
-        # qImgNIR = QImage(arrNIR.data, width, height, bytesPerLine, QImage.Format_RGB888)
-        # pixmapNIR = QPixmap.fromImage(qImgNIR)
-        # self.imageBottomRightDisplay.setPixmap(pixmapNIR.scaled(540,360, aspectRatioMode=Qt.KeepAspectRatio))
 
     def handleSingleImageProcessed(self,imgOut): #Duplicate function of updateSingleDisplay
         self.imageSingleScene.clear()
