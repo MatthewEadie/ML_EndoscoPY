@@ -602,10 +602,9 @@ class Window(QWidget):
 
     def newMLModelOpened(self, MLDirectoryPath):
         # read in model path
-        try:
-            self.MLPipeline.loadModel(MLDirectoryPath)
-        except:
-            print('Error loading ML model')
+        txtModelLoaded = self.MLPipeline.loadModel(MLDirectoryPath)
+        
+        self.txtInfo.setText(f' {txtModelLoaded}: {MLDirectoryPath}')
         # set class variable model path to selected path
         # set text field in ML settings to path
         pass

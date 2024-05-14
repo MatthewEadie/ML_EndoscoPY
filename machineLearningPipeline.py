@@ -31,17 +31,16 @@ class machineLearningPipeline(QObject):
     def loadModel(self, model_fp):
         #Load trained model
         self.model_path = model_fp
-        print(model_fp)
-        self.modelML = tf.keras.models.load_model(self.model_path, compile=False)
-        self.modelML.compile(optimizer='adam',loss='mse')
 
-        print('model loaded')
+        try:
+            self.modelML = tf.keras.models.load_model(self.model_path, compile=False)
+            self.modelML.compile(optimizer='adam',loss='mse')
+            return 'Model loaded'
+        
+        except:
+            return 'Error loading ML model'
+        
 
-        # try:
-        #     self.modelML = tf.keras.model.load_model(self.model_path, compile=False)
-        #     self.modelML.compile(optimizer='adam',loss='mse')
-        # except:
-        #     print('Error loading ML model')
 
     def loadDataset(self, dataset_fp):
         self.dataset_path = dataset_fp
