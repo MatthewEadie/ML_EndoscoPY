@@ -68,23 +68,24 @@ class WidgetGallery(QMainWindow):
 
         self.fileMenu = QMenu("File", self)
 
-        self.openAction = QAction("Open Playback session",self)
-        self.openAction.triggered.connect(self.openFile)
-        
-        closeAction = QAction('Exit', self)  
-        closeAction.triggered.connect(self.close) 
-
         self.mlModelAction = QAction("Select ML model")
         self.mlModelAction.triggered.connect(self.openMachineLearningModel)
 
-        self.mlDatasetAction = QAction("Select Dataset")
+        self.mlDatasetAction = QAction("Select Dataset folder")
         self.mlDatasetAction.triggered.connect(self.openMLDataset)
 
-        self.fileMenu.addAction(self.openAction)
-        self.fileMenu.addSeparator()
-        self.fileMenu.addSeparator()
+        self.saveImagesAction = QAction("Save images")
+        # self.mlDatasetAction.triggered.connect(self.saveImages)
+
+
+        closeAction = QAction('Exit', self)  
+        closeAction.triggered.connect(self.close) 
+
         self.fileMenu.addAction(self.mlModelAction)
         self.fileMenu.addAction(self.mlDatasetAction)
+        self.fileMenu.addSeparator()
+        self.fileMenu.addSeparator()
+        self.fileMenu.addAction(self.saveImagesAction)
         self.fileMenu.addSeparator()
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(closeAction)
@@ -293,55 +294,21 @@ class Window(QWidget):
         layout.addWidget(self.singleDisplay,1,0,5,5)
 
 
-
+        #Group layout for dataset list
         self.grpSessionSettings = QGroupBox()
         groupLayout = QGridLayout()
         self.grpSessionSettings.setLayout(groupLayout)
-        groupSettings = QGroupBox()
-        groupSettingsLayout = QVBoxLayout()
-        groupSettings.setLayout(groupSettingsLayout)
-        self.radioManual = QRadioButton('Manual')
-        self.radioFromMetadata = QRadioButton('From metadata')
-        self.radioManual.toggled.connect(self.settingChanged)
-        self.radioFromMetadata.toggled.connect(self.settingChanged)
-        groupSettingsLayout.addWidget(self.radioManual)
-        groupSettingsLayout.addWidget(self.radioFromMetadata)
 
-        groupExposureSettings = QGroupBox()
-        groupExposureSetLayout = QVBoxLayout()
-        groupExposureSettings.setLayout(groupExposureSetLayout)
-        self.btngrpExposure = QButtonGroup()
-        self.radioExposure5 = QRadioButton('5')
-        self.radioExposure15 = QRadioButton('15')
-        self.radioExposure25 = QRadioButton('25')
-        self.radioExposure50 = QRadioButton('50')
-
-        self.btngrpExposure.addButton(self.radioExposure5,5)
-        self.btngrpExposure.addButton(self.radioExposure15,15)
-        self.btngrpExposure.addButton(self.radioExposure25,25)
-        self.btngrpExposure.addButton(self.radioExposure50,50)
-
-        groupExposureSetLayout.addWidget(self.radioExposure5)
-        groupExposureSetLayout.addWidget(self.radioExposure15)
-        groupExposureSetLayout.addWidget(self.radioExposure25)
-        groupExposureSetLayout.addWidget(self.radioExposure50)
-
-        self.radioExposure5.toggled.connect(self.createTriggerTask)
-        self.radioExposure15.toggled.connect(self.createTriggerTask)
-        self.radioExposure25.toggled.connect(self.createTriggerTask)
-        self.radioExposure50.toggled.connect(self.createTriggerTask)
-
-
+        #List widget for datasets in selected folder
         self.lstDatasetList = QListWidget()
         self.btnSelectDataset = QPushButton("Select dataset")
         self.btnSelectDataset.clicked.connect(self.loadDataset)
 
-        
-        groupLayout.addWidget(groupSettings, 0, 0)
-        groupLayout.addWidget(groupExposureSettings, 0, 1)
+        #Add dataset list widget to layout
         groupLayout.addWidget(self.lstDatasetList, 0, 2, 2, 2)
         groupLayout.addWidget(self.btnSelectDataset, 3, 2)
 
+        #Add dataset layout to main layout
         layout.addWidget(self.grpSessionSettings,1,5)
 
 
@@ -591,9 +558,10 @@ class Window(QWidget):
         self.contrastTabLayout.addWidget(self.grpBlueChannel)
 
     def createCameraTab(self):
+        # TRIGGER MODE SETTINGS # 
         #Layout for entire camera settings tab
         self.cameraSettingsTab = QWidget()
-        self.cameraSettingsLayout = QHBoxLayout()
+        self.cameraSettingsLayout = QVBoxLayout()
         self.cameraSettingsTab.setLayout(self.cameraSettingsLayout)
 
         #Layout for trigger mode selector
@@ -621,6 +589,41 @@ class Window(QWidget):
 
         #Add trigger mode to tab layout
         self.cameraSettingsLayout.addWidget(self.triggerModeSelection)
+
+
+        # EXPOSURE SETTINGS #
+        #Layout for exposure settings
+        groupExposureSettings = QGroupBox()
+        groupExposureSetLayout = QVBoxLayout()
+        groupExposureSettings.setLayout(groupExposureSetLayout)
+
+        #Button group and radio buttons for exposure presets
+        self.btngrpExposure = QButtonGroup()
+        self.radioExposure5 = QRadioButton('5')
+        self.radioExposure15 = QRadioButton('15')
+        self.radioExposure25 = QRadioButton('25')
+        self.radioExposure50 = QRadioButton('50')
+
+        #Add buttons to group to work properly
+        self.btngrpExposure.addButton(self.radioExposure5,5)
+        self.btngrpExposure.addButton(self.radioExposure15,15)
+        self.btngrpExposure.addButton(self.radioExposure25,25)
+        self.btngrpExposure.addButton(self.radioExposure50,50)
+
+        #Add buttons to layout
+        groupExposureSetLayout.addWidget(self.radioExposure5)
+        groupExposureSetLayout.addWidget(self.radioExposure15)
+        groupExposureSetLayout.addWidget(self.radioExposure25)
+        groupExposureSetLayout.addWidget(self.radioExposure50)
+
+        #Connect radio buttons to functions
+        self.radioExposure5.toggled.connect(self.createTriggerTask)
+        self.radioExposure15.toggled.connect(self.createTriggerTask)
+        self.radioExposure25.toggled.connect(self.createTriggerTask)
+        self.radioExposure50.toggled.connect(self.createTriggerTask)
+
+        #Add exposure settings group to tab layout
+        self.cameraSettingsLayout.addWidget(groupExposureSettings)
 
 
 
