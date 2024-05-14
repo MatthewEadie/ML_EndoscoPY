@@ -10,7 +10,6 @@ import os
 from postProcessingPipeline import playbackMethod
 # from cameraSettings import CameraThread
 from DisplaySettings import displaySettings
-from initImagingSession import newImagingSession
 
 try:
     from machineLearningPipeline import machineLearningPipeline
