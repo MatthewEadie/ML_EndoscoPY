@@ -7,7 +7,7 @@ from PyQt5.QtGui import *
 
 import os
 
-from playbackPipeline import playbackMethod
+from postProcessingPipeline import playbackMethod
 # from cameraSettings import CameraThread
 from DisplaySettings import displaySettings
 from initImagingSession import newImagingSession
