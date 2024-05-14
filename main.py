@@ -77,9 +77,9 @@ class WidgetGallery(QMainWindow):
         self.saveImagesAction = QAction("Save images")
         # self.mlDatasetAction.triggered.connect(self.saveImages)
 
-
         closeAction = QAction('Exit', self)  
         closeAction.triggered.connect(self.close) 
+
 
         self.fileMenu.addAction(self.mlModelAction)
         self.fileMenu.addAction(self.mlDatasetAction)
@@ -89,8 +89,6 @@ class WidgetGallery(QMainWindow):
         self.fileMenu.addSeparator()
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(closeAction)
-
-
 
 
 
@@ -375,18 +373,7 @@ class Window(QWidget):
         layout.addWidget(self.txtFPS,9,4)
 
         #DISPLAY SIGNALS AND SLOTS
-        self.checkBlueNormalise.clicked.connect(self.updateImageSettings)
-        self.checkBlueSubtrackBkg.clicked.connect(self.updateImageSettings)
         self.checkBlueAutoContrast.clicked.connect(self.updateImageSettings)
-        self.btnBlueChannelOnOff.clicked.connect(self.updateImageSettings)
-
-
-        #PROCESSING METHOD SIGNALS AND SLOTS
-        self.radioBlueBasic.clicked.connect(self.updateImageSettings)
-        self.radioBlueGaussian.clicked.connect(self.updateImageSettings)
-        self.radioBlueInterpolation.clicked.connect(self.updateImageSettings)
-        self.radioBlueBinning.clicked.connect(self.updateImageSettings)
-
 
         #SIGNALS AND SLOTS FOR CONTRAST SETTINGS
         self.sliderBlueMin.valueChanged.connect(self.updateImageSettings)
@@ -482,54 +469,20 @@ class Window(QWidget):
 
 
     def createContrastTab(self):
+        #Layout for tab
         self.contrastTab = QWidget()
-        self.contrastTabLayout = QHBoxLayout()
+        self.contrastTabLayout = QVBoxLayout()
         self.contrastTab.setLayout(self.contrastTabLayout)
 
-        self.contrastLabelFont = QFont('Arial', 15)
-        self.contrastLabelFont.setBold(True)
+        
 
         #----- BLUE CHANNEL GUI -----
-        self.grpBlueChannel = QGroupBox('Blue/Green')
-        self.grpBlueChannelLayout = QVBoxLayout()
-        self.grpBlueChannel.setLayout(self.grpBlueChannelLayout)
-
-        self.grpBlueProcesingSteps = QGroupBox('Processing steps')
-        self.grpBlueProcesingStepsLayout = QVBoxLayout()
-        self.grpBlueProcesingSteps.setLayout(self.grpBlueProcesingStepsLayout)
-        self.checkBlueSubtrackBkg = QCheckBox('Subtract Background')
-        self.checkBlueNormalise = QCheckBox('Normalise')
-        self.grpBlueProcesingStepsLayout.addWidget(self.checkBlueSubtrackBkg,)
-        self.grpBlueProcesingStepsLayout.addWidget(self.checkBlueNormalise)
-        self.grpBlueChannelLayout.addWidget(self.grpBlueProcesingSteps)
-
-        self.grpBlueDisplay = QGroupBox('Display')
-        self.grpBlueDisplayLayout = QVBoxLayout()
-        self.grpBlueDisplay.setLayout(self.grpBlueDisplayLayout)
-        #btn grp
-        self.btngrpBlueDisplay = QButtonGroup()
-        self.radioBlueBasic = QRadioButton('Basic')
-        self.radioBlueBasic.setChecked(True)
-        self.radioBlueGaussian = QRadioButton('Gaussian')
-        self.radioBlueInterpolation = QRadioButton('Interpolation')
-        self.radioBlueBinning = QRadioButton('Binning')
-
-        self.btngrpBlueDisplay.addButton(self.radioBlueBasic,1)
-        self.btngrpBlueDisplay.addButton(self.radioBlueGaussian,2)
-        self.btngrpBlueDisplay.addButton(self.radioBlueInterpolation,3)
-        self.btngrpBlueDisplay.addButton(self.radioBlueBinning,4)
-
-
-        self.grpBlueDisplayLayout.addWidget(self.radioBlueBasic)
-        self.grpBlueDisplayLayout.addWidget(self.radioBlueGaussian)
-        self.grpBlueDisplayLayout.addWidget(self.radioBlueInterpolation)
-        self.grpBlueDisplayLayout.addWidget(self.radioBlueBinning)
-
-        self.grpBlueChannelLayout.addWidget(self.grpBlueDisplay)
-
-        self.grpBlueSliders = QGroupBox('Contrast')
+        #Layout for contrast sliders
+        self.grpBlueSliders = QGroupBox()
         self.grpBlueSlidersLayout = QHBoxLayout()
         self.grpBlueSliders.setLayout(self.grpBlueSlidersLayout)
+
+        #Create two sliders (min/max value)
         self.sliderBlueMin = QSlider()
         self.sliderBlueMin.setMaximum(255)
         self.sliderBlueMin.setMinimum(0)
@@ -537,28 +490,32 @@ class Window(QWidget):
         self.sliderBlueMax.setMaximum(255)
         self.sliderBlueMax.setMinimum(0)
         self.sliderBlueMax.setValue(255)
+
+        #Create label to display value of slider
+        self.contrastLabelFont = QFont('Arial', 15)
+        self.contrastLabelFont.setBold(True)
         self.lblBlueMin = QLabel('0')
         self.lblBlueMin.setFont(self.contrastLabelFont)
         self.lblBlueMax = QLabel('255')
         self.lblBlueMax.setFont(self.contrastLabelFont)
+
+        #Add slider and labels to slider group
         self.grpBlueSlidersLayout.addWidget(self.lblBlueMin)
         self.grpBlueSlidersLayout.addWidget(self.sliderBlueMin)
         self.grpBlueSlidersLayout.addWidget(self.sliderBlueMax)
         self.grpBlueSlidersLayout.addWidget(self.lblBlueMax)
-        self.grpBlueChannelLayout.addWidget(self.grpBlueSliders)
-
+        
+        #Create check box for auto contrast
         self.checkBlueAutoContrast = QCheckBox('Auto contrast')
-        self.btnBlueChannelOnOff = QPushButton('ON')
-        self.btnBlueChannelOnOff.setCheckable(True)
-        self.btnBlueChannelOnOff.setChecked(True)
-        self.grpBlueChannelLayout.addWidget(self.checkBlueAutoContrast)
-        self.grpBlueChannelLayout.addWidget(self.btnBlueChannelOnOff)
 
-        #----- CONTRAST TEB GUI -----
-        self.contrastTabLayout.addWidget(self.grpBlueChannel)
+        #Add sliders and auto contrast toggle to main group
+        self.contrastTabLayout.addWidget(self.grpBlueSliders)
+        self.contrastTabLayout.addWidget(self.checkBlueAutoContrast)
+
 
     def createCameraTab(self):
-        # TRIGGER MODE SETTINGS # 
+
+        # ---- TRIGGER MODE SETTINGS ---- # 
         #Layout for entire camera settings tab
         self.cameraSettingsTab = QWidget()
         self.cameraSettingsLayout = QVBoxLayout()
@@ -591,7 +548,7 @@ class Window(QWidget):
         self.cameraSettingsLayout.addWidget(self.triggerModeSelection)
 
 
-        # EXPOSURE SETTINGS #
+        # ---- EXPOSURE SETTINGS ---- #
         #Layout for exposure settings
         groupExposureSettings = QGroupBox()
         groupExposureSetLayout = QVBoxLayout()
