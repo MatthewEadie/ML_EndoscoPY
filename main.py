@@ -326,7 +326,7 @@ class Window(QWidget):
         
 
 
-        # PLAY PAUSE BUTTON TO BEGIN PROCESSING
+        # Play/pause button
         self.btnPlayPause = QPushButton('Play')
         self.btnPlayPause.clicked.connect(self.handlePlayPause)
 
@@ -337,32 +337,10 @@ class Window(QWidget):
 
 
 
-        #IMAGE SELECTOR
-        self.start_slider = QSlider(orientation=Qt.Horizontal)
-        self.start_slider.setMinimum(1)
-        self.start_slider.setMaximum(4000)
-        self.start_slider.setAutoFillBackground(False)
-        # self.start_slider.setStyleSheet(
-        #     "QSlider::groove:horizontal, QSlider::groove:horizontal:hover, QSlider::sub-page:horizontal, QSlider::groove:horizontal:disabled { border:0;  background: #19232D; }")
-        
-        # self.end_slider = QSlider(orientation=Qt.Horizontal)
-        # self.end_slider.setMinimum(1)
-        # self.end_slider.setMaximum(4000)
-        # self.end_slider.setValue(4000)
-        # self.end_slider.setAutoFillBackground(False)
-        # self.end_slider.setStyleSheet("QSlider::groove:horizontal, QSlider::groove:horizontal:hover, QSlider::sub-page:horizontal, QSlider::groove:horizontal:disabled { border:0;  background: #19232D; }")
-        
+        #Image selector slider
+        self.createImageSlider()
+        layout.addWidget(self.groupImageSlider, 6, 0, 1, 5)
 
-        # self.rangeIndicator = QLabel()
-        # self.rangeIndicator.setFixedHeight(25)
-        # self.rangeIndicator.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Fixed)
-
-        
-        # layout.addWidget(self.start_slider, 6, 0, 1, 5)
-        # layout.addWidget(self.rangeIndicator, 7, 0, 1, 5)
-        # layout.addWidget(self.end_slider, 8, 0, 1, 5)
-
-        # self.updateRangeIndicator()
 
         # LABEL FOR USING INFORMATION
         self.txtInfo = QLabel('info text')
@@ -385,15 +363,7 @@ class Window(QWidget):
 
 
 
-        # #CAMERA INITALISATION
-        # if self.cameraFunctions.initialise(): #Initialise camera
-        #         self.cameraInitialised = True
-        # else:
-        #     self.createErrorMessage('No camera detected, starting without acqisition mode.')
-        #     # print('Error initalising camera!')
-        #     self.cameraInitialised = False
-        #     self.disableCameraOptions()
-        #     #ADD FUNCTION TO DISABLE CAMERA SETTING IF NOT INITIALISED
+        
 
         # #TRIGGERING
         # try:
@@ -420,18 +390,15 @@ class Window(QWidget):
         displayMode = self.modeButtonGroup.checkedId()
         if displayMode == 1:
             self.globalDisplayMode = 1
+            self.MLThread.start()
             self.processingThread.start()
             self.cameraThread.exit() #End camera thread when swapping to playback
-            print('Playback mode')
+            print('Machine learning mode')
         elif displayMode == 2:
             self.globalDisplayMode = 2
             self.cameraThread.start() #Creates thread for camera acquisition
             self.processingThread.exit() #End playback thread
             print('Acquisition mode')
-        elif displayMode == 3:
-            self.globalDisplayMode = 3
-            self.MLThread.start()
-            print('Machine learning mode')
         else:
             print('Error setting display mode')
 
@@ -465,18 +432,12 @@ class Window(QWidget):
 
 
 
-
-
-
     def createContrastTab(self):
         #Layout for tab
         self.contrastTab = QWidget()
         self.contrastTabLayout = QVBoxLayout()
         self.contrastTab.setLayout(self.contrastTabLayout)
 
-        
-
-        #----- BLUE CHANNEL GUI -----
         #Layout for contrast sliders
         self.grpBlueSliders = QGroupBox()
         self.grpBlueSlidersLayout = QHBoxLayout()
@@ -511,7 +472,6 @@ class Window(QWidget):
         #Add sliders and auto contrast toggle to main group
         self.contrastTabLayout.addWidget(self.grpBlueSliders)
         self.contrastTabLayout.addWidget(self.checkBlueAutoContrast)
-
 
     def createCameraTab(self):
 
@@ -582,8 +542,6 @@ class Window(QWidget):
         #Add exposure settings group to tab layout
         self.cameraSettingsLayout.addWidget(groupExposureSettings)
 
-
-
     def createMachineLearningTab(self):
         self.machineLearningTab = QWidget()
         self.machineLearningTabLayout = QHBoxLayout()
@@ -596,27 +554,45 @@ class Window(QWidget):
         #Area to be populated with dataset thumbnails
         pass
 
+    def createImageSlider(self):
+        #h box
+        self.groupImageSlider = QWidget()
+        self.groupImageSliderLayout = QHBoxLayout()
+        self.groupImageSlider.setLayout(self.groupImageSliderLayout)
+
+        #button back image
+        self.btnBackImageSlider = QPushButton('<')
+
+        #slider
+        self.imageSlider = QSlider(orientation=Qt.Horizontal)
+        self.imageSlider.setMinimum(1)
+        self.imageSlider.setMaximum(4000)
+
+        #button forward image
+        self.btnForwardImageSlider = QPushButton('>')
+
+        #Label for current image number
+        self.rangeIndicator = QLabel('0')
+
+        #Add all components into slider group
+        self.groupImageSliderLayout.addWidget(self.btnBackImageSlider)
+        self.groupImageSliderLayout.addWidget(self.imageSlider)
+        self.groupImageSliderLayout.addWidget(self.btnForwardImageSlider)
+        self.groupImageSliderLayout.addWidget(self.rangeIndicator)
+        pass
+
+
+
     def newSessionOpened(self, directoryPath):
+        #Obtain path to selected dataset folder
         self.sessionDirectory = directoryPath
-        self.sessionImagingPath = f'{self.sessionDirectory}/Imaging Data/'
+        self.sessionImagingPath = f'{self.sessionDirectory}/'
 
+        #Create list of all items in that folder
         datasetFolders = os.listdir(self.sessionImagingPath)
-
-        #DO WE NEED TO SPLIT THESE????
-        # datasetDates = []
-        # datasetTimes = []
-        # for dataset in datasetFolders:
-        #     datasetDates.append(dataset.split('_')[0])
-        #     datasetTimes.append(dataset.split('_')[1])
 
         self.lstDatasetList.clear() # remove previous entries
         self.lstDatasetList.addItems(datasetFolders)
-
-        #Calibration image location
-        # sesstionCalibrationPath = directoryPath + /Calibration Data/
-        # loop for each exposure (5, 15, 25, 50, 100, 250) (Only 25ms to start)
-        # in each loop for each colour channel (only Blue to start)
-        # send calibration images to processing class global variables
 
         tfNewSession = self.playbackPipeline.newSession(folderPath=self.sessionDirectory)
         if tfNewSession:
@@ -642,6 +618,18 @@ class Window(QWidget):
             print('Error loading chosen dataset')
         # Set class variable dataset path to selected path
         # Set text field in ML settings
+        pass
+
+    def initaliseCamera(self):
+        # #CAMERA INITALISATION
+        # if self.cameraFunctions.initialise(): #Initialise camera
+        #         self.cameraInitialised = True
+        # else:
+        #     self.createErrorMessage('No camera detected, starting without acqisition mode.')
+        #     # print('Error initalising camera!')
+        #     self.cameraInitialised = False
+        #     self.disableCameraOptions()
+        #     #ADD FUNCTION TO DISABLE CAMERA SETTING IF NOT INITIALISED
         pass
 
     def createTriggerTask(self):
@@ -952,8 +940,6 @@ class Window(QWidget):
         # Show the image
         self.rangeIndicator.setPixmap(pix)
         
-
-
     def createErrorMessage(self,text):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
