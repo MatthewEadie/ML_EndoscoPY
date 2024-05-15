@@ -553,14 +553,17 @@ class Window(QWidget):
 
         #button back image
         self.btnBackImageSlider = QPushButton('<')
+        self.btnBackImageSlider.clicked.connect(self.btnBackPressed)
 
         #slider
         self.imageSlider = QSlider(orientation=Qt.Horizontal)
-        self.imageSlider.setMinimum(1)
+        self.imageSlider.setMinimum(0)
         self.imageSlider.setMaximum(4000)
+        self.imageSlider.sliderMoved.connect(self.sliderMoved)
 
         #button forward image
         self.btnForwardImageSlider = QPushButton('>')
+        self.btnForwardImageSlider.clicked.connect(self.btnForwardPressed)
 
         #Label for current image number
         self.currentImageNo = 0
@@ -618,6 +621,7 @@ class Window(QWidget):
 
             #Display shape of dataset
             self.txtDatasetShape.setText(f'{self.datasetShape}')
+            self.numberOfImages = self.datasetShape[0]-1
 
             #Configure image selector to fit dataset
             self.configureImageSelector()
@@ -627,13 +631,46 @@ class Window(QWidget):
         pass
 
     def configureImageSelector(self):
-        self.imageSlider.setMaximum(self.datasetShape[0])
-        self.txtRangeIndicator.setText(f'{0}/{self.datasetShape[0]}')
+        self.imageSlider.setMaximum(self.numberOfImages)
+        self.txtRangeIndicator.setText(f'{0}/{self.numberOfImages}')
 
     def updateImageRangeCurrent(self):
-        self.txtRangeIndicator.setText(f'{self.currentImageNo}/{self.datasetShape[0]}')
+        self.txtRangeIndicator.setText(f'{self.currentImageNo}/{self.numberOfImages}')
         self.imageSlider.setValue(self.currentImageNo)
         pass
+
+
+    def btnBackPressed(self):
+        #Check if at beginning of dataset
+        if self.currentImageNo == 0:
+            #Loop if at the beginning
+            self.currentImageNo = self.numberOfImages
+        else:
+            #Reduce the image number by 1
+            self.currentImageNo -= 1
+
+        #Update ML pipline with new current image no
+        self.MLPipeline.currentImageUpdated(self.currentImageNo)
+
+    def sliderMoved(self):
+        #Set current image number to new number
+        self.currentImageNo = self.imageSlider.sliderPosition()
+
+        #Update ML pipline number
+        self.MLPipeline.currentImageUpdated(self.currentImageNo)
+        pass
+
+    def btnForwardPressed(self):
+        #Check if at end of dataset
+        if self.currentImageNo == self.numberOfImages:
+            #Loop if at the end
+            self.currentImageNo = 0
+        else:
+            #Increase the image number by 1
+            self.currentImageNo += 1
+        
+        #Update ML pipline with new current image no
+        self.MLPipeline.currentImageUpdated(self.currentImageNo)
 
     def initaliseCamera(self):
         # #CAMERA INITALISATION

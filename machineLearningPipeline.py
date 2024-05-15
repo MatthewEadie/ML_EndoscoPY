@@ -60,7 +60,32 @@ class machineLearningPipeline(QObject):
     def stopMLPlayback(self):
         self.stop_pressed = True
 
-    
+    def currentImageUpdated(self, imageNo):
+        #Set thread current image value to new value
+        self.currentImageNum = imageNo
+
+        #Run ML and output new image
+        self.singleImageML()
+
+
+    def singleImageML(self):
+        X_pred = self.modelML(self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:])
+
+        #emit X_Pred for display on screen
+        pred_output = X_pred[0,:,:,0].numpy()
+        pred_output *= 255
+        pred_output[pred_output>255] = 255
+
+
+        height,width = pred_output.shape
+        bytesPerLine = width            
+        arrCombined = np.require(pred_output, np.uint8, 'C')
+        qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
+        pix_output = QPixmap.fromImage(qImg)
+
+        self.updateImageML.emit(pix_output, self.currentImageNum)
+
+
 
     def runML(self):
 
