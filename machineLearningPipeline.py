@@ -13,6 +13,8 @@ from cv2 import imwrite
 from math import floor
 import time
 
+from utils import commonFunctions as CF
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QImage, QPixmap
 
@@ -27,6 +29,19 @@ class machineLearningPipeline(QObject):
     model_path = ""
     dataset_path = ""
 
+    minContrast = 0
+    maxContrast = 255
+
+    stop_pressed = False #Default False
+
+
+    def contrastChanged(self, minCont, maxCont):
+        #Update thread contrast values
+        self.minContrast = minCont
+        self.maxContrast = maxCont
+        #Run single image incase playback is paused
+        if self.stop_pressed:
+            self.singleImageML()
 
     def loadModel(self, model_fp):
         #Load trained model
@@ -41,8 +56,6 @@ class machineLearningPipeline(QObject):
         except:
             return 'Error loading ML model'
         
-
-
     def loadDataset(self, dataset_fp):
         #Copy file path to thread
         self.dataset_path = dataset_fp   
@@ -56,7 +69,6 @@ class machineLearningPipeline(QObject):
         #Return the shape of the dataset for UI features
         return self.dataset.shape
 
-
     def stopMLPlayback(self):
         self.stop_pressed = True
 
@@ -69,21 +81,17 @@ class machineLearningPipeline(QObject):
 
 
     def singleImageML(self):
-        X_pred = self.modelML(self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:])
+        #Process image
+        outputImage = self.processImage()
 
-        #emit X_Pred for display on screen
-        pred_output = X_pred[0,:,:,0].numpy()
-        pred_output *= 255
-        pred_output[pred_output>255] = 255
+        #Perform contrast adjustment
+        outputImage = self.contrastAdjustment(outputImage)
 
-
-        height,width = pred_output.shape
-        bytesPerLine = width            
-        arrCombined = np.require(pred_output, np.uint8, 'C')
-        qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
-        pix_output = QPixmap.fromImage(qImg)
-
-        self.updateImageML.emit(pix_output, self.currentImageNum)
+        #Prepare image for display
+        pixOutputImage = self.prepareImageForDisplay(outputImage)
+        
+        #Emit image back to main page for display
+        self.updateImageML.emit(pixOutputImage, self.currentImageNum)
 
 
 
@@ -95,20 +103,16 @@ class machineLearningPipeline(QObject):
 
         while self.stop_pressed == False:
 
-            X_pred = self.modelML(self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:])
+            #Process image
+            outputImage = self.processImage()
 
-            #emit X_Pred for display on screen
-            pred_output = X_pred[0,:,:,0].numpy()
-            pred_output *= 255
-            pred_output[pred_output>255] = 255
+            #Perform contrast adjustment
+            outputImage = self.contrastAdjustment(outputImage)
 
+            #Prepare image for display
+            pix_output = self.prepareImageForDisplay(outputImage)
 
-            height,width = pred_output.shape
-            bytesPerLine = width            
-            arrCombined = np.require(pred_output, np.uint8, 'C')
-            qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
-            pix_output = QPixmap.fromImage(qImg)
-
+            #Emit image back to main page for display
             self.updateImageML.emit(pix_output, self.currentImageNum)
 
             time.sleep(1) # wait 1 second before looping
@@ -120,4 +124,24 @@ class machineLearningPipeline(QObject):
                 self.currentImageNum += 1 #Else iterate to next image
 
 
+    def processImage(self):
+        X_pred = self.modelML(self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:])
+
+        pred_output = X_pred[0,:,:,0].numpy()
+        pred_output *= 255
+        pred_output[pred_output>255] = 255
+        return pred_output
+    
+    def contrastAdjustment(self, outputImage):
+        outputImage = CF.AdjustContrastImage(outputImage, self.minContrast, self.maxContrast)
+        return outputImage
+
+    def prepareImageForDisplay(self, outputImage):
+        height,width = outputImage.shape
+        bytesPerLine = width            
+        arrCombined = np.require(outputImage, np.uint8, 'C')
+        qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
+        pixOutput = QPixmap.fromImage(qImg)
+
+        return pixOutput
 

@@ -281,12 +281,8 @@ class Window(QWidget):
         self.txtFPS.setAlignment(Qt.AlignRight)
         layout.addWidget(self.txtFPS,9,4)
 
-        #DISPLAY SIGNALS AND SLOTS
-        self.checkBlueAutoContrast.clicked.connect(self.updateImageSettings)
 
-        #SIGNALS AND SLOTS FOR CONTRAST SETTINGS
-        self.sliderBlueMin.valueChanged.connect(self.updateImageSettings)
-        self.sliderBlueMax.valueChanged.connect(self.updateImageSettings)
+
 
 
 
@@ -308,8 +304,7 @@ class Window(QWidget):
         # Set the layout on the application's window
         self.setLayout(layout)
 
-        #Initalise all settings on open
-        self.updateImageSettings() 
+
 
 
 
@@ -405,39 +400,44 @@ class Window(QWidget):
         self.contrastTab.setLayout(self.contrastTabLayout)
 
         #Layout for contrast sliders
-        self.grpBlueSliders = QGroupBox()
-        self.grpBlueSlidersLayout = QHBoxLayout()
-        self.grpBlueSliders.setLayout(self.grpBlueSlidersLayout)
+        self.grpContrastSliders = QGroupBox()
+        self.grpContrastSlidersLayout = QHBoxLayout()
+        self.grpContrastSliders.setLayout(self.grpContrastSlidersLayout)
 
         #Create two sliders (min/max value)
-        self.sliderBlueMin = QSlider()
-        self.sliderBlueMin.setMaximum(255)
-        self.sliderBlueMin.setMinimum(0)
-        self.sliderBlueMax = QSlider()
-        self.sliderBlueMax.setMaximum(255)
-        self.sliderBlueMax.setMinimum(0)
-        self.sliderBlueMax.setValue(255)
+        self.sliderContrastMin = QSlider()
+        self.sliderContrastMin.setMaximum(255)
+        self.sliderContrastMin.setMinimum(0)
+        self.sliderContrastMin.setValue(0)
+        self.sliderContrastMax = QSlider()
+        self.sliderContrastMax.setMaximum(255)
+        self.sliderContrastMax.setMinimum(0)
+        self.sliderContrastMax.setValue(255)
+
+        #Update contrast values if sliders changed
+        self.sliderContrastMin.sliderMoved.connect(self.updateContrastSettings)
+        self.sliderContrastMax.sliderMoved.connect(self.updateContrastSettings)
 
         #Create label to display value of slider
         self.contrastLabelFont = QFont('Arial', 15)
         self.contrastLabelFont.setBold(True)
-        self.lblBlueMin = QLabel('0')
-        self.lblBlueMin.setFont(self.contrastLabelFont)
-        self.lblBlueMax = QLabel('255')
-        self.lblBlueMax.setFont(self.contrastLabelFont)
+        self.lblContrastMin = QLabel('0')
+        self.lblContrastMin.setFont(self.contrastLabelFont)
+        self.lblContrastMax = QLabel('255')
+        self.lblContrastMax.setFont(self.contrastLabelFont)
 
         #Add slider and labels to slider group
-        self.grpBlueSlidersLayout.addWidget(self.lblBlueMin)
-        self.grpBlueSlidersLayout.addWidget(self.sliderBlueMin)
-        self.grpBlueSlidersLayout.addWidget(self.sliderBlueMax)
-        self.grpBlueSlidersLayout.addWidget(self.lblBlueMax)
+        self.grpContrastSlidersLayout.addWidget(self.lblContrastMin)
+        self.grpContrastSlidersLayout.addWidget(self.sliderContrastMin)
+        self.grpContrastSlidersLayout.addWidget(self.sliderContrastMax)
+        self.grpContrastSlidersLayout.addWidget(self.lblContrastMax)
         
         #Create check box for auto contrast
-        self.checkBlueAutoContrast = QCheckBox('Auto contrast')
+        self.checkAutoContrast = QCheckBox('Auto contrast')
 
         #Add sliders and auto contrast toggle to main group
-        self.contrastTabLayout.addWidget(self.grpBlueSliders)
-        self.contrastTabLayout.addWidget(self.checkBlueAutoContrast)
+        self.contrastTabLayout.addWidget(self.grpContrastSliders)
+        self.contrastTabLayout.addWidget(self.checkAutoContrast)
 
     def createCameraTab(self):
 
@@ -448,7 +448,7 @@ class Window(QWidget):
         self.cameraSettingsTab.setLayout(self.cameraSettingsLayout)
 
         #Layout for trigger mode selector
-        self.triggerModeSelection = QGroupBox()
+        self.triggerModeSelection = QGroupBox('Trigger mode')
         self.triggerModeSelectionLayout = QHBoxLayout()
         self.triggerModeSelection.setLayout(self.triggerModeSelectionLayout)
 
@@ -476,7 +476,7 @@ class Window(QWidget):
 
         # ---- EXPOSURE SETTINGS ---- #
         #Layout for exposure settings
-        groupExposureSettings = QGroupBox()
+        groupExposureSettings = QGroupBox('Exposure time (ms)')
         groupExposureSetLayout = QVBoxLayout()
         groupExposureSettings.setLayout(groupExposureSetLayout)
 
@@ -630,6 +630,38 @@ class Window(QWidget):
             self.errorInfoText('Error loading data')
         pass
 
+
+
+
+    def updateContrastSettings(self):
+        #Get values of min slider
+        self.minContrastValue = self.sliderContrastMin.value()
+        #Get value of max slider
+        self.maxContrastValue = self.sliderContrastMax.value()
+
+        #Check min is below max
+        if self.minContrastValue >= self.maxContrastValue:
+            #Set min value to max minus 1 
+            self.minContrastValue = self.maxContrastValue-1
+            #Set slider position to new value
+            self.sliderContrastMin.setValue(self.minContrastValue)
+
+        #Check max is above min
+        if self.maxContrastValue <= self.minContrastValue:
+            #Set min value to max minus 1 
+            self.maxContrastValue = self.minContrastValue+1
+            #Set slider position to new value
+            self.sliderContrastMax.setValue(self.maxContrastValue)
+
+        #Update min label
+        self.lblContrastMin.setText(f'{self.minContrastValue}')
+        #Update max label
+        self.lblContrastMax.setText(f'{self.maxContrastValue}')
+
+        #Pass values to post processing pipeline
+        self.MLPipeline.contrastChanged(self.minContrastValue, self.maxContrastValue)
+        pass
+
     def configureImageSelector(self):
         self.imageSlider.setMaximum(self.numberOfImages)
         self.txtRangeIndicator.setText(f'{0}/{self.numberOfImages}')
@@ -638,7 +670,6 @@ class Window(QWidget):
         self.txtRangeIndicator.setText(f'{self.currentImageNo}/{self.numberOfImages}')
         self.imageSlider.setValue(self.currentImageNo)
         pass
-
 
     def btnBackPressed(self):
         #Check if at beginning of dataset
@@ -746,7 +777,6 @@ class Window(QWidget):
         #open imaging session from selected dataset from listview
         pass
 
-
     def handlePlayPause(self):
         # self.globalDisplayMode:   1 - ML Playback   2 - Camera Acquisition
         if self.globalDisplayMode == 1:
@@ -788,50 +818,27 @@ class Window(QWidget):
         #     QMessageBox.critical(self, "Error playing dataset", "Error playing dataset. \nMake sure a dataset is selected and try again.")
         pass
 
-
-
-    def handleSingleImageProcessed(self,imgOut, imageNo): #Duplicate function of updateSingleDisplay
+    def handleSingleImageProcessed(self,imgOut, imageNo):
+        #Clear previous image from scene
         self.imageSingleScene.clear()
+        #Add the pixmap of the new image to the scene
         self.imageSingleScene.addPixmap(imgOut.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
+        #Tell the scene to update
         self.imageSingleScene.update()
+        #Set the display to the new scene
         self.imageSingleDisplay.setScene(self.imageSingleScene)
 
+        #Update the current image number
         self.currentImageNo = imageNo
         self.updateImageRangeCurrent()
 
         pass
 
-    def updateInfoLabel(self, newText):
-        self.txtInfo.setText(f'{newText}')
-        return
     
     def fpsCounter(self, fps):
         self.txtFPS.setText(f'FPS: {fps}')
 
-    def updateImageSettings(self):
-        #Blue channel settings
-        # self.blueDisplaySettings.LEDisEnabled = self.btnBlueChannelOnOff.isChecked()
-        # self.blueDisplaySettings.autocontrast = self.checkBlueAutoContrast.isChecked()
-        # self.blueDisplaySettings.minValue = self.sliderBlueMin.value()
-        # self.blueDisplaySettings.maxValue = self.sliderBlueMax.value()
-        # self.blueDisplaySettings.displayMode = self.btngrpBlueDisplay.checkedId()
-        # self.blueDisplaySettings.subtractBackground = self.checkBlueSubtrackBkg.isChecked()
-        # self.blueDisplaySettings.normaliseByLightfield = self.checkBlueNormalise.isChecked()
 
-        # self.playbackPipeline.setAllValues(LED_Channel=1, channelSettings=self.blueDisplaySettings)
-
-        # self.lblBlueMin.setText(str(self.blueDisplaySettings.minValue))
-        # self.lblBlueMax.setText(str(self.blueDisplaySettings.maxValue))
-        # print(self.btnBlueChannelOnOff.isChecked())
-        # if self.btnBlueChannelOnOff.isChecked():
-        #     self.btnBlueChannelOnOff.setText("OFF")
-        # else:
-        #     self.btnBlueChannelOnOff.setText("ON")
-
-
-        #Pass new values to processing pipeline
-        print('Values changed')
-        pass
 
 
 
@@ -842,7 +849,6 @@ class Window(QWidget):
     def okayInfoText(self, text):
         self.txtInfo.setStyleSheet("QLabel { background-color : none; color : white; }")
         self.txtInfo.setText(text)
-
 
     def createErrorMessage(self,text):
         msg = QMessageBox()
