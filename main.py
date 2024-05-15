@@ -102,19 +102,19 @@ class WidgetGallery(QMainWindow):
         #CHANGE TO FILE SELECTION NOT FOLDER
         #SELECTION NEEDS TO BE A 4D .npy STACK
 
-        self.dataset_filepath = QFileDialog.getOpenFileName(self, "Open File", "./", "Numpy array (*.npy)")[0]
+        # self.dataset_filepath = QFileDialog.getOpenFileName(self, "Open File", "./", "Numpy array (*.npy)")[0]
 
-        # dialog = QFileDialog(self, "Open dataset", "Image Files (*.npy)")
-        # dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        # dialog.setViewMode(QFileDialog.ViewMode.List)
-        # self.datasetDirectoryPath = dialog.getExistingDirectory()
+        dialog = QFileDialog(self, "Open dataset")
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setViewMode(QFileDialog.ViewMode.List)
+        self.datasetDirectoryPath = dialog.getExistingDirectory()
 
 
-        if self.dataset_filepath == "":
+        if self.datasetDirectoryPath == "":
             QMessageBox.critical(self, "Missing folder path", "No folder path selected.")
             return
         
-        self.mainWindow.newMLDatasetOpened(self.dataset_filepath)
+        self.mainWindow.newMLDatasetDirectory(self.datasetDirectoryPath)
 
 
 
@@ -229,8 +229,8 @@ class Window(QWidget):
 
         #List widget for datasets in selected folder
         self.lstDatasetList = QListWidget()
-        self.btnSelectDataset = QPushButton("Select dataset")
-        self.btnSelectDataset.clicked.connect(self.loadDataset)
+        self.btnSelectDataset = QPushButton("Load dataset")
+        self.btnSelectDataset.clicked.connect(self.openNewDataset)
 
         #Add dataset list widget to layout
         groupLayout.addWidget(self.lstDatasetList, 0, 2, 2, 2)
@@ -439,6 +439,43 @@ class Window(QWidget):
         self.contrastTabLayout.addWidget(self.grpContrastSliders)
         self.contrastTabLayout.addWidget(self.checkAutoContrast)
 
+    def createMachineLearningTab(self):
+        self.machineLearningTab = QWidget()
+        self.machineLearningTabLayout = QVBoxLayout()
+        self.machineLearningTab.setLayout(self.machineLearningTabLayout)
+
+        # ---- Selected Model ---- #
+        #Text box for ML directory
+        self.lblChosenModel = QLabel('ML Model:')
+        self.txtChosenModel = QLineEdit('')
+        self.txtChosenModel.setReadOnly(True)
+
+        #Add label and txtbox to tab layout
+        self.machineLearningTabLayout.addWidget(self.lblChosenModel)
+        self.machineLearningTabLayout.addWidget(self.txtChosenModel)
+
+        # ---- Chosen Dataset ---- #
+        #Text box for Dataset directory
+        self.lblChosenDataset = QLabel('Selected Dataset:')
+        self.txtChosenDataset = QLineEdit('')
+        self.txtChosenDataset.setReadOnly(True)
+
+        #Add label and txtbox to tab layout
+        self.machineLearningTabLayout.addWidget(self.lblChosenDataset)
+        self.machineLearningTabLayout.addWidget(self.txtChosenDataset)
+
+        # ---- Dataset shape ---- #
+        #Text box for Dataset directory
+        self.lblDatasetShape = QLabel('Dataset shape:')
+        self.txtDatasetShape = QLineEdit('')
+        self.txtDatasetShape.setReadOnly(True)
+
+        #Add label and txtbox to tab layout
+        self.machineLearningTabLayout.addWidget(self.lblDatasetShape)
+        self.machineLearningTabLayout.addWidget(self.txtDatasetShape)
+
+        pass
+
     def createCameraTab(self):
 
         # ---- TRIGGER MODE SETTINGS ---- # 
@@ -508,43 +545,6 @@ class Window(QWidget):
         #Add exposure settings group to tab layout
         self.cameraSettingsLayout.addWidget(groupExposureSettings)
 
-    def createMachineLearningTab(self):
-        self.machineLearningTab = QWidget()
-        self.machineLearningTabLayout = QVBoxLayout()
-        self.machineLearningTab.setLayout(self.machineLearningTabLayout)
-
-        # ---- Selected Model ---- #
-        #Text box for ML directory
-        self.lblChosenModel = QLabel('ML Model:')
-        self.txtChosenModel = QLineEdit('')
-        self.txtChosenModel.setReadOnly(True)
-
-        #Add label and txtbox to tab layout
-        self.machineLearningTabLayout.addWidget(self.lblChosenModel)
-        self.machineLearningTabLayout.addWidget(self.txtChosenModel)
-
-        # ---- Chosen Dataset ---- #
-        #Text box for Dataset directory
-        self.lblChosenDataset = QLabel('Selected Dataset:')
-        self.txtChosenDataset = QLineEdit('')
-        self.txtChosenDataset.setReadOnly(True)
-
-        #Add label and txtbox to tab layout
-        self.machineLearningTabLayout.addWidget(self.lblChosenDataset)
-        self.machineLearningTabLayout.addWidget(self.txtChosenDataset)
-
-        # ---- Dataset shape ---- #
-        #Text box for Dataset directory
-        self.lblDatasetShape = QLabel('Selected Dataset:')
-        self.txtDatasetShape = QLineEdit('')
-        self.txtDatasetShape.setReadOnly(True)
-
-        #Add label and txtbox to tab layout
-        self.machineLearningTabLayout.addWidget(self.lblDatasetShape)
-        self.machineLearningTabLayout.addWidget(self.txtDatasetShape)
-
-        pass
-
     def createImageSlider(self):
         #h box
         self.groupImageSlider = QWidget()
@@ -604,20 +604,37 @@ class Window(QWidget):
 
             #Update info box and ML tab
             self.okayInfoText('ML model loaded')
-            self.txtChosenDataset.setText(MLDirectoryPath)
+            self.txtChosenModel.setText(MLDirectoryPath)
         except:
             #Display error message in info box
             self.errorInfoText('Error loading ML model')
         pass
 
-    def newMLDatasetOpened(self, datasetPath):
-        try:
-            #Load dataset in ML pipeline
-            self.datasetShape = self.MLPipeline.loadDataset(datasetPath)
+    def newMLDatasetDirectory(self, MLDatasetPath):
+        self.datasetPath = MLDatasetPath
+        self.datasets = []
+        #Loop over all files in folder
+        for file in os.listdir(self.datasetPath):
+            #Check file ends with .npy
+            if file.endswith(".npy"):
+                #Add file to array
+                self.datasets.append(file)
 
-            #Update info box and ML tab
-            self.okayInfoText('Dataset loaded')
-            self.txtChosenDataset.setText(datasetPath)
+        #Remove previous entries
+        self.lstDatasetList.clear() 
+        #Populate list with files
+        self.lstDatasetList.addItems(self.datasets)
+        
+    def openNewDataset(self):
+        try:
+            #Get selected item from dataset list
+            selectedDataset = self.lstDatasetList.currentItem().text()
+
+            #Load dataset in ML pipeline
+            self.datasetShape = self.MLPipeline.loadDataset(f'{self.datasetPath}/{selectedDataset}')
+
+            #Display chosen dataset
+            self.txtChosenDataset.setText(f'{self.datasetPath}/{selectedDataset}')
 
             #Display shape of dataset
             self.txtDatasetShape.setText(f'{self.datasetShape}')
@@ -625,6 +642,9 @@ class Window(QWidget):
 
             #Configure image selector to fit dataset
             self.configureImageSelector()
+
+            #Display okay message in info box
+            self.okayInfoText(f'Dataset loaded: {selectedDataset}')
         except:
             #Display error message in info box
             self.errorInfoText('Error loading data')
@@ -753,29 +773,8 @@ class Window(QWidget):
         # while(not(self.task.is_task_done())):
         #         self.task.is_task_done()
         
-        
 
 
-
-    
-    def loadDataset(self):
-        #get selected item
-        try:
-            selectedDataset = self.lstDatasetList.currentItem()
-            self.txtInfo.setText(selectedDataset.text())
-            self.playbackPipeline.updateSelectedDataset(selectedDataset.text())
-        except:
-            self.txtInfo.setText('No dataset selected.')
-        
-        return
-
-        
-
-        #imaging path = self.directory+date+dataset
-        #send path to imaging pipeline
-
-        #open imaging session from selected dataset from listview
-        pass
 
     def handlePlayPause(self):
         # self.globalDisplayMode:   1 - ML Playback   2 - Camera Acquisition
@@ -843,11 +842,11 @@ class Window(QWidget):
 
 
     def errorInfoText(self, text):
-        self.txtInfo.setStyleSheet("QLabel { background-color : red; color : blue; }")
+        self.txtInfo.setStyleSheet("QLineEdit { background-color : red; color : blue; }")
         self.txtInfo.setText(text)
 
     def okayInfoText(self, text):
-        self.txtInfo.setStyleSheet("QLabel { background-color : none; color : white; }")
+        self.txtInfo.setStyleSheet("QLineEdit { background-color : none; color : white; }")
         self.txtInfo.setText(text)
 
     def createErrorMessage(self,text):
