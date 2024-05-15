@@ -21,7 +21,7 @@ class MLSettings:
     dataset_path = ""
 
 class machineLearningPipeline(QObject):
-    updateImageML = pyqtSignal(QPixmap)
+    updateImageML = pyqtSignal(QPixmap, int)
 
     channels = 0
     model_path = ""
@@ -44,26 +44,33 @@ class machineLearningPipeline(QObject):
 
 
     def loadDataset(self, dataset_fp):
+        #Copy file path to thread
         self.dataset_path = dataset_fp   
-        try:
-            self.dataset = np.load(self.dataset_path)
-            print('dataset loaded')
-        except:
-            print('Error loading data')
+
+        #Load the dataset
+        self.dataset = np.load(self.dataset_path)
+
+        #Set current image number to 0
+        self.currentImageNum = 0
+
+        #Return the shape of the dataset for UI features
+        return self.dataset.shape
+
 
     def stopMLPlayback(self):
         self.stop_pressed = True
+
+    
 
     def runML(self):
 
         print('running ML reconstruction')
 
-        imageNum = 0
         self.stop_pressed = False
 
         while self.stop_pressed == False:
 
-            X_pred = self.modelML(self.dataset[imageNum:imageNum+1,:,:,:])
+            X_pred = self.modelML(self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:])
 
             #emit X_Pred for display on screen
             pred_output = X_pred[0,:,:,0].numpy()
@@ -77,15 +84,15 @@ class machineLearningPipeline(QObject):
             qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
             pix_output = QPixmap.fromImage(qImg)
 
-            self.updateImageML.emit(pix_output)
+            self.updateImageML.emit(pix_output, self.currentImageNum)
 
             time.sleep(1) # wait 1 second before looping
 
             #check if end of dataset has been reached
-            if imageNum == self.dataset.shape[0]: # 0th items in dataset is number of images (eg 10,256,256,11 dataset has 10 images)
-                imageNum = 0 #If end of dataset reached loop dataset
+            if self.currentImageNum == self.dataset.shape[0]: # 0th items in dataset is number of images (eg 10,256,256,11 dataset has 10 images)
+                self.currentImageNum = 0 #If end of dataset reached loop dataset
             else:
-                imageNum += 1 #Else iterate to next image
+                self.currentImageNum += 1 #Else iterate to next image
 
 
 

@@ -81,27 +81,7 @@ class WidgetGallery(QMainWindow):
 
         self.setMenuBar(self.mainMenuBar)
 
-
-    def openFile(self):
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
-        dialog.setViewMode(QFileDialog.ViewMode.List)
-        self.directoryPath = dialog.getExistingDirectory()
-
-
-        if self.directoryPath == "":
-            QMessageBox.critical(self, "Missing folder path", "No folder path selected.")
-            return
-
-        dirCheck = self.mainWindow.checkDirectoryFolders(self.directoryPath)
-        if (dirCheck == False):
-            return    
-        else:
-            #add imaging datasets to Qlistview
-            self.mainWindow.newSessionOpened(self.directoryPath)
-            #self.mainWindow.lstDatasetList
-            pass
-        
+   
 
     def openMachineLearningModel(self):
         dialog = QFileDialog(self)
@@ -293,7 +273,8 @@ class Window(QWidget):
 
 
         # LABEL FOR USING INFORMATION
-        self.txtInfo = QLabel('info text')
+        self.txtInfo = QLineEdit('info text')
+        self.txtInfo.setReadOnly(True)
         layout.addWidget(self.txtInfo,9,0,1,0)
 
         self.txtFPS = QLabel('fps counter')
@@ -529,14 +510,39 @@ class Window(QWidget):
 
     def createMachineLearningTab(self):
         self.machineLearningTab = QWidget()
-        self.machineLearningTabLayout = QHBoxLayout()
+        self.machineLearningTabLayout = QVBoxLayout()
         self.machineLearningTab.setLayout(self.machineLearningTabLayout)
 
+        # ---- Selected Model ---- #
         #Text box for ML directory
+        self.lblChosenModel = QLabel('ML Model:')
+        self.txtChosenModel = QLineEdit('')
+        self.txtChosenModel.setReadOnly(True)
 
+        #Add label and txtbox to tab layout
+        self.machineLearningTabLayout.addWidget(self.lblChosenModel)
+        self.machineLearningTabLayout.addWidget(self.txtChosenModel)
+
+        # ---- Chosen Dataset ---- #
         #Text box for Dataset directory
+        self.lblChosenDataset = QLabel('Selected Dataset:')
+        self.txtChosenDataset = QLineEdit('')
+        self.txtChosenDataset.setReadOnly(True)
 
-        #Area to be populated with dataset thumbnails
+        #Add label and txtbox to tab layout
+        self.machineLearningTabLayout.addWidget(self.lblChosenDataset)
+        self.machineLearningTabLayout.addWidget(self.txtChosenDataset)
+
+        # ---- Dataset shape ---- #
+        #Text box for Dataset directory
+        self.lblDatasetShape = QLabel('Selected Dataset:')
+        self.txtDatasetShape = QLineEdit('')
+        self.txtDatasetShape.setReadOnly(True)
+
+        #Add label and txtbox to tab layout
+        self.machineLearningTabLayout.addWidget(self.lblDatasetShape)
+        self.machineLearningTabLayout.addWidget(self.txtDatasetShape)
+
         pass
 
     def createImageSlider(self):
@@ -557,13 +563,15 @@ class Window(QWidget):
         self.btnForwardImageSlider = QPushButton('>')
 
         #Label for current image number
-        self.rangeIndicator = QLabel('0')
+        self.currentImageNo = 0
+        self.maxImage = 0
+        self.txtRangeIndicator = QLabel(f'{self.currentImageNo}/{self.maxImage}')
 
         #Add all components into slider group
         self.groupImageSliderLayout.addWidget(self.btnBackImageSlider)
         self.groupImageSliderLayout.addWidget(self.imageSlider)
         self.groupImageSliderLayout.addWidget(self.btnForwardImageSlider)
-        self.groupImageSliderLayout.addWidget(self.rangeIndicator)
+        self.groupImageSliderLayout.addWidget(self.txtRangeIndicator)
         pass
 
 
@@ -587,25 +595,45 @@ class Window(QWidget):
             self.txtInfo.setText('Error opening new session.')
 
     def newMLModelOpened(self, MLDirectoryPath):
-        # read in model path
-        txtModelLoaded = self.MLPipeline.loadModel(MLDirectoryPath)
-        
-        self.txtInfo.setText(f' {txtModelLoaded}: {MLDirectoryPath}')
-        # set class variable model path to selected path
-        # set text field in ML settings to path
+        try:
+            #Load model in ML pipeline
+            self.MLPipeline.loadModel(MLDirectoryPath)
+
+            #Update info box and ML tab
+            self.okayInfoText('ML model loaded')
+            self.txtChosenDataset.setText(MLDirectoryPath)
+        except:
+            #Display error message in info box
+            self.errorInfoText('Error loading ML model')
         pass
 
     def newMLDatasetOpened(self, datasetPath):
-        # Check file is .npy
-        txtLoadDataset = self.MLPipeline.loadDataset(datasetPath)
+        try:
+            #Load dataset in ML pipeline
+            self.datasetShape = self.MLPipeline.loadDataset(datasetPath)
 
-        self.txtInfo.setText(txtLoadDataset)
-        # Set class variable dataset path to selected path
-        # Set text field in ML settings
+            #Update info box and ML tab
+            self.okayInfoText('Dataset loaded')
+            self.txtChosenDataset.setText(datasetPath)
+
+            #Display shape of dataset
+            self.txtDatasetShape.setText(f'{self.datasetShape}')
+
+            #Configure image selector to fit dataset
+            self.configureImageSelector()
+        except:
+            #Display error message in info box
+            self.errorInfoText('Error loading data')
         pass
 
+    def configureImageSelector(self):
+        self.imageSlider.setMaximum(self.datasetShape[0])
+        self.txtRangeIndicator.setText(f'{0}/{self.datasetShape[0]}')
 
-
+    def updateImageRangeCurrent(self):
+        self.txtRangeIndicator.setText(f'{self.currentImageNo}/{self.datasetShape[0]}')
+        self.imageSlider.setValue(self.currentImageNo)
+        pass
 
     def initaliseCamera(self):
         # #CAMERA INITALISATION
@@ -660,28 +688,7 @@ class Window(QWidget):
         
 
 
-    def checkDirectoryFolders(self, folderPath):
-        checkCalibTF = False
-        checkGeneratedTF = False
-        checkImagingTF = False
 
-        checkCalibTF = os.path.isdir(folderPath+'/Calibration Data')
-        checkGeneratedTF = os.path.isdir(folderPath+'/Generated Data')
-        checkImagingTF = os.path.isdir(folderPath+'/Imaging Data')
-
-        if (checkCalibTF == False):
-            QMessageBox.critical(self, "Missing calibration folder", "The calibration data folder could not be found at the selected location.")
-            return False
-
-        if (checkGeneratedTF == False):
-            QMessageBox.critical(self, "Missing generated folder", "The generated data folder could not be found at the selected location.")
-            return False
-            
-        if (checkImagingTF == False):
-            QMessageBox.critical(self, "Missing imaging folder", "The imaging data folder could not be found at the selected location.")
-            return False
-
-        return True
     
     def loadDataset(self):
         #get selected item
@@ -746,11 +753,14 @@ class Window(QWidget):
 
 
 
-    def handleSingleImageProcessed(self,imgOut): #Duplicate function of updateSingleDisplay
+    def handleSingleImageProcessed(self,imgOut, imageNo): #Duplicate function of updateSingleDisplay
         self.imageSingleScene.clear()
         self.imageSingleScene.addPixmap(imgOut.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
         self.imageSingleScene.update()
         self.imageSingleDisplay.setScene(self.imageSingleScene)
+
+        self.currentImageNo = imageNo
+        self.updateImageRangeCurrent()
 
         pass
 
@@ -760,18 +770,6 @@ class Window(QWidget):
     
     def fpsCounter(self, fps):
         self.txtFPS.setText(f'FPS: {fps}')
-
-    # def updateImage(self, filePath):
-    #     self.displayImage = QPixmap(filePath)
-    #     self.updateDisplays()
-
-    # def updateDisplays(self):
-    #     self.imageSingleDisplay.setPixmap(self.displayImage.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
-
-    #     self.topLeftDisplay.setPixmap(self.displayImage.scaled(270,180, aspectRatioMode=Qt.KeepAspectRatio))
-    #     self.topRightDisplay.setPixmap(self.displayImage.scaled(270,180, aspectRatioMode=Qt.KeepAspectRatio))
-    #     self.bottomLeftDisplay.setPixmap(self.displayImage.scaled(270,180, aspectRatioMode=Qt.KeepAspectRatio))
-    #     self.bottomRightDisplay.setPixmap(self.displayImage.scaled(270,180, aspectRatioMode=Qt.KeepAspectRatio))
 
     def updateImageSettings(self):
         #Blue channel settings
@@ -799,41 +797,16 @@ class Window(QWidget):
         pass
 
 
-    def updateRangeIndicator(self):
-        """updates the range indicator that shows the subselection of the video
-        for download or analysis
-        """
-        # Get indicator width and height
-        w, h = self.rangeIndicator.width(), self.rangeIndicator.height()
 
-        # Create an empty image to draw on
-        pix = QPixmap(w, h)
-        p = QPainter(pix)
+    def errorInfoText(self, text):
+        self.txtInfo.setStyleSheet("QLabel { background-color : red; color : blue; }")
+        self.txtInfo.setText(text)
 
-        # Draw background color
-        p.setBrush(QBrush(QColor("#19232D")))
-        p.drawRect(-1, -1, w, h)
+    def okayInfoText(self, text):
+        self.txtInfo.setStyleSheet("QLabel { background-color : none; color : white; }")
+        self.txtInfo.setText(text)
 
-        # Draw foreground color
-        p.setBrush(QBrush(QColor("#1464A0")))
 
-        # Define region start and end on x axis
-        x0 = w*self.start_slider.value()/self.start_slider.maximum()
-        x1 = w*self.end_slider.value()/self.end_slider.maximum()
-
-        # Draw rect from start to end of selection
-        p.drawRect(int(x0), 0, int(x1-x0), h)
-
-        # Display the number of frames selected
-        p.setPen(QPen(QColor("#FFFFFF")))
-        p.drawText(0, # left
-            17, # center
-            "{} frames selected".format(self.end_slider.value()-self.start_slider.value()+1))
-        p.end()
-
-        # Show the image
-        self.rangeIndicator.setPixmap(pix)
-        
     def createErrorMessage(self,text):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
@@ -841,7 +814,6 @@ class Window(QWidget):
         msg.setInformativeText(text)
         msg.setWindowTitle("Error")
         msg.exec_()
-
 
          
 if __name__ == '__main__':

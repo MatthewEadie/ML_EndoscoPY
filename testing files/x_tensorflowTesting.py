@@ -16,7 +16,7 @@ import time
 channels = 11
 model_fp = "MFAE_Models/MFUNet_trained500_" + str(channels) 
 test_index = 3 #index of image to test model on
-path_datasets = "test images/image_stacks"
+path_datasets = "./image_stacks"
 save_path = "image_stacks/" + str(channels) 
 #----------
 
@@ -51,8 +51,8 @@ X_pred = MF_UNet(test_image)
 
 # plt.show()
 
-plt.imshow(X_pred[0,:,:,0])
-plt.show
+# plt.imshow(X_pred[0,:,:,0])
+# plt.show
 
 # imshow('Output',X_pred[0,:,:,0])
 # waitKey(0)
