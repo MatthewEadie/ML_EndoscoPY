@@ -44,13 +44,17 @@ class machineLearningPipeline(QObject):
             self.singleImageML()
 
     def loadModel(self, model_fp):
-        #Load trained model
+        #Copy file path to thread
         self.model_path = model_fp
 
         try:
+            #Load trained model
             self.modelML = tf.keras.models.load_model(self.model_path, compile=False)
             self.modelML.compile(optimizer='adam',loss='mse')
-            print('Model loaded')
+            
+            #Get shape of input layer
+            self.firstLayerShape = self.modelML.layers[0].input_shape[0]
+
             return 'Model loaded'
         
         except:
@@ -81,8 +85,10 @@ class machineLearningPipeline(QObject):
 
 
     def singleImageML(self):
+        outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
+        
         #Process image
-        outputImage = self.processImage()
+        outputImage = self.processImage(outputImage)
 
         #Perform contrast adjustment
         outputImage = self.contrastAdjustment(outputImage)
@@ -96,15 +102,15 @@ class machineLearningPipeline(QObject):
 
 
     def runML(self):
-
-        print('running ML reconstruction')
-
         self.stop_pressed = False
 
         while self.stop_pressed == False:
 
+            #Get image from dataset
+            outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
+
             #Process image
-            outputImage = self.processImage()
+            outputImage = self.processImage(outputImage)
 
             #Perform contrast adjustment
             outputImage = self.contrastAdjustment(outputImage)
@@ -124,8 +130,8 @@ class machineLearningPipeline(QObject):
                 self.currentImageNum += 1 #Else iterate to next image
 
 
-    def processImage(self):
-        X_pred = self.modelML(self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:])
+    def processImage(self, image):
+        X_pred = self.modelML(image)
 
         pred_output = X_pred[0,:,:,0].numpy()
         pred_output *= 255

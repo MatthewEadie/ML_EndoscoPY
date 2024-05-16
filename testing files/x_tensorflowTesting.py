@@ -34,10 +34,16 @@ MF_UNet.compile(optimizer='adam',loss='mse')
 print(f"Shape of X_test: {X_test.shape}")
 print(f"Shape of Y_test: {Y_test.shape}")
 
+firstLayer = MF_UNet.layers[0].input_shape[0]
+print(f'First layer: {firstLayer}')
+print(f'Image number: {firstLayer[0]}')
+print(f'X axis shape: {firstLayer[1]}')
+print(f'Y axis shape: {firstLayer[2]}')
+print(f'Channel shape: {firstLayer[3]}')
 
-test_image = X_test[0:1]
+# test_image = X_test[0:1]
 
-X_pred = MF_UNet(test_image)
+# X_pred = MF_UNet(test_image)
 
 # fig, ax = plt.subplots(3)
 # ax[0].imshow(X_test[0,:,:,0])

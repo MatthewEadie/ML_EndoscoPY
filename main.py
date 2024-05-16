@@ -241,7 +241,7 @@ class Window(QWidget):
 
 
 
-        #----- CONTRAST AND COLOURMAP TAB -----
+        #----- SETTINGS TABS -----
         self.settingsTabs = QTabWidget()
 
         self.createContrastTab()
@@ -454,6 +454,16 @@ class Window(QWidget):
         self.machineLearningTabLayout.addWidget(self.lblChosenModel)
         self.machineLearningTabLayout.addWidget(self.txtChosenModel)
 
+        # ---- Model input shape ---- #
+        #Text box for Dataset directory
+        self.lblModelInputShape = QLabel('Model input shape:')
+        self.txtModelInputShape = QLineEdit('')
+        self.txtModelInputShape.setReadOnly(True)
+
+        #Add label and txtbox to tab layout
+        self.machineLearningTabLayout.addWidget(self.lblModelInputShape)
+        self.machineLearningTabLayout.addWidget(self.txtModelInputShape)
+
         # ---- Chosen Dataset ---- #
         #Text box for Dataset directory
         self.lblChosenDataset = QLabel('Selected Dataset:')
@@ -477,13 +487,52 @@ class Window(QWidget):
         pass
 
     def createCameraTab(self):
-
-        # ---- TRIGGER MODE SETTINGS ---- # 
         #Layout for entire camera settings tab
         self.cameraSettingsTab = QWidget()
         self.cameraSettingsLayout = QVBoxLayout()
         self.cameraSettingsTab.setLayout(self.cameraSettingsLayout)
 
+        # ----  CAMERA FUNCTION ---- #
+        #Initalise camera button
+        self.btnInitaliseCamera = QPushButton('Initalise')
+        #Add button to camera tab layout
+        self.cameraSettingsLayout.addWidget(self.btnInitaliseCamera)
+        #Connect button to initalise camera function
+        self.btnInitaliseCamera.clicked.connect(self.initaliseCamera)
+
+
+
+        # ---- CAMERA INFORMATION ---- #
+        #Layout for camera information
+        self.grpCameraInfo = QGroupBox('Camera Info')
+        self.cameraInfoLayout = QHBoxLayout()
+        self.grpCameraInfo.setLayout(self.cameraInfoLayout)
+
+        #Line edit to display camera name
+        self.lblCameraName = QLabel('Camera name')
+        self.txtCameraName = QLineEdit()
+        self.txtCameraName.setReadOnly(True)
+
+        #Add group to tab layout
+        self.cameraSettingsLayout.addWidget(self.grpCameraInfo)
+
+
+        # ---- Image save location ---- # 
+        #Layout for save location changing
+        self.grpSaveLocation = QGroupBox('Save location')
+        self.saveLocationLayout = QHBoxLayout()
+        self.grpSaveLocation.setLayout(self.saveLocationLayout)
+
+        self.btnChangeSaveLocation = QPushButton('Change save location')
+
+        self.btnChangeSaveLocation.clicked.connect(self.changeSaveLocation)
+
+        self.saveLocationLayout.addWidget(self.btnChangeSaveLocation)
+
+
+
+
+        # ---- TRIGGER MODE SETTINGS ---- # 
         #Layout for trigger mode selector
         self.triggerModeSelection = QGroupBox('Trigger mode')
         self.triggerModeSelectionLayout = QHBoxLayout()
@@ -602,9 +651,14 @@ class Window(QWidget):
             #Load model in ML pipeline
             self.MLPipeline.loadModel(MLDirectoryPath)
 
+            #Get shape of first layer
+            self.firstLayerShape = self.MLPipeline.firstLayerShape
+            print(self.firstLayerShape)
+
             #Update info box and ML tab
             self.okayInfoText('ML model loaded')
             self.txtChosenModel.setText(MLDirectoryPath)
+            self.txtModelInputShape.setText(f'{self.firstLayerShape}')
         except:
             #Display error message in info box
             self.errorInfoText('Error loading ML model')
@@ -643,14 +697,33 @@ class Window(QWidget):
             #Configure image selector to fit dataset
             self.configureImageSelector()
 
+            #Check if dataset shape and ML input shape match
+            imageShape = self.datasetShape[1:4] #Ignore number of images
+            inputModelShape = self.firstLayerShape[1:4] #Ignore first number
+            if imageShape == inputModelShape:
+                pass
+            else:
+                #If they don't match display error
+                self.errorInfoText(f"Loaded dataset does not match model input shape")
+                #Disable play/pause to avoid break
+                self.disablePlayPause()
+                return
+
             #Display okay message in info box
             self.okayInfoText(f'Dataset loaded: {selectedDataset}')
+
+            #Enable play/pause if disabled previously
+            self.enablePlayPause()
         except:
+            #Disable play/pause to avoid break
+            self.disablePlayPause()
+
             #Display error message in info box
             self.errorInfoText('Error loading data')
         pass
 
-
+    def changeSaveLocation(self):
+        pass
 
 
     def updateContrastSettings(self):
@@ -833,13 +906,16 @@ class Window(QWidget):
 
         pass
 
-    
-    def fpsCounter(self, fps):
-        self.txtFPS.setText(f'FPS: {fps}')
 
 
+    def disableAllButtons(self):
+        pass
 
+    def disablePlayPause(self):
+        self.btnPlayPause.setEnabled(False)
 
+    def enablePlayPause(self):
+        self.btnPlayPause.setEnabled(True)
 
     def errorInfoText(self, text):
         self.txtInfo.setStyleSheet("QLineEdit { background-color : red; color : blue; }")
