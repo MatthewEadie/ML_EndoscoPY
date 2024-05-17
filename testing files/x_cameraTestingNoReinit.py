@@ -311,7 +311,7 @@ class CameraThread(QThread):
             print('Press enter to close the program..')
 
             # # Figure(1) is default so you can omit this line. Figure(0) will create a new window every time program hits this line
-            fig = plt.figure(1)
+            # fig = plt.figure(1)
 
             # # Close the GUI when close event happens
             # fig.canvas.mpl_connect('close_event', self.handle_close)
@@ -348,9 +348,9 @@ class CameraThread(QThread):
                         # Getting the image data as a numpy array
                         image_data = image_result.GetNDArray()
 
-                        plt.imshow(image_data, cmap='gray')
-                        plt.pause(0.001)
-                        plt.clf()
+                        # plt.imshow(image_data, cmap='gray')
+                        # plt.pause(0.001)
+                        # plt.clf()
 
                         # time.sleep(5)
 
@@ -383,7 +383,7 @@ class CameraThread(QThread):
 
                         # Interval in plt.pause(interval) determines how fast the images are displayed in a GUI
                         # Interval is in seconds.
-                        # time.sleep(0.01)
+                        time.sleep(0.1)
 
                         # Clear current reference of a figure. This will improve display speed significantly
                         
@@ -392,7 +392,7 @@ class CameraThread(QThread):
                             print('Program is closing...')
                             
                             # Close figure
-                            plt.close('all')   
+                            # plt.close('all')   
 
                             # input('Done! Press Enter to exit...')
                             continue_recording=False

@@ -8,7 +8,7 @@ from PyQt5.QtGui import *
 import os
 
 from postProcessingPipeline import playbackMethod
-# from cameraSettings import CameraThread
+from cameraSettings import CameraThread
 from DisplaySettings import displaySettings
 
 try:
@@ -18,9 +18,6 @@ except:
     print('Could not initalise ML pipeline')
 
 import numpy as np
-
-# import nidaqmx
-# from nidaqmx.constants import AcquisitionType
 
 
 
@@ -187,21 +184,19 @@ class Window(QWidget):
         self.MLThread.start()
 
         # CAMERA THREAD #
-        # self.cameraFunctions = CameraThread()
-        # self.cameraThread = QThread()
-        # self.cameraFunctions.moveToThread(self.cameraThread)
+        self.cameraFunctions = CameraThread()
+        self.cameraThread = QThread()
+        self.cameraFunctions.moveToThread(self.cameraThread)
 
         
 
         #SIGNALS
-        # self.beginCapture.connect(self.cameraFunctions.run_single_camera)
+        self.beginCapture.connect(self.cameraFunctions.run_single_camera)
         self.beginMLPlayback.connect(self.MLPipeline.runML)
         
 
         #SLOTS
-        # self.cameraFunctions.imageAcquired.connect(self.updateSingleDisplay)
-        # self.cameraFunctions.updateFPS.connect(self.fpsCounter)
-
+        self.cameraFunctions.imageAcquired.connect(self.updateSingleDisplay)
         self.MLPipeline.updateImageML.connect(self.handleSingleImageProcessed)
         #----------------------------
 
@@ -284,15 +279,6 @@ class Window(QWidget):
 
 
 
-
-
-        # #TRIGGERING
-        # try:
-        #     self.task = nidaqmx.Task()
-        # except:
-        #     print('Error connecting to trigger unit')
-        #     self.createErrorMessage('No trigger unit detected, starting without acqisition mode.')
-        #     self.disableCameraOptions()
 
         #SET DEFAULT VALUES AT END OF WIDGET ALLOCATIONS
         #----------------------------------------------
@@ -866,20 +852,18 @@ class Window(QWidget):
                 self.playTF = True
                 print('ML playback paused')
 
-        # elif self.globalDisplayMode == 2:
-        #     if self.playTF==True:
-        #         self.beginCapture.emit() #Emit signal to begin thread
-        #         self.startTriggering()
-        #         #Set button to display stop
-        #         self.btnPlayPause.setText('Stop')
-        #         self.playTF = False
+        elif self.globalDisplayMode == 2:
+            if self.playTF==True:
+                self.beginCapture.emit() #Emit signal to begin thread
+                #Set button to display stop
+                self.btnPlayPause.setText('Stop')
+                self.playTF = False
 
-        #     else:
-        #         self.cameraFunctions.exit()
-        #         self.stopTriggering()
-        #         #Change button to display Play
-        #         self.btnPlayPause.setText('Play')
-        #         self.playTF = True
+            else:
+                self.cameraFunctions.exit()
+                #Change button to display Play
+                self.btnPlayPause.setText('Play')
+                self.playTF = True
 
 
         else:
@@ -904,6 +888,17 @@ class Window(QWidget):
         self.currentImageNo = imageNo
         self.updateImageRangeCurrent()
 
+        pass
+
+    def updateSingleDisplay(self, imgOut):
+        #Clear previous image from scene
+        self.imageSingleScene.clear()
+        #Add the pixmap of the new image to the scene
+        self.imageSingleScene.addPixmap(imgOut.scaled(1080,720, aspectRatioMode=Qt.KeepAspectRatio))
+        #Tell the scene to update
+        self.imageSingleScene.update()
+        #Set the display to the new scene
+        self.imageSingleDisplay.setScene(self.imageSingleScene)
         pass
 
 
