@@ -348,11 +348,7 @@ class Window(QWidget):
         else:
             print('Error setting display mode')
 
-    def disableCameraOptions(self):
-        self.txtInfo.setText('No camera detected, disabling camera options.') # change to popup error message
-        self.radioAcquisitionMode.setEnabled(False) # Disable radio button for acquisition mode
-        self.triggerModeSelection.setEnabled(False) # Disable trigger mode settings as without a camera the triggering isn't needed
-        pass
+
 
     def changeTriggerMode(self):
         selectredTriggerMode = self.triggerModeSelectionGroup.checkedId()
@@ -784,15 +780,12 @@ class Window(QWidget):
 
     def initaliseCamera(self):
         #CAMERA INITALISATION
-        if self.cameraFunctions.initialise(): #Initialise camera
-                self.cameraInitialised = True
-        else:
-            self.createErrorMessage('No camera detected, starting without acqisition mode.')
-            # print('Error initalising camera!')
+        try:
+            self.cameraFunctions.initialiseCamera() #Initialise camera
+            self.cameraInitialised = True
+        except:
+            self.errorInfoText('Error initalising camera')
             self.cameraInitialised = False
-            self.disableCameraOptions()
-            #ADD FUNCTION TO DISABLE CAMERA SETTING IF NOT INITIALISED
-        pass
 
 
 

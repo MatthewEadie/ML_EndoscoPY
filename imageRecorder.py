@@ -1,29 +1,41 @@
 import numpy as np
+from datetime import datetime
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 class ImageRecorder(QObject):
-    _imageBuffer = []
-
+    
     mutex = QMutex()
 
-    def recieveNewImage(self, newImage):
+    def createBuffer(self,MLShape):
+        #Read shape of input layer
+        images, height, width, channels = MLShape.shape
+        #Create empty array for storing images
+        self._imageBuffer = np.zeros((100,height,width,channels))
+
+
+    def recieveNewImage(self, newImage, imageNumber):
         self.mutex.lock()
         _image = newImage
 
-        if len(self._imageBuffer) < 300:
+        if imageNumber < 100:
             #Check to see if image buffer has reached 300 images
-            self._imageBuffer.append(_image) #Append new image into buffer
+            self._imageBuffer[imageNumber,:,:,:] = _image #Append new image into buffer
         else:
-            self._imageBuffer.pop(0) #Remove earliest image put into buffer
-            self._imageBuffer.append(_image) # Append new image into buffer
+            #Use np.roll to move first image to last image
+            self._imageBuffer = np.roll(self._imageBuffer, [0, 0, 0, -1], axis=(1, 0, 0, 0))
+            #rewrite last image as new image
+            self._imageBuffer[imageNumber,:,:,:] = _image
 
         self.mutex.unlock()
 
 
 
-    def saveImages(self):
-        self._savingPath = ""
+    def saveImages(self, savePath):
+        self._savingPath = savePath
+        now = datetime.now()
+        dateTime = now.strftime("%H-%M-%S_%d-%m-%Y")
+        np.save(f'{self._savingPath}+{dateTime}.npy', self._imageBuffer)
         pass

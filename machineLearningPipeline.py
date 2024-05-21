@@ -47,18 +47,14 @@ class machineLearningPipeline(QObject):
         #Copy file path to thread
         self.model_path = model_fp
 
-        try:
-            #Load trained model
-            self.modelML = tf.keras.models.load_model(self.model_path, compile=False)
-            self.modelML.compile(optimizer='adam',loss='mse')
-            
-            #Get shape of input layer
-            self.firstLayerShape = self.modelML.layers[0].input_shape[0]
-
-            return 'Model loaded'
+        #Load trained model
+        self.modelML = tf.keras.models.load_model(self.model_path, compile=False)
+        self.modelML.compile(optimizer='adam',loss='mse')
         
-        except:
-            return 'Error loading ML model'
+        #Get shape of input layer
+        self.firstLayerShape = self.modelML.layers[0].input_shape[0]
+
+
         
     def loadDataset(self, dataset_fp):
         #Copy file path to thread
