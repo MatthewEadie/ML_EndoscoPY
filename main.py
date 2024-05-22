@@ -337,6 +337,9 @@ class Window(QWidget):
             #Update controls
             self.changeControlsPlayback()
 
+            #Clear display on switch mode
+            self.clearDisplay()
+
 
             print('Machine learning mode')
 
@@ -344,7 +347,11 @@ class Window(QWidget):
             #Create thread for camera acquisition
             self.MLPipeline.createCameraThread() 
 
+            #Update controls for acquisition mode
             self.changeControlsAcquisition()
+
+            #Clear display on switch mode
+            self.clearDisplay()
 
 
            
@@ -402,7 +409,18 @@ class Window(QWidget):
         self.btnForwardImageSlider.setEnabled(False)
         pass
 
+    def clearDisplay(self):
+        #Black pixmap
+        self.displayImage = np.zeros((720,1080))
+        height, width = self.displayImage.shape
+        bytesPerLine = 3*width
+        self.displayImage = QImage(self.displayImage.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
+        self.displayImage = QPixmap.fromImage(self.displayImage)
+        self.imageSingleScene.addPixmap(self.displayImage)
 
+        #Set graphics view to display blank image
+        self.imageSingleDisplay.setScene(self.imageSingleScene)
+        pass
 
 
     def createContrastTab(self):
