@@ -514,6 +514,15 @@ class Window(QWidget):
         self.machineLearningTabLayout.addWidget(self.lblDatasetShape)
         self.machineLearningTabLayout.addWidget(self.txtDatasetShape)
 
+        # ---- Toggle ML operation ---- #
+        #Button to turn ML on off
+        self.btnEnableML = QPushButton('ML off')
+        self.btnEnableML.clicked.connect(self.handleToggleML)
+        self.machineLearningTabLayout.addWidget(self.btnEnableML)
+
+        #Set variable to handle toggle ML, True by default
+        self.TFmachineLearning = True
+
         pass
 
     def createCameraTab(self):
@@ -734,17 +743,17 @@ class Window(QWidget):
                 #If they don't match display error
                 self.errorInfoText(f"Loaded dataset does not match model input shape")
                 #Disable play/pause to avoid break
-                self.disablePlayPause()
+                self.btnPlayPause.setEnabled(False)
                 return
 
             #Display okay message in info box
             self.okayInfoText(f'Dataset loaded: {selectedDataset}')
 
             #Enable play/pause if disabled previously
-            self.enablePlayPause()
+            self.btnPlayPause.setEnabled(True)
         except:
             #Disable play/pause to avoid break
-            self.disablePlayPause()
+            self.btnPlayPause.setEnabled(False)
 
             #Display error message in info box
             self.errorInfoText('Error loading data')
@@ -848,6 +857,21 @@ class Window(QWidget):
         #Update ML pipline with new current image no
         self.MLPipeline.currentImageUpdated(self.currentImageNo)
 
+    def handleToggleML(self):
+        #Check if button is on or of
+        #Button on -> disable ML, turn button to off
+        if self.TFmachineLearning == True:
+            self.MLPipeline.toggleML(False)
+            self.TFmachineLearning = False
+            self.btnEnableML.setText('ML on')
+
+        #Button off -> enable ML, turn button to on
+        elif self.TFmachineLearning == False:
+            self.MLPipeline.toggleML(True)
+            self.TFmachineLearning = True
+            self.btnEnableML.setText('ML off')
+        pass
+
     def initaliseCamera(self):
         #CAMERA INITALISATION
         self.cameraInitialised = self.MLPipeline.initaliseCamera() #Initialise camera
@@ -863,7 +887,6 @@ class Window(QWidget):
 
 
     def handlePlayPause(self):
-        # self.globalDisplayMode:   1 - ML Playback   2 - Camera Acquisition
         # try:
         if self.playTF==True:
             self.beginMLPlayback.emit() #Emit signal to begin thread

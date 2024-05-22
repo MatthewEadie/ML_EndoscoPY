@@ -32,6 +32,7 @@ class machineLearningPipeline(QObject):
     maxContrast = 255
 
     stop_pressed = False #Default False
+    TFML = True #Machine learning no by default
 
     def createCameraThread(self):
         # CAMERA THREAD #
@@ -47,7 +48,6 @@ class machineLearningPipeline(QObject):
         self.recorderThread = QThread()
         self.recorderFunctions.moveToThread(self.recorderThread)
 
-
     def stopCameraThread(self):
         #Exit camera thread
         self.cameraThread.exit() 
@@ -62,7 +62,9 @@ class machineLearningPipeline(QObject):
 
 
 
-
+    def toggleML(self, tfPerformML):
+        #Update local variable to check if performing ML
+        self.TFML = tfPerformML
 
     def contrastChanged(self, minCont, maxCont):
         #Update thread contrast values
@@ -131,7 +133,12 @@ class machineLearningPipeline(QObject):
             outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
 
             #Process image
-            outputImage = self.processImage(outputImage)
+            if self.TFML == True:
+                outputImage = self.processImage(outputImage)
+            else:
+                #Need to put 4D image into 1D array
+                outputImage = self.singleFrameFromStack(outputImage)
+                pass
 
             #Perform contrast adjustment
             outputImage = self.contrastAdjustment(outputImage)
@@ -221,6 +228,7 @@ class machineLearningPipeline(QObject):
 
 
 
+# ---- GENERAL FUNCTIONS ---- #
 
     def processImage(self, image):
         X_pred = self.modelML(image)
@@ -242,4 +250,11 @@ class machineLearningPipeline(QObject):
         pixOutput = QPixmap.fromImage(qImg)
 
         return pixOutput
+
+    def singleFrameFromStack(self, imageStack):
+        #Get the first image in the stack with only the first channel
+        singleFrame = imageStack[0,:,:,0]
+        #Multiply by 255 to get values between 1 and 256 instead of 0 and 1
+        singleFrame *= 255
+        return singleFrame
 
