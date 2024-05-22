@@ -16,7 +16,7 @@ class ImageRecorder(QObject):
         self._imageBuffer = np.zeros((100,height,width,channels))
 
 
-    def recieveNewImage(self, newImage, imageNumber):
+    def addImageToStack(self, newImage, imageNumber):
         self.mutex.lock()
         _image = newImage
 

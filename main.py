@@ -8,7 +8,6 @@ from PyQt5.QtGui import *
 import os
 
 from postProcessingPipeline import playbackMethod
-from cameraSettings import CameraThread
 
 try:
     from machineLearningPipeline import machineLearningPipeline
@@ -140,9 +139,8 @@ class WidgetGallery(QMainWindow):
 
 
 class Window(QWidget):
-    beginCapture = pyqtSignal()
-    beginPlayback = pyqtSignal()
     beginMLPlayback = pyqtSignal()
+    beginMLAcquisition = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -168,21 +166,18 @@ class Window(QWidget):
         #Start the thread as ML playback is default
         self.MLThread.start()
 
-        # CAMERA THREAD #
-        self.cameraFunctions = CameraThread()
-        self.cameraThread = QThread()
-        self.cameraFunctions.moveToThread(self.cameraThread)
+        
 
         
 
         #SIGNALS
-        self.beginCapture.connect(self.cameraFunctions.run_single_camera)
-        self.beginMLPlayback.connect(self.MLPipeline.runML)
+        self.beginMLPlayback.connect(self.MLPipeline.runMLPlayback)
+        self.beginMLAcquisition.connect(self.MLPipeline.runMLAcquisition)
         
 
         #SLOTS
-        self.cameraFunctions.imageAcquired.connect(self.updateSingleDisplay)
-        self.MLPipeline.updateImageML.connect(self.handleSingleImageProcessed)
+        self.MLPipeline.updateImagePlayback.connect(self.updateDisplayPlayback)
+        self.MLPipeline.updateImageAcquisition.connect(self.updateDisplayCamera)
         #----------------------------
 
 
@@ -337,7 +332,7 @@ class Window(QWidget):
             self.MLThread.start()
 
             #End camera thread when swapping to playback
-            self.cameraThread.exit() 
+            self.MLPipeline.stopCameraThread()
 
             #Update controls
             self.changeControlsPlayback()
@@ -346,7 +341,8 @@ class Window(QWidget):
             print('Machine learning mode')
 
         elif self.displayMode == 2:
-            self.cameraThread.start() #Creates thread for camera acquisition
+            #Create thread for camera acquisition
+            self.MLPipeline.createCameraThread() 
 
             self.changeControlsAcquisition()
 
@@ -358,21 +354,52 @@ class Window(QWidget):
         #     self.errorInfoText('Error setting display mode')
 
     def changeControlsPlayback(self):
+        #Remove capture and save buttons
         self.buttonControlGroupLayout.removeWidget(self.btnCapture)
         self.buttonControlGroupLayout.removeWidget(self.btnSave100)
-
         self.btnCapture.setParent(None)
         self.btnSave100.setParent(None)
 
+        #Disable Initalise camera button
+        self.btnInitaliseCamera.setEnabled(False)
+
+        #Add play/pause button
         self.buttonControlGroupLayout.addWidget(self.btnPlayPause)
+
+        #Enable select dataset button
+        self.btnSelectDataset.setEnabled(True)
+
+        #Enable image slider
+        self.btnBackImageSlider.setEnabled(True)
+        self.imageSlider.setEnabled(True)
+        self.btnForwardImageSlider.setEnabled(True)
+
         pass
 
     def changeControlsAcquisition(self):
+
+        #Remove play/pause button
         self.buttonControlGroupLayout.removeWidget(self.btnPlayPause)
         self.btnPlayPause.setParent(None)
 
+        #Add capture and save button
         self.buttonControlGroupLayout.addWidget(self.btnCapture)
         self.buttonControlGroupLayout.addWidget(self.btnSave100)
+
+        #Disable buttons until camera is initalised and save stack created
+        self.btnCapture.setEnabled(False)
+        self.btnSave100.setEnabled(False)
+
+        #Enable initalise camera button
+        self.btnInitaliseCamera.setEnabled(True)
+
+        #Disable load dataset button
+        self.btnSelectDataset.setEnabled(False)
+
+        #Disable image selector
+        self.btnBackImageSlider.setEnabled(False)
+        self.imageSlider.setEnabled(False)
+        self.btnForwardImageSlider.setEnabled(False)
         pass
 
 
@@ -505,14 +532,20 @@ class Window(QWidget):
         # ---- Image save location ---- # 
         #Layout for save location changing
         self.grpSaveLocation = QGroupBox('Save location')
-        self.saveLocationLayout = QHBoxLayout()
+        self.saveLocationLayout = QVBoxLayout()
         self.grpSaveLocation.setLayout(self.saveLocationLayout)
 
         self.btnChangeSaveLocation = QPushButton('Change save location')
-
         self.btnChangeSaveLocation.clicked.connect(self.changeSaveLocation)
-
         self.saveLocationLayout.addWidget(self.btnChangeSaveLocation)
+
+        self.txtSaveLocation = QLineEdit()
+        self.txtSaveLocation.setReadOnly(True)
+        self.saveLocationLayout.addWidget(self.txtSaveLocation)
+
+
+        #Add group to layout
+        self.cameraSettingsLayout.addWidget(self.grpSaveLocation)
 
 
 
@@ -597,7 +630,7 @@ class Window(QWidget):
         #CREATE BUTTONS FOR ACQUISITION BUT DON'T ADD THEM
         #Button to tell camera to start capturing
         self.btnCapture = QPushButton('Capture')
-        # self.btnCapture.clicked.connect(self.handlePlayPause)
+        self.btnCapture.clicked.connect(self.handleAcquisition)
 
         #Button to save the last 100 images
         self.btnSave100 = QPushButton('Save 100')
@@ -700,6 +733,27 @@ class Window(QWidget):
         pass
 
     def changeSaveLocation(self):
+        #Create fil dialog box to allow user to set folder path
+        dialog = QFileDialog(self, "Open dataset")
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setViewMode(QFileDialog.ViewMode.List)
+        self.acquisitionSaveLocation = dialog.getExistingDirectory()
+
+        #Check is selected directory exists
+        if self.acquisitionSaveLocation == "":
+            #If no save path selected display error
+            QMessageBox.critical(self, "Missing folder path", "No folder path selected.")
+            #Remove text from save box
+            self.txtSaveLocation.setText('')
+            #Disable save button
+            self.btnSave100.setEnabled(False)
+            return
+        
+        #Update text box with save location
+        self.txtSaveLocation.setText(f'{self.acquisitionSaveLocation}')
+
+        #Enable save button
+        self.btnSave100.setEnabled(True)
         pass
 
 
@@ -775,54 +829,52 @@ class Window(QWidget):
 
     def initaliseCamera(self):
         #CAMERA INITALISATION
-        self.cameraInitialised = self.cameraFunctions.initialiseCamera() #Initialise camera
+        self.cameraInitialised = self.MLPipeline.initaliseCamera() #Initialise camera
         #If the camera fails to initalised display error
         if self.cameraInitialised == False:
             self.errorInfoText('Error initalising camera')
+            return
+        
+        #Enable capture button
+        self.btnCapture.setEnabled(True)
             
 
 
 
     def handlePlayPause(self):
         # self.globalDisplayMode:   1 - ML Playback   2 - Camera Acquisition
-        if self.globalDisplayMode == 1:
         # try:
-            if self.playTF==True:
-                self.beginMLPlayback.emit() #Emit signal to begin thread
-                #Set button to display stop
-                self.btnPlayPause.setText('Stop')
-                self.playTF = False
-                print('starting playing in ML mode')
-            else:
-                self.MLPipeline.stopMLPlayback()
-                #Change button to display Play
-                self.btnPlayPause.setText('Play')
-                self.playTF = True
-                print('ML playback paused')
-
-        elif self.globalDisplayMode == 2:
-            if self.playTF==True:
-                self.beginCapture.emit() #Emit signal to begin thread
-                #Set button to display stop
-                self.btnPlayPause.setText('Stop')
-                self.playTF = False
-
-            else:
-                self.cameraFunctions.exit()
-                #Change button to display Play
-                self.btnPlayPause.setText('Play')
-                self.playTF = True
-
-
+        if self.playTF==True:
+            self.beginMLPlayback.emit() #Emit signal to begin thread
+            #Set button to display stop
+            self.btnPlayPause.setText('Stop')
+            self.playTF = False
+            print('starting playing in ML mode')
         else:
-            print('unknown playback option.')
-
+            self.MLPipeline.stopMLPlayback()
+            #Change button to display Play
+            self.btnPlayPause.setText('Play')
+            self.playTF = True
+            print('ML playback paused')
 
         # except:
         #     QMessageBox.critical(self, "Error playing dataset", "Error playing dataset. \nMake sure a dataset is selected and try again.")
         pass
 
-    def handleSingleImageProcessed(self,imgOut, imageNo):
+    def handleAcquisition(self):
+        if self.playTF==True:
+            self.beginMLAcquisition.emit() #Emit signal to begin thread
+            #Set button to display stop
+            self.btnCapture.setText('Stop')
+            self.playTF = False
+
+        else:
+            self.MLPipeline.stopMLAcquisition()
+            #Change button to display Play
+            self.btnCapture.setText('Capture')
+            self.playTF = True
+
+    def updateDisplayPlayback(self,imgOut, imageNo):
         #Clear previous image from scene
         self.imageSingleScene.clear()
         #Add the pixmap of the new image to the scene
@@ -838,7 +890,7 @@ class Window(QWidget):
 
         pass
 
-    def updateSingleDisplay(self, imgOut):
+    def updateDisplayCamera(self, imgOut):
         #Clear previous image from scene
         self.imageSingleScene.clear()
         #Add the pixmap of the new image to the scene
@@ -852,13 +904,8 @@ class Window(QWidget):
 
 
     def disableAllButtons(self):
+        #Disable all buttons while loading...
         pass
-
-    def disablePlayPause(self):
-        self.btnPlayPause.setEnabled(False)
-
-    def enablePlayPause(self):
-        self.btnPlayPause.setEnabled(True)
 
     def errorInfoText(self, text):
         self.txtInfo.setStyleSheet("QLineEdit { background-color : red; color : blue; }")

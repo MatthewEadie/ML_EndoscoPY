@@ -9,13 +9,12 @@ import keyboard
 import numpy as np
 import time
 
-from imageRecorder import ImageRecorder
 
 
 
 
 class CameraThread(QObject):
-    imageAcquired = pyqtSignal(QPixmap)
+    imageAcquired = pyqtSignal(np.ndarray)
     updateFPS = pyqtSignal(int)
 
 
@@ -24,15 +23,7 @@ class CameraThread(QObject):
     global continue_recording
     continue_recording = True
 
-    def setCameraSettings(self, MLInputShape, exposureTime):
-        #Copy ML shape for buffer shape
-        self.mlShape = MLInputShape
-        #Copy exposure time for initial setup
-        self.exposureTime = exposureTime
 
-    def createSaveStack(self):
-        #Pass mlshape to image recorder class
-        ImageRecorder.createBuffer(self.mlShape)
 
     def initialiseCamera(self):
         try:
@@ -65,7 +56,7 @@ class CameraThread(QObject):
         except:
             return False
     
-    def exit(self):
+    def stopCapture(self):
         self.captureStop = True
 
     def endAcquisition(self):
@@ -140,54 +131,24 @@ class CameraThread(QObject):
         print('Acquisition mode set to continuous...')
 
         #  Begin acquiring images
-        #
-        #  *** NOTES ***
-        #  What happens when the camera begins acquiring images depends on the
-        #  acquisition mode. Single frame captures only a single image, multi
-        #  frame catures a set number of images, and continuous captures a
-        #  continuous stream of images.
-        #
-        #  *** LATER ***
-        #  Image acquisition must be ended when no more images are needed.
         self.cam.BeginAcquisition()
 
         print('Acquiring images...')
 
         #  Retrieve device serial number for filename
-        #
-        #  *** NOTES ***
-        #  The device serial number is retrieved in order to keep cameras from
-        #  overwriting one another. Grabbing image IDs could also accomplish
-        #  this.
         device_serial_number = ''
         node_device_serial_number = PySpin.CStringPtr(nodemap_tldevice.GetNode('DeviceSerialNumber'))
         if PySpin.IsReadable(node_device_serial_number):
             device_serial_number = node_device_serial_number.GetValue()
             print('Device serial number retrieved as %s...' % device_serial_number)
 
-        # Close program
-        print('Press enter to close the program..')
-
-        # # Figure(1) is default so you can omit this line. Figure(0) will create a new window every time program hits this line
-        # # Close the GUI when close event happens
-        # fig.canvas.mpl_connect('close_event', self.handle_close)
 
         print(f'Recording: {continue_recording}')
 
         # Retrieve and display images
         while(continue_recording):
 
-                #  Retrieve next received image
-                #
-                #  *** NOTES ***
-                #  Capturing an image houses images on the camera buffer. Trying
-                #  to capture an image that does not exist will hang the camera.
-                #
-                #  *** LATER ***
-                #  Once an image from the buffer is saved and/or no longer
-                #  needed, the image must be released in order to keep the
-                #  buffer from filling up.
-                
+                #  Retrieve next received image                
                 image_result = self.cam.GetNextImage(1000)
 
                 #  Ensure image completion
@@ -201,21 +162,8 @@ class CameraThread(QObject):
                     # Getting the image data as a numpy array
                     image_data = image_result.GetNDArray()
 
-                    height,width = image_data.shape
-                    imgOut = np.zeros((height,width,3))
-                    #Format is RGB
-                    imgOut[:,:,0] = image_data
-                    imgOut[:,:,1] = image_data
-                    imgOut[:,:,2] = image_data
-
-                    bytesPerLine = 3*width            
-                    arrCombined = np.require(imgOut, np.uint8, 'C')
-                    qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_RGB888)
-                    pixmap = QPixmap.fromImage(qImg)
-
-
                     # Draws an image on the current figure
-                    self.imageAcquired.emit(pixmap.scaled(720,512, aspectRatioMode=Qt.KeepAspectRatio))
+                    self.imageAcquired.emit(image_data)
 
                     time_stop = time.time()
 
@@ -226,9 +174,6 @@ class CameraThread(QObject):
                     if self.captureStop==True:
                         print('Program is closing...')
                         
-                        # Close figure
-                        plt.close('all')   
-
                         # input('Done! Press Enter to exit...')
                         continue_recording=False
 

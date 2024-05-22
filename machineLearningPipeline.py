@@ -1,10 +1,3 @@
-"""
-    Created by: Matthew Eadie
-    Date: 10/01/22
-
-    Work based off RAMS multiframe super resolution 
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import os
@@ -15,6 +8,11 @@ import time
 
 from utils import commonFunctions as CF
 
+
+from cameraSettings import CameraThread
+from imageRecorder import ImageRecorder
+
+
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QImage, QPixmap
 
@@ -23,7 +21,8 @@ class MLSettings:
     dataset_path = ""
 
 class machineLearningPipeline(QObject):
-    updateImageML = pyqtSignal(QPixmap, int)
+    updateImagePlayback = pyqtSignal(QPixmap, int)
+    updateImageAcquisition = pyqtSignal(QPixmap)
 
     channels = 0
     model_path = ""
@@ -33,6 +32,36 @@ class machineLearningPipeline(QObject):
     maxContrast = 255
 
     stop_pressed = False #Default False
+
+    def createCameraThread(self):
+        # CAMERA THREAD #
+        self.cameraFunctions = CameraThread()
+        self.cameraThread = QThread()
+        self.cameraFunctions.moveToThread(self.cameraThread)
+
+        #Slot to recieve image from camera
+        self.cameraFunctions.imageAcquired.connect(self.processCameraImage)
+
+        # RECORDER THREAD #
+        self.recorderFunctions = ImageRecorder()
+        self.recorderThread = QThread()
+        self.recorderFunctions.moveToThread(self.recorderThread)
+
+
+    def stopCameraThread(self):
+        #Exit camera thread
+        self.cameraThread.exit() 
+
+        #Exit recorder thread
+        self.recorderThread.exit()
+        pass
+
+    def initaliseCamera(self):
+        tfCameraInitalised = self.cameraFunctions.initialiseCamera()
+        return tfCameraInitalised
+
+
+
 
 
     def contrastChanged(self, minCont, maxCont):
@@ -53,8 +82,6 @@ class machineLearningPipeline(QObject):
         
         #Get shape of input layer
         self.firstLayerShape = self.modelML.layers[0].input_shape[0]
-
-
         
     def loadDataset(self, dataset_fp):
         #Copy file path to thread
@@ -69,9 +96,6 @@ class machineLearningPipeline(QObject):
         #Return the shape of the dataset for UI features
         return self.dataset.shape
 
-    def stopMLPlayback(self):
-        self.stop_pressed = True
-
     def currentImageUpdated(self, imageNo):
         #Set thread current image value to new value
         self.currentImageNum = imageNo
@@ -79,6 +103,9 @@ class machineLearningPipeline(QObject):
         #Run ML and output new image
         self.singleImageML()
 
+
+
+# ---- PLAYBACK FUNCTIONS ---- #
 
     def singleImageML(self):
         outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
@@ -95,9 +122,7 @@ class machineLearningPipeline(QObject):
         #Emit image back to main page for display
         self.updateImageML.emit(pixOutputImage, self.currentImageNum)
 
-
-
-    def runML(self):
+    def runMLPlayback(self):
         self.stop_pressed = False
 
         while self.stop_pressed == False:
@@ -115,7 +140,7 @@ class machineLearningPipeline(QObject):
             pix_output = self.prepareImageForDisplay(outputImage)
 
             #Emit image back to main page for display
-            self.updateImageML.emit(pix_output, self.currentImageNum)
+            self.updateImagePlayback.emit(pix_output, self.currentImageNum)
 
             time.sleep(1) # wait 1 second before looping
 
@@ -124,6 +149,71 @@ class machineLearningPipeline(QObject):
                 self.currentImageNum = 0 #If end of dataset reached loop dataset
             else:
                 self.currentImageNum += 1 #Else iterate to next image
+
+    def stopMLPlayback(self):
+        self.stop_pressed = True
+
+
+
+# ---- CAMERA FUNCTIONS ---- #
+
+    def runMLAcquisition(self):
+        #Reset image number to 0
+        self.currentImageNum = 0
+
+        #Tell camera to beging acquiring
+        self.cameraFunctions.run_single_camera()
+
+        pass
+
+    def stopMLAcquisition(self):
+        #Tell camera to stop acquiring
+        self.cameraFunctions.stopCapture()
+        pass
+
+    def setCameraSettings(self, MLInputShape, exposureTime):
+        #Copy ML shape for buffer shape
+        self.mlShape = MLInputShape
+        #Copy exposure time for initial setup
+        self.exposureTime = exposureTime
+
+    def createSaveStack(self):
+        #Pass mlshape to image recorder class
+        self.recorderFunctions.createBuffer(self.mlShape)
+
+    def sendImageToStack(self, image, imageNum):
+        self.recorderFunctions.addImageToStack(image, imageNum)
+
+    def saveImageStack(self, savePath):
+        pass
+
+    def processCameraImage(self, cameraImage):
+        #When image recieved from camera:
+        
+
+        height,width = cameraImage.shape
+        imgOut = np.zeros((height,width,3))
+        #Format is RGB
+        imgOut[:,:,0] = cameraImage
+        imgOut[:,:,1] = cameraImage
+        imgOut[:,:,2] = cameraImage
+
+        bytesPerLine = 3*width            
+        arrCombined = np.require(imgOut, np.uint8, 'C')
+        qImg = QImage(arrCombined.data, width, height, bytesPerLine, QImage.Format_RGB888)
+        pix_output = QPixmap.fromImage(qImg)
+
+
+        # Draws an image on the current figure
+        self.updateImageAcquisition.emit(pix_output)
+
+        #Check if image should be written to stack
+        
+        #Iterate image number
+        self.currentImageNum += 1
+        pass
+
+
 
 
     def processImage(self, image):
