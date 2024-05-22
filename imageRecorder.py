@@ -27,7 +27,7 @@ class ImageRecorder(QObject):
             #Use np.roll to move first image to last image
             self._imageBuffer = np.roll(self._imageBuffer, [0, 0, 0, -1], axis=(1, 0, 0, 0))
             #rewrite last image as new image
-            self._imageBuffer[imageNumber,:,:,:] = _image
+            self._imageBuffer[99,:,:,:] = _image
 
         self.mutex.unlock()
 

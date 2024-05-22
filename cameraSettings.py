@@ -59,11 +59,11 @@ class CameraThread(QObject):
                 # Release system instance
                 self.system.ReleaseInstance()
 
-                return 'Not enough cameras!'
+                return False
             
-            return 'Camera initalised'
+            return True
         except:
-            return ''
+            return False
     
     def exit(self):
         self.captureStop = True

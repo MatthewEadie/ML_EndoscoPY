@@ -9,7 +9,6 @@ import os
 
 from postProcessingPipeline import playbackMethod
 from cameraSettings import CameraThread
-from DisplaySettings import displaySettings
 
 try:
     from machineLearningPipeline import machineLearningPipeline
@@ -145,33 +144,19 @@ class Window(QWidget):
     beginPlayback = pyqtSignal()
     beginMLPlayback = pyqtSignal()
 
-    cameraInitialised = True
-
     def __init__(self):
         super().__init__()
         self.setWindowTitle("QGridLayout Example")
 
 
         #----- GLOBAL VARIABLES -----
-        self.imageSingleScene = QGraphicsScene()
-
-
-        #Black large display
-        self.displayImage = np.zeros((720,1080))
-        height, width = self.displayImage.shape
-        bytesPerLine = 3*width
-        self.displayImage = QImage(self.displayImage.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
-        self.displayImage = QPixmap.fromImage(self.displayImage)
-        self.imageSingleScene.addPixmap(self.displayImage)
-
-
 
 
         self.sessionDirectory = ""
 
         self.playTF = True #Initalise play stop button as true
 
-        self.globalDisplayMode = 1 # 1 = ML playback, 2 = acquisition
+        self.displayMode = 1 # 1 = ML playback, 2 = acquisition
 
         # ---- THREAD INSTANCES ---- #
         # ML THREAD #
@@ -252,13 +237,13 @@ class Window(QWidget):
 
 
         # Play/pause button
-        self.btnPlayPause = QPushButton('Play')
-        self.btnPlayPause.clicked.connect(self.handlePlayPause)
+        self.createButtonControls()
+
 
         # Add widgets to the layout
         layout.addWidget(self.grpSessionSettings,1,5,1,2)
         layout.addWidget(self.settingsTabs, 2,5,1,2)
-        layout.addWidget(self.btnPlayPause, 3,5)
+        layout.addWidget(self.buttonControlGroup, 3,5)
 
 
 
@@ -315,15 +300,26 @@ class Window(QWidget):
         self.modeSelectionGroupLayout.addWidget(self.radioMLMode)
         self.modeSelectionGroupLayout.addWidget(self.radioAcquisitionMode)
 
-        #Connect buttons to functions when clicked
-        self.radioMLMode.clicked.connect(self.changeDisplayMode)
-        self.radioAcquisitionMode.clicked.connect(self.changeDisplayMode)
+        #Only one button needs to be connected when using toggled
+        self.radioMLMode.toggled.connect(self.changeDisplayMode)
+        # self.radioAcquisitionMode.toggled.connect(self.changeDisplayMode)
 
     def createDisplayImage(self):
         #Layout to contain image display
         self.singleDisplay = QWidget()
         singleDisplayLayout = QGridLayout()
         self.singleDisplay.setLayout(singleDisplayLayout)
+
+        #A scene is required to display images
+        self.imageSingleScene = QGraphicsScene()
+
+        #Black pixmap for initial display
+        self.displayImage = np.zeros((720,1080))
+        height, width = self.displayImage.shape
+        bytesPerLine = 3*width
+        self.displayImage = QImage(self.displayImage.data, width, height, bytesPerLine, QImage.Format_Grayscale8)
+        self.displayImage = QPixmap.fromImage(self.displayImage)
+        self.imageSingleScene.addPixmap(self.displayImage)
 
         #Graphics view widget to display image
         self.imageSingleDisplay = QGraphicsView()
@@ -333,44 +329,51 @@ class Window(QWidget):
         singleDisplayLayout.addWidget(self.imageSingleDisplay,0,0)
 
     def changeDisplayMode(self):
-        displayMode = self.modeButtonGroup.checkedId()
-        if displayMode == 1:
-            self.globalDisplayMode = 1
+        self.displayMode = self.modeButtonGroup.checkedId()
+        # try:
+
+        if self.displayMode == 1:
+            #Start machine learning thread if not already started
             self.MLThread.start()
-            # self.processingThread.start()
-            self.cameraThread.exit() #End camera thread when swapping to playback
+
+            #End camera thread when swapping to playback
+            self.cameraThread.exit() 
+
+            #Update controls
+            self.changeControlsPlayback()
+
+
             print('Machine learning mode')
-        elif displayMode == 2:
-            self.globalDisplayMode = 2
+
+        elif self.displayMode == 2:
             self.cameraThread.start() #Creates thread for camera acquisition
-            # self.processingThread.exit() #End playback thread
+
+            self.changeControlsAcquisition()
+
+
+           
             print('Acquisition mode')
-        else:
-            print('Error setting display mode')
 
+        # except:
+        #     self.errorInfoText('Error setting display mode')
 
+    def changeControlsPlayback(self):
+        self.buttonControlGroupLayout.removeWidget(self.btnCapture)
+        self.buttonControlGroupLayout.removeWidget(self.btnSave100)
 
-    def changeTriggerMode(self):
-        selectredTriggerMode = self.triggerModeSelectionGroup.checkedId()
-        if selectredTriggerMode == 1:
-            self.triggerMode = 1
+        self.btnCapture.setParent(None)
+        self.btnSave100.setParent(None)
 
-            try:
-                self.task.close() #Delete the trigger task
-            except:
-                print('No task to close')
+        self.buttonControlGroupLayout.addWidget(self.btnPlayPause)
+        pass
 
-            self.cameraFunctions.setTrigger(1)
-            print('Trigger mode set to software')
-        elif selectredTriggerMode == 2:
-            self.triggerMode = 2
-            self.cameraFunctions.setTrigger(2)
+    def changeControlsAcquisition(self):
+        self.buttonControlGroupLayout.removeWidget(self.btnPlayPause)
+        self.btnPlayPause.setParent(None)
 
-            self.createTriggerTask()#Create a trigger task using selected exposuretime
-
-            print('Trigger mode set to hardware')
-        else:
-            print('Error changing trigger mode.')
+        self.buttonControlGroupLayout.addWidget(self.btnCapture)
+        self.buttonControlGroupLayout.addWidget(self.btnSave100)
+        pass
 
 
 
@@ -513,35 +516,6 @@ class Window(QWidget):
 
 
 
-
-        # ---- TRIGGER MODE SETTINGS ---- # 
-        #Layout for trigger mode selector
-        self.triggerModeSelection = QGroupBox('Trigger mode')
-        self.triggerModeSelectionLayout = QHBoxLayout()
-        self.triggerModeSelection.setLayout(self.triggerModeSelectionLayout)
-
-        #Create radio buttons for mode selector
-        self.triggerModeSelectionGroup = QButtonGroup()
-        self.softwareTrigger = QRadioButton('Software')
-        self.softwareTrigger.setChecked(True)
-        self.hardwareTrigger = QRadioButton('Hardware')
-
-        #Add buttons to group for radio to function
-        self.triggerModeSelectionGroup.addButton(self.softwareTrigger,1)
-        self.triggerModeSelectionGroup.addButton(self.hardwareTrigger,2)
-
-        #Add buttons to mode selector layout
-        self.triggerModeSelectionLayout.addWidget(self.softwareTrigger)
-        self.triggerModeSelectionLayout.addWidget(self.hardwareTrigger)
-
-        #Connect buttons to functions
-        self.softwareTrigger.clicked.connect(self.changeTriggerMode)
-        self.hardwareTrigger.clicked.connect(self.changeTriggerMode)
-
-        #Add trigger mode to tab layout
-        self.cameraSettingsLayout.addWidget(self.triggerModeSelection)
-
-
         # ---- EXPOSURE SETTINGS ---- #
         #Layout for exposure settings
         groupExposureSettings = QGroupBox('Exposure time (ms)')
@@ -608,8 +582,29 @@ class Window(QWidget):
         self.groupImageSliderLayout.addWidget(self.txtRangeIndicator)
         pass
 
+    def createButtonControls(self):
+        self.buttonControlGroup = QGroupBox()
+        self.buttonControlGroupLayout = QVBoxLayout()
+        self.buttonControlGroup.setLayout(self.buttonControlGroupLayout)
+
+        #Push button to control playback
+        self.btnPlayPause = QPushButton('Play')
+        self.btnPlayPause.clicked.connect(self.handlePlayPause)
+
+        #Add button to layout as playback is default
+        self.buttonControlGroupLayout.addWidget(self.btnPlayPause)
+
+        #CREATE BUTTONS FOR ACQUISITION BUT DON'T ADD THEM
+        #Button to tell camera to start capturing
+        self.btnCapture = QPushButton('Capture')
+        # self.btnCapture.clicked.connect(self.handlePlayPause)
+
+        #Button to save the last 100 images
+        self.btnSave100 = QPushButton('Save 100')
+        # self.btnCapture.clicked.connect(self.handlePlayPause)
 
 
+        
 
     def newSessionOpened(self, directoryPath):
         #Obtain path to selected dataset folder
@@ -780,13 +775,11 @@ class Window(QWidget):
 
     def initaliseCamera(self):
         #CAMERA INITALISATION
-        try:
-            self.cameraFunctions.initialiseCamera() #Initialise camera
-            self.cameraInitialised = True
-        except:
+        self.cameraInitialised = self.cameraFunctions.initialiseCamera() #Initialise camera
+        #If the camera fails to initalised display error
+        if self.cameraInitialised == False:
             self.errorInfoText('Error initalising camera')
-            self.cameraInitialised = False
-
+            
 
 
 
