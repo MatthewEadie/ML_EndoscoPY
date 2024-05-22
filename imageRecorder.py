@@ -34,8 +34,12 @@ class ImageRecorder(QObject):
 
 
     def saveImages(self, savePath):
+        self.mutex.lock()
+
         self._savingPath = savePath
         now = datetime.now()
         dateTime = now.strftime("%H-%M-%S_%d-%m-%Y")
         np.save(f'{self._savingPath}+{dateTime}.npy', self._imageBuffer)
+
+        self.mutex.unlock()
         pass

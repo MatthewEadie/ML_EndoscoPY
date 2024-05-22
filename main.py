@@ -770,6 +770,9 @@ class Window(QWidget):
         #Update text box with save location
         self.txtSaveLocation.setText(f'{self.acquisitionSaveLocation}')
 
+        #Update save location in ML pipeline
+        self.MLPipeline.setSaveLocation(self.acquisitionSaveLocation)
+
         #Enable save button
         self.btnSave100.setEnabled(True)
         pass

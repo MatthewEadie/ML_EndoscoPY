@@ -184,7 +184,13 @@ class machineLearningPipeline(QObject):
     def sendImageToStack(self, image, imageNum):
         self.recorderFunctions.addImageToStack(image, imageNum)
 
-    def saveImageStack(self, savePath):
+    def setSaveLocation(self, savePath):
+        #Update local path to new path
+        self.savePath = savePath
+
+    def saveImageStack(self):
+        #Tell image recorder thread to save stack
+        self.recorderFunctions.saveImages(self.savePath)
         pass
 
     def processCameraImage(self, cameraImage):
