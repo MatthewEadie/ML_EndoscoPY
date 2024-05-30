@@ -9,28 +9,52 @@ class ImageRecorder(QObject):
     
     mutex = QMutex()
 
-    def createBuffer(self,MLShape):
+    def createDisplayStack(self,MLShape):
         #Read shape of input layer
-        images, height, width, channels = MLShape.shape
+        images, height, width, self.channels = MLShape.shape
         #Create empty array for storing images
-        self._imageBuffer = np.zeros((100,height,width,channels))
+        self._imageDisplayBuffer = np.zeros((height,width,self.channels))
+        pass
 
-
-    def addImageToStack(self, newImage, imageNumber):
+    def addImageToDisplayStack(self, newImage, imageNumber):
         self.mutex.lock()
         _image = newImage
 
-        if imageNumber < 100:
+        if imageNumber < self.channels:
             #Check to see if image buffer has reached 300 images
-            self._imageBuffer[imageNumber,:,:,:] = _image #Append new image into buffer
+            self._imageDisplayBuffer[:,:,imageNumber] = _image #Append new image into buffer
         else:
             #Use np.roll to move first image to last image
-            self._imageBuffer = np.roll(self._imageBuffer, [0, 0, 0, -1], axis=(1, 0, 0, 0))
+            self._imageDisplayBuffer = np.roll(self._imageBuffer, -1)
             #rewrite last image as new image
-            self._imageBuffer[99,:,:,:] = _image
+            self._imageDisplayBuffer[:,:,self.channels] = _image
 
         self.mutex.unlock()
 
+
+        pass
+
+    def createSaveBuffer(self,MLShape):
+        #Read shape of input layer
+        images, height, width, channels = MLShape.shape
+        #Create empty array for storing images
+        self._stackBuffer = np.zeros((100,height,width,channels))
+
+
+    def addStackToSaveStack(self, newImage, stackNumber):
+        self.mutex.lock()
+        _image = newImage
+
+        if stackNumber < 100:
+            #Check to see if image buffer has reached 300 images
+            self._stackBuffer[stackNumber,:,:,:] = _image #Append new image into buffer
+        else:
+            #Use np.roll to move first image to last image
+            self._stackBuffer = np.roll(self._stackBuffer, [0, 0, 0, -1], axis=(1, 0, 0, 0))
+            #rewrite last image as new image
+            self._stackBuffer[99,:,:,:] = _image
+
+        self.mutex.unlock()
 
 
     def saveImages(self, savePath):
@@ -39,7 +63,7 @@ class ImageRecorder(QObject):
         self._savingPath = savePath
         now = datetime.now()
         dateTime = now.strftime("%H-%M-%S_%d-%m-%Y")
-        np.save(f'{self._savingPath}+{dateTime}.npy', self._imageBuffer)
+        np.save(f'{self._savingPath}+{dateTime}.npy', self._stackBuffer)
 
         self.mutex.unlock()
         pass

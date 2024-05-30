@@ -39,6 +39,8 @@ class CameraThread(QObject):
 
             num_cameras = self.cam_list.GetSize()
 
+            
+
             print('Number of cameras detected: %d' % num_cameras)
 
             # Finish if there are no cameras
@@ -51,6 +53,21 @@ class CameraThread(QObject):
                 self.system.ReleaseInstance()
 
                 return False
+            
+            self.cam = self.cam_list[0]
+
+            node_map_tl_device = self.cam.GetTLDeviceNodeMap()
+            self.cameraSerialNumC = node_map_tl_device.GetNode("DeviceSerialNumber")
+            self.cameraModelNameC = node_map_tl_device.GetNode("DeviceModelName")
+            self.cameraDisplayNameC = node_map_tl_device.GetNode("DeviceDisplayName")
+
+            self.cameraSerialNum = PySpin.CValuePtr(self.cameraSerialNumC).ToString()
+            self.cameraModelName = PySpin.CValuePtr(self.cameraModelNameC).ToString()
+            self.cameraDisplayName = PySpin.CValuePtr(self.cameraDisplayNameC).ToString()
+
+            print(self.cameraSerialNum)
+            print(self.cameraModelName)
+            print(self.cameraDisplayName)
             
             return True
         except:
@@ -309,8 +326,6 @@ class CameraThread(QObject):
         :return: True if successful, False otherwise.
         :rtype: bool
         """
-
-        self.cam = self.cam_list[0]
 
         self.captureStop = False
 
