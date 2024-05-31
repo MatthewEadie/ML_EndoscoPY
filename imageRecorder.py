@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
 class ImageRecorder(QObject):
+    stackFull = pyqtSignal(np.ndarray)
     
     mutex = QMutex()
 
@@ -21,13 +22,15 @@ class ImageRecorder(QObject):
         _image = newImage
 
         if imageNumber < self.channels:
-            #Check to see if image buffer has reached 300 images
+            #Check to see if image buffer is full
             self._imageDisplayBuffer[:,:,imageNumber] = _image #Append new image into buffer
         else:
             #Use np.roll to move first image to last image
-            self._imageDisplayBuffer = np.roll(self._imageBuffer, -1)
+            self._imageDisplayBuffer = np.roll(self._imageDisplayBuffer, -1)
             #rewrite last image as new image
             self._imageDisplayBuffer[:,:,self.channels] = _image
+            #Emit stack for processing
+            self.stackFull.emit(self._imageDisplayBuffer)
 
         self.mutex.unlock()
 

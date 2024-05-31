@@ -13,12 +13,10 @@ import time
 
 
 
-class CameraThread(QObject):
-    imageAcquired = pyqtSignal(np.ndarray)
+class CameraPipeline(QObject):
+    imageAcquired = pyqtSignal(np.ndarray, int)
     updateFPS = pyqtSignal(int)
 
-
- 
 
     global continue_recording
     continue_recording = True
@@ -64,11 +62,7 @@ class CameraThread(QObject):
             self.cameraSerialNum = PySpin.CValuePtr(self.cameraSerialNumC).ToString()
             self.cameraModelName = PySpin.CValuePtr(self.cameraModelNameC).ToString()
             self.cameraDisplayName = PySpin.CValuePtr(self.cameraDisplayNameC).ToString()
-
-            print(self.cameraSerialNum)
-            print(self.cameraModelName)
-            print(self.cameraDisplayName)
-            
+                        
             return True
         except:
             return False
@@ -162,6 +156,8 @@ class CameraThread(QObject):
 
         print(f'Recording: {continue_recording}')
 
+        self.imageNumber = 0 #Set image number
+
         # Retrieve and display images
         while(continue_recording):
 
@@ -179,12 +175,10 @@ class CameraThread(QObject):
                     # Getting the image data as a numpy array
                     image_data = image_result.GetNDArray()
 
+                    print(f'Acquired image: {self.imageNumber}')
+
                     # Draws an image on the current figure
-                    self.imageAcquired.emit(image_data)
-
-                    time_stop = time.time()
-
-                    self.updateFPS.emit(int(np.round(1/(time_stop - time_start),0)))
+                    self.imageAcquired.emit(image_data, self.imageNumber)
 
 
                     # If user presses enter, close the program
@@ -201,6 +195,9 @@ class CameraThread(QObject):
                 #  images) need to be released in order to keep from filling the
                 #  buffer.
                 image_result.Release()
+
+                #Increment image number
+                self.imageNumber += 1
 
             
         #  End acquisition

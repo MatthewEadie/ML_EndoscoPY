@@ -7,13 +7,8 @@ from PyQt5.QtGui import *
 
 import os
 
-from postProcessingPipeline import playbackMethod
+from mainPipeline import mainPipeline
 
-try:
-    from mainPipeline import machineLearningPipeline
-    print('ML pipeline loaded')
-except:
-    print('Could not initalise ML pipeline')
 
 import numpy as np
 
@@ -139,8 +134,8 @@ class WidgetGallery(QMainWindow):
 
 
 class Window(QWidget):
-    beginMLPlayback = pyqtSignal()
-    beginMLAcquisition = pyqtSignal()
+    beginPlayback = pyqtSignal()
+    beginAcquisition = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -159,30 +154,32 @@ class Window(QWidget):
         # ---- THREAD INSTANCES ---- #
         # ML THREAD #
         #Create instance of ML pipeline
-        self.MLPipeline = machineLearningPipeline()
+        self.mainPipeline = mainPipeline()
         #Create QThread to store pipeline
-        self.MLThread = QThread()
-        self.MLPipeline.moveToThread(self.MLThread)
+        self.mainThread = QThread()
+        self.mainPipeline.moveToThread(self.mainThread)
         #Start the thread as ML playback is default
-        self.MLThread.start()
+        self.mainThread.start()
+        #Create the ML thread
+        self.mainPipeline.createMLThread()
 
         
 
         
 
         #SIGNALS
-        self.beginMLPlayback.connect(self.MLPipeline.runMLPlayback)
-        self.beginMLAcquisition.connect(self.MLPipeline.runMLAcquisition)
+        self.beginPlayback.connect(self.mainPipeline.runPlayback)
+        self.beginAcquisition.connect(self.mainPipeline.runAcquisition)
         
 
         #SLOTS
-        self.MLPipeline.updateImagePlayback.connect(self.updateDisplayPlayback)
-        self.MLPipeline.updateImageAcquisition.connect(self.updateDisplayCamera)
+        self.mainPipeline.updateImagePlayback.connect(self.updateDisplayPlayback)
+        self.mainPipeline.updateImageAcquisition.connect(self.updateDisplayCamera)
         #----------------------------
 
 
 
-        
+        # ---- GUI SET UP ---- #
         
         # Create a QGridLayout instance
         layout = QGridLayout()
@@ -190,6 +187,10 @@ class Window(QWidget):
         #Create software function mode (ML playback or Acquisition)
         self.createSoftwareFunctionMode()
         layout.addWidget(self.modeSelectionGroup,0,0)
+
+        #Create buton for controlling ML application
+        self.createmachineLearningToggle()
+        layout.addWidget(self.toggleMLGroup,0,1)
 
 
         #Create display image
@@ -286,6 +287,20 @@ class Window(QWidget):
         self.radioMLMode.toggled.connect(self.changeDisplayMode)
         # self.radioAcquisitionMode.toggled.connect(self.changeDisplayMode)
 
+    def createmachineLearningToggle(self):
+         # ---- Toggle ML operation ---- #
+        self.toggleMLGroup = QGroupBox()
+        self.toggleMLGroupLayout = QHBoxLayout()
+        self.toggleMLGroup.setLayout(self.toggleMLGroupLayout)
+        #Button to turn ML on off
+        self.btnEnableML = QPushButton('ML on')
+        self.btnEnableML.clicked.connect(self.handleToggleML)
+        self.toggleMLGroupLayout.addWidget(self.btnEnableML)
+
+        #Set variable to handle toggle ML, True by default
+        self.TFmachineLearning = False
+        pass
+
     def createDisplayImage(self):
         #Layout to contain image display
         self.singleDisplay = QWidget()
@@ -327,40 +342,35 @@ class Window(QWidget):
 
     def changeDisplayMode(self):
         self.displayMode = self.modeButtonGroup.checkedId()
-        # try:
+        try:
+            if self.displayMode == 1:
+                #End camera thread when swapping to playback
+                self.mainPipeline.stopCameraThread()
 
-        if self.displayMode == 1:
-            #Start machine learning thread if not already started
-            self.MLThread.start()
+                #Update controls
+                self.changeControlsPlayback()
 
-            #End camera thread when swapping to playback
-            self.MLPipeline.stopCameraThread()
+                #Clear display on switch mode
+                self.clearDisplay()
 
-            #Update controls
-            self.changeControlsPlayback()
+                #Display okay message
+                self.okayInfoText('Changed to machine learning mode')
 
-            #Clear display on switch mode
-            self.clearDisplay()
+            elif self.displayMode == 2:
+                #Create thread for camera acquisition
+                self.mainPipeline.createCameraThread() 
 
+                #Update controls for acquisition mode
+                self.changeControlsAcquisition()
 
-            print('Machine learning mode')
+                #Clear display on switch mode
+                self.clearDisplay()
 
-        elif self.displayMode == 2:
-            #Create thread for camera acquisition
-            self.MLPipeline.createCameraThread() 
+                #Display okay message
+                self.okayInfoText('Changed to acquisition mode')
 
-            #Update controls for acquisition mode
-            self.changeControlsAcquisition()
-
-            #Clear display on switch mode
-            self.clearDisplay()
-
-
-           
-            print('Acquisition mode')
-
-        # except:
-        #     self.errorInfoText('Error setting display mode')
+        except:
+            self.errorInfoText('Error setting display mode')
 
     def changeControlsPlayback(self):
         #Remove capture and save buttons
@@ -515,16 +525,6 @@ class Window(QWidget):
         #Add label and txtbox to tab layout
         self.machineLearningTabLayout.addWidget(self.lblDatasetShape)
         self.machineLearningTabLayout.addWidget(self.txtDatasetShape)
-
-        # ---- Toggle ML operation ---- #
-        #Button to turn ML on off
-        self.btnEnableML = QPushButton('ML on')
-        self.btnEnableML.clicked.connect(self.handleToggleML)
-        self.machineLearningTabLayout.addWidget(self.btnEnableML)
-
-        #Set variable to handle toggle ML, True by default
-        self.TFmachineLearning = True
-
         pass
 
     def createCameraTab(self):
@@ -698,22 +698,22 @@ class Window(QWidget):
             self.txtInfo.setText('Error opening new session.')
 
     def newMLModelOpened(self, MLDirectoryPath):
-        try:
+        # try:
             #Load model in ML pipeline
-            self.MLPipeline.loadModel(MLDirectoryPath)
+            self.mainPipeline.loadMLModel(MLDirectoryPath)
 
             #Get shape of first layer
-            self.firstLayerShape = self.MLPipeline.firstLayerShape
+            self.firstLayerShape = self.mainPipeline.firstLayerShape
             print(self.firstLayerShape)
 
             #Update info box and ML tab
             self.okayInfoText('ML model loaded')
             self.txtChosenModel.setText(MLDirectoryPath)
             self.txtModelInputShape.setText(f'{self.firstLayerShape}')
-        except:
-            #Display error message in info box
-            self.errorInfoText('Error loading ML model')
-        pass
+        # except:
+        #     Display error message in info box
+        #     self.errorInfoText('Error loading ML model')
+        # pass
 
     def newMLDatasetDirectory(self, MLDatasetPath):
         self.datasetPath = MLDatasetPath
@@ -736,7 +736,7 @@ class Window(QWidget):
             selectedDataset = self.lstDatasetList.currentItem().text()
 
             #Load dataset in ML pipeline
-            self.datasetShape = self.MLPipeline.loadDataset(f'{self.datasetPath}/{selectedDataset}')
+            self.datasetShape = self.mainPipeline.loadDataset(f'{self.datasetPath}/{selectedDataset}')
 
             #Display chosen dataset
             self.txtChosenDataset.setText(f'{self.datasetPath}/{selectedDataset}')
@@ -794,7 +794,7 @@ class Window(QWidget):
         self.txtSaveLocation.setText(f'{self.acquisitionSaveLocation}')
 
         #Update save location in ML pipeline
-        self.MLPipeline.setSaveLocation(self.acquisitionSaveLocation)
+        self.mainPipeline.setSaveLocation(self.acquisitionSaveLocation)
 
         #Enable save button
         self.btnSave100.setEnabled(True)
@@ -827,7 +827,7 @@ class Window(QWidget):
         self.lblContrastMax.setText(f'{self.maxContrastValue}')
 
         #Pass values to post processing pipeline
-        self.MLPipeline.contrastChanged(self.minContrastValue, self.maxContrastValue)
+        self.mainPipeline.contrastChanged(self.minContrastValue, self.maxContrastValue)
         pass
 
     def configureImageSelector(self):
@@ -849,14 +849,14 @@ class Window(QWidget):
             self.currentImageNo -= 1
 
         #Update ML pipline with new current image no
-        self.MLPipeline.currentImageUpdated(self.currentImageNo)
+        self.mainPipeline.currentImageUpdated(self.currentImageNo)
 
     def sliderMoved(self):
         #Set current image number to new number
         self.currentImageNo = self.imageSlider.sliderPosition()
 
         #Update ML pipline number
-        self.MLPipeline.currentImageUpdated(self.currentImageNo)
+        self.mainPipeline.currentImageUpdated(self.currentImageNo)
         pass
 
     def btnForwardPressed(self):
@@ -869,34 +869,34 @@ class Window(QWidget):
             self.currentImageNo += 1
         
         #Update ML pipline with new current image no
-        self.MLPipeline.currentImageUpdated(self.currentImageNo)
+        self.mainPipeline.currentImageUpdated(self.currentImageNo)
 
     def handleToggleML(self):
         #Check if button is on or of
         #Button on -> disable ML, turn button to off
         if self.TFmachineLearning == True:
-            self.MLPipeline.toggleML(False)
+            self.mainPipeline.toggleML(False)
             self.TFmachineLearning = False
             self.btnEnableML.setText('ML off')
 
         #Button off -> enable ML, turn button to on
         elif self.TFmachineLearning == False:
-            self.MLPipeline.toggleML(True)
+            self.mainPipeline.toggleML(True)
             self.TFmachineLearning = True
             self.btnEnableML.setText('ML on')
         pass
 
     def initaliseCamera(self):
         #CAMERA INITALISATION
-        self.cameraInitialised = self.MLPipeline.initaliseCamera() #Initialise camera
+        self.cameraInitialised = self.mainPipeline.initaliseCamera() #Initialise camera
         #If the camera fails to initalised display error
         if self.cameraInitialised == False:
             self.errorInfoText('Error initalising camera')
             return
         
         #Update camera info
-        self.txtCameraSN.setText(f'{self.MLPipeline.cameraFunctions.cameraSerialNum}')
-        self.txtCameraName.setText(f'{self.MLPipeline.cameraFunctions.cameraModelName}')
+        self.txtCameraSN.setText(f'{self.mainPipeline.cameraFunctions.cameraSerialNum}')
+        self.txtCameraName.setText(f'{self.mainPipeline.cameraFunctions.cameraModelName}')
 
         #Enable capture button
         self.btnCapture.setEnabled(True)
@@ -910,13 +910,13 @@ class Window(QWidget):
     def handlePlayPause(self):
         # try:
         if self.playTF==True:
-            self.beginMLPlayback.emit() #Emit signal to begin thread
+            self.beginPlayback.emit() #Emit signal to begin thread
             #Set button to display stop
             self.btnPlayPause.setText('Stop')
             self.playTF = False
             print('starting playing in ML mode')
         else:
-            self.MLPipeline.stopMLPlayback()
+            self.mainPipeline.stopPlayback()
             #Change button to display Play
             self.btnPlayPause.setText('Play')
             self.playTF = True
@@ -928,13 +928,13 @@ class Window(QWidget):
 
     def handleAcquisition(self):
         if self.playTF==True:
-            self.beginMLAcquisition.emit() #Emit signal to begin thread
+            self.beginAcquisition.emit() #Emit signal to begin thread
             #Set button to display stop
             self.btnCapture.setText('Stop')
             self.playTF = False
 
         else:
-            self.MLPipeline.stopMLAcquisition()
+            self.mainPipeline.stopMLAcquisition()
             #Change button to display Play
             self.btnCapture.setText('Capture')
             self.playTF = True
