@@ -77,13 +77,14 @@ class CameraPipeline(QObject):
             self.node_height = PySpin.CIntegerPtr(self.nodemap.GetNode('Height'))
 
             self.maxWidth = self.node_width.GetMax()
+            self.minWidth = self.node_width.GetMin()
             self.currentWidth = self.node_width.GetValue()
+            self.widthIncrements = self.node_width.GetInc()
             
             self.maxHeight = self.node_height.GetMax()
-            self.currentheight = self.node_width.GetValue()
-
-            self.maxWidth = self.node_width.GetMax()
-            self.currentWidth = self.node_width.GetValue()
+            self.minHeight = self.node_height.GetMin()
+            self.currentheight = self.node_height.GetValue()
+            self.heightIncrements = self.node_height.GetInc()
 
             self.currentOffsetX = self.node_offset_x.GetValue()
             self.currentOffsetY = self.node_offset_y.GetValue()
@@ -334,12 +335,11 @@ class CameraPipeline(QObject):
             result = False
 
         return result
-
-     
-    def configure_custom_image_settings(nodemap):
+ 
+    def configure_custom_image_settings(self, xFrameSize, yFrameSize, xFrameOffset, yFrameOffset):
         """
-        Configures a number of settings on the camera including offsets  X and Y, width,
-        height, and pixel format. These settings must be applied before BeginAcquisition()
+        Configures a number of settings on the camera including offsets  X and Y, width and
+        height. These settings must be applied before BeginAcquisition()
         is called; otherwise, they will be read only. Also, it is important to note that
         settings are applied immediately. This means if you plan to reduce the width and
         move the x offset accordingly, you need to apply such changes in the appropriate order.
@@ -354,109 +354,39 @@ class CameraPipeline(QObject):
         try:
             result = True
 
-            # Apply mono 8 pixel format
-            #
-            # *** NOTES ***
-            # Enumeration nodes are slightly more complicated to set than other
-            # nodes. This is because setting an enumeration node requires working
-            # with two nodes instead of the usual one.
-            #
-            # As such, there are a number of steps to setting an enumeration node:
-            # retrieve the enumeration node from the nodemap, retrieve the desired
-            # entry node from the enumeration node, retrieve the integer value from
-            # the entry node, and set the new value of the enumeration node with
-            # the integer value from the entry node.
-            #
-            # Retrieve the enumeration node from the nodemap
-            node_pixel_format = PySpin.CEnumerationPtr(nodemap.GetNode('PixelFormat'))
-            if PySpin.IsReadable(node_pixel_format) and PySpin.IsWritable(node_pixel_format):
-
-                # Retrieve the desired entry node from the enumeration node
-                node_pixel_format_mono8 = PySpin.CEnumEntryPtr(node_pixel_format.GetEntryByName('Mono8'))
-                if PySpin.IsReadable(node_pixel_format_mono8):
-
-                    # Retrieve the integer value from the entry node
-                    pixel_format_mono8 = node_pixel_format_mono8.GetValue()
-
-                    # Set integer as new value for enumeration node
-                    node_pixel_format.SetIntValue(pixel_format_mono8)
-
-                    print('Pixel format set to %s...' % node_pixel_format.GetCurrentEntry().GetSymbolic())
-
-                else:
-                    print('Pixel format mono 8 not readable...')
-
-            else:
-                print('Pixel format not readable or writable...')
-
-            # Apply minimum to offset X
-            #
-            # *** NOTES ***
-            # Numeric nodes have both a minimum and maximum. A minimum is retrieved
-            # with the method GetMin(). Sometimes it can be important to check
-            # minimums to ensure that your desired value is within range.
-            node_offset_x = PySpin.CIntegerPtr(nodemap.GetNode('OffsetX'))
-            if PySpin.IsReadable(node_offset_x) and PySpin.IsWritable(node_offset_x):
-
-                node_offset_x.SetValue(node_offset_x.GetMin())
-                print('Offset X set to %i...' % node_offset_x.GetMin())
-
+            # Set new value to offset X
+            if PySpin.IsReadable(self.node_offset_x) and PySpin.IsWritable(self.node_offset_x):
+                self.node_offset_x.SetValue(xFrameOffset)
             else:
                 print('Offset X not readable or writable...')
 
-            # Apply minimum to offset Y
-            #
-            # *** NOTES ***
-            # It is often desirable to check the increment as well. The increment
-            # is a number of which a desired value must be a multiple of. Certain
-            # nodes, such as those corresponding to offsets X and Y, have an
-            # increment of 1, which basically means that any value within range
-            # is appropriate. The increment is retrieved with the method GetInc().
-            node_offset_y = PySpin.CIntegerPtr(nodemap.GetNode('OffsetY'))
-            if PySpin.IsReadable(node_offset_y) and PySpin.IsWritable(node_offset_y):
-
-                node_offset_y.SetValue(node_offset_y.GetMin())
-                print('Offset Y set to %i...' % node_offset_y.GetMin())
-
+            # Set new value to offset Y
+            if PySpin.IsReadable(self.node_offset_y) and PySpin.IsWritable(self.node_offset_y):
+                self.node_offset_y.SetValue(yFrameOffset)
             else:
                 print('Offset Y not readable or writable...')
 
-            # Set maximum width
-            #
-            # *** NOTES ***
-            # Other nodes, such as those corresponding to image width and height,
-            # might have an increment other than 1. In these cases, it can be
-            # important to check that the desired value is a multiple of the
-            # increment. However, as these values are being set to the maximum,
-            # there is no reason to check against the increment.
-            node_width = PySpin.CIntegerPtr(nodemap.GetNode('Width'))
-            if PySpin.IsReadable(node_width) and PySpin.IsWritable(node_width):
-
-                width_to_set = node_width.GetMax()
-                node_width.SetValue(width_to_set)
-                print('Width set to %i...' % node_width.GetValue())
-
+            # Set new width
+            if PySpin.IsReadable(self.node_width) and PySpin.IsWritable(self.node_width):
+                self.node_width.SetValue(xFrameSize)
             else:
                 print('Width not readable or writable...')
 
-            # Set maximum height
-            #
-            # *** NOTES ***
-            # A maximum is retrieved with the method GetMax(). A node's minimum and
-            # maximum should always be a multiple of its increment.
-            node_height = PySpin.CIntegerPtr(nodemap.GetNode('Height'))
-            if  PySpin.IsReadable(node_height) and PySpin.IsWritable(node_height):
-
-                height_to_set = node_height.GetMax()
-                node_height.SetValue(height_to_set)
-                print('Height set to %i...' % node_height.GetValue())
-
+            # Set new height
+            if  PySpin.IsReadable(self.node_height) and PySpin.IsWritable(self.node_height):
+                self.node_height.SetValue(yFrameSize)
             else:
                 print('Height not readable or writable...')
 
         except PySpin.SpinnakerException as ex:
             print('Error: %s' % ex)
             return False
+        
+        #Re obtain all frame values to update interface
+        self.currentWidth = self.node_width.GetValue()
+        self.currentheight = self.node_height.GetValue()
+        self.currentOffsetX = self.node_offset_x.GetValue()
+        self.currentOffsetY = self.node_offset_y.GetValue()
 
         return result
 

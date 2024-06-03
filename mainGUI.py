@@ -581,22 +581,22 @@ class Window(QWidget):
         #Spin box to allow user to enter new dimension
         self.lblFrameX = QLabel('X:')
         self.numFrameX = QSpinBox()
-        self.numFrameX.setMinimum(100)
+        self.numFrameX.setMinimum(0)
         self.numFrameX.setMaximum(2048)
 
         self.lblFrameY = QLabel('Y:')
         self.numFrameY = QSpinBox()
-        self.numFrameY.setMinimum(100)
+        self.numFrameY.setMinimum(0)
         self.numFrameY.setMaximum(2048)
 
         self.lblFrameXOffset = QLabel('X Offset:')
         self.numFrameXOffset = QSpinBox()
-        self.numFrameXOffset.setMinimum(100)
+        self.numFrameXOffset.setMinimum(0)
         self.numFrameXOffset.setMaximum(2048)
 
         self.lblFrameYOffset = QLabel('Y Offset:')
         self.numFrameYOffset = QSpinBox()
-        self.numFrameYOffset.setMinimum(100)
+        self.numFrameYOffset.setMinimum(0)
         self.numFrameYOffset.setMaximum(2048)
 
         #Add labels and line edits to layout
@@ -680,7 +680,7 @@ class Window(QWidget):
         self.saveLocationLayout = QVBoxLayout()
         self.grpSaveLocation.setLayout(self.saveLocationLayout)
 
-        self.btnChangeSaveLocation = QPushButton('Change save location')
+        self.btnChangeSaveLocation = QPushButton('Set save location')
         self.btnChangeSaveLocation.clicked.connect(self.changeSaveLocation)
         self.saveLocationLayout.addWidget(self.btnChangeSaveLocation)
 
@@ -971,16 +971,25 @@ class Window(QWidget):
         #Update camera frame info
         self.updateCameraFrameInfo()
 
+        #Change max and min x and y axis of frame
+        self.numFrameX.setMaximum(self.mainPipeline.cameraFunctions.maxWidth)
+        self.numFrameX.setMinimum(self.mainPipeline.cameraFunctions.minWidth)
+        self.numFrameX.setSingleStep(self.mainPipeline.cameraFunctions.widthIncrements)
+
+        self.numFrameY.setMaximum(self.mainPipeline.cameraFunctions.maxHeight)
+        self.numFrameY.setMinimum(self.mainPipeline.cameraFunctions.minHeight)
+        self.numFrameY.setSingleStep(self.mainPipeline.cameraFunctions.heightIncrements)
+
         #Enable capture button
         self.btnCapture.setEnabled(True)
 
         self.okayInfoText('Camera initalised')
 
     def setCameraFrameSize(self):
-        self.newXFrameSize = self.numFrameX.value
-        self.newYFrameSize = self.numFrameY.value
-        self.newXFrameOffset = self.numFrameXOffset.value
-        self.newYFrameOffset = self.numFrameYOffset.value
+        self.newXFrameSize = self.numFrameX.value()
+        self.newYFrameSize = self.numFrameY.value()
+        self.newXFrameOffset = self.numFrameXOffset.value()
+        self.newYFrameOffset = self.numFrameYOffset.value()
         try:
             #Try updating camera frame size
             self.mainPipeline.setCameraFrameSize(self.newXFrameSize, self.newYFrameSize, self.newXFrameOffset, self.newYFrameOffset)
@@ -992,6 +1001,7 @@ class Window(QWidget):
         self.updateCameraFrameInfo()
 
     def updateCameraFrameInfo(self):
+        #Set current frame text
         self.lblCurrentFrameX.setText(f'X: {self.mainPipeline.cameraFunctions.currentWidth}')
         self.lblCurrentFrameXOffset.setText(f'X Offset: {self.mainPipeline.cameraFunctions.currentOffsetX}')
 

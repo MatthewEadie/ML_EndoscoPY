@@ -252,6 +252,7 @@ class mainPipeline(QObject):
         self.exposureTime = exposureTime
 
     def setCameraFrameSize(self, xFrameSize, yFrameSize, xFrameOffset, yFrameOffset):
+        self.cameraFunctions.configure_custom_image_settings(xFrameSize, yFrameSize, xFrameOffset, yFrameOffset)
         pass
 
     def createSaveStack(self):
