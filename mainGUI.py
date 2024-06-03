@@ -297,6 +297,9 @@ class Window(QWidget):
         self.btnEnableML.clicked.connect(self.handleToggleML)
         self.toggleMLGroupLayout.addWidget(self.btnEnableML)
 
+        #Disabled on start until ML model is loaded
+        self.btnEnableML.setEnabled(False)
+
         #Set variable to handle toggle ML, True by default
         self.TFmachineLearning = False
         pass
@@ -698,7 +701,7 @@ class Window(QWidget):
             self.txtInfo.setText('Error opening new session.')
 
     def newMLModelOpened(self, MLDirectoryPath):
-        # try:
+        try:
             #Load model in ML pipeline
             self.mainPipeline.loadMLModel(MLDirectoryPath)
 
@@ -710,10 +713,13 @@ class Window(QWidget):
             self.okayInfoText('ML model loaded')
             self.txtChosenModel.setText(MLDirectoryPath)
             self.txtModelInputShape.setText(f'{self.firstLayerShape}')
-        # except:
-        #     Display error message in info box
-        #     self.errorInfoText('Error loading ML model')
-        # pass
+
+            #Enable ML toggle button
+            self.btnEnableML.setEnabled(True)
+        except:
+            #Display error message in info box
+            self.errorInfoText('Error loading ML model')
+        pass
 
     def newMLDatasetDirectory(self, MLDatasetPath):
         self.datasetPath = MLDatasetPath
@@ -934,7 +940,7 @@ class Window(QWidget):
             self.playTF = False
 
         else:
-            self.mainPipeline.stopMLAcquisition()
+            self.mainPipeline.stopAcquisition()
             #Change button to display Play
             self.btnCapture.setText('Capture')
             self.playTF = True

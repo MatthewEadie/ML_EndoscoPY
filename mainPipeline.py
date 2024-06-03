@@ -31,7 +31,7 @@ class mainPipeline(QObject):
     maxContrast = 255
 
     stop_pressed = False #Default False
-    TFML = True #Machine learning no by default
+    TFML = False #Machine learning off by default
 
 
 
@@ -202,6 +202,8 @@ class mainPipeline(QObject):
         singleFrame *= 255
         return singleFrame
 
+
+
     def singleImageFromCamera(self,cameraImage):
         height,width = cameraImage.shape
         imgOut = np.zeros((height,width,3))
@@ -216,7 +218,6 @@ class mainPipeline(QObject):
         pix_output = QPixmap.fromImage(qImg)
         return pix_output
     
-
     def createCameraThread(self):
         # CAMERA THREAD #
         self.cameraFunctions = CameraPipeline()
@@ -257,9 +258,9 @@ class mainPipeline(QObject):
     def sendImageToStack(self, image, imageNum):
         self.recorderFunctions.addImageToDisplayStack(image, imageNum)
 
-    def setSaveLocation(self, savePath):
+    def setSaveLocation(self, newSavePath):
         #Update local path to new path
-        self.savePath = savePath
+        self.savePath = newSavePath
 
     def saveImageStack(self):
         #Tell image recorder thread to save stack
