@@ -251,6 +251,9 @@ class mainPipeline(QObject):
         #Copy exposure time for initial setup
         self.exposureTime = exposureTime
 
+    def setCameraFrameSize(self, xFrameSize, yFrameSize, xFrameOffset, yFrameOffset):
+        pass
+
     def createSaveStack(self):
         #Pass mlshape to image recorder class
         self.recorderFunctions.createSaveBuffer(self.mlShape)

@@ -226,7 +226,7 @@ class Window(QWidget):
         # Add widgets to the layout
         layout.addWidget(self.grpSessionSettings,1,5,1,2)
         layout.addWidget(self.settingsTabs, 2,5,1,2)
-        layout.addWidget(self.buttonControlGroup, 3,5)
+        layout.addWidget(self.buttonControlGroup, 6,5)
 
 
 
@@ -572,31 +572,76 @@ class Window(QWidget):
         #Add group to tab layout
         self.cameraSettingsLayout.addWidget(self.grpCameraInfo)
 
+        # ---- Camera frame size ---- #
+        self.grpCameraFrame = QGroupBox('Frame size')
+        self.cameraFrameLayout = QGridLayout()
+        self.grpCameraFrame.setLayout(self.cameraFrameLayout)
 
-        # ---- Image save location ---- # 
-        #Layout for save location changing
-        self.grpSaveLocation = QGroupBox('Save location')
-        self.saveLocationLayout = QVBoxLayout()
-        self.grpSaveLocation.setLayout(self.saveLocationLayout)
+        #Labels to tell user what dimension they're changing
+        #Spin box to allow user to enter new dimension
+        self.lblFrameX = QLabel('X:')
+        self.numFrameX = QSpinBox()
+        self.numFrameX.setMinimum(100)
+        self.numFrameX.setMaximum(2048)
 
-        self.btnChangeSaveLocation = QPushButton('Change save location')
-        self.btnChangeSaveLocation.clicked.connect(self.changeSaveLocation)
-        self.saveLocationLayout.addWidget(self.btnChangeSaveLocation)
+        self.lblFrameY = QLabel('Y:')
+        self.numFrameY = QSpinBox()
+        self.numFrameY.setMinimum(100)
+        self.numFrameY.setMaximum(2048)
 
-        self.txtSaveLocation = QLineEdit()
-        self.txtSaveLocation.setReadOnly(True)
-        self.saveLocationLayout.addWidget(self.txtSaveLocation)
+        self.lblFrameXOffset = QLabel('X Offset:')
+        self.numFrameXOffset = QSpinBox()
+        self.numFrameXOffset.setMinimum(100)
+        self.numFrameXOffset.setMaximum(2048)
 
+        self.lblFrameYOffset = QLabel('Y Offset:')
+        self.numFrameYOffset = QSpinBox()
+        self.numFrameYOffset.setMinimum(100)
+        self.numFrameYOffset.setMaximum(2048)
 
-        #Add group to layout
-        self.cameraSettingsLayout.addWidget(self.grpSaveLocation)
+        #Add labels and line edits to layout
+        self.cameraFrameLayout.addWidget(self.lblFrameX,0,0)
+        self.cameraFrameLayout.addWidget(self.numFrameX,0,1)
+        self.cameraFrameLayout.addWidget(self.lblFrameY,0,2)
+        self.cameraFrameLayout.addWidget(self.numFrameY,0,3)
+
+        self.cameraFrameLayout.addWidget(self.lblFrameXOffset,1,0)
+        self.cameraFrameLayout.addWidget(self.numFrameXOffset,1,1)
+        self.cameraFrameLayout.addWidget(self.lblFrameYOffset,1,2)
+        self.cameraFrameLayout.addWidget(self.numFrameYOffset,1,3)
+
+        #Group to contain current frame settings
+        self.grpCameraCurrentFrame = QGroupBox('Current frame size')
+        self.cameraCurrentFrameLayout = QGridLayout()
+        self.grpCameraCurrentFrame.setLayout(self.cameraCurrentFrameLayout)
+
+        self.lblCurrentFrameX = QLabel(f'X: ')
+        self.lblCurrentFrameY = QLabel(f'Y: ')
+        self.lblCurrentFrameXOffset = QLabel(f'X Offset: ')
+        self.lblCurrentFrameYOffset = QLabel(f'Y Offset: ')
+
+        self.cameraCurrentFrameLayout.addWidget(self.lblCurrentFrameX,0,0)
+        self.cameraCurrentFrameLayout.addWidget(self.lblCurrentFrameY,0,2)
+        self.cameraCurrentFrameLayout.addWidget(self.lblCurrentFrameXOffset,1,0)
+        self.cameraCurrentFrameLayout.addWidget(self.lblCurrentFrameYOffset,1,2)
+
+        self.cameraFrameLayout.addWidget(self.grpCameraCurrentFrame, 2,0,1,4)
+
+        #Button to set the camera frame to new size enetered above
+        self.btnSetCameraFrame = QPushButton('Set frame')
+        self.cameraFrameLayout.addWidget(self.btnSetCameraFrame,4,0,1,4)
+
+        #Connect button to function
+        self.btnSetCameraFrame.clicked.connect(self.setCameraFrameSize)
+
+        self.cameraSettingsLayout.addWidget(self.grpCameraFrame)
 
 
 
         # ---- EXPOSURE SETTINGS ---- #
         #Layout for exposure settings
         groupExposureSettings = QGroupBox('Exposure time (ms)')
-        groupExposureSetLayout = QVBoxLayout()
+        groupExposureSetLayout = QGridLayout()
         groupExposureSettings.setLayout(groupExposureSetLayout)
 
         #Button group and radio buttons for exposure presets
@@ -613,10 +658,10 @@ class Window(QWidget):
         self.btngrpExposure.addButton(self.radioExposure50,50)
 
         #Add buttons to layout
-        groupExposureSetLayout.addWidget(self.radioExposure5)
-        groupExposureSetLayout.addWidget(self.radioExposure15)
-        groupExposureSetLayout.addWidget(self.radioExposure25)
-        groupExposureSetLayout.addWidget(self.radioExposure50)
+        groupExposureSetLayout.addWidget(self.radioExposure5,0,0)
+        groupExposureSetLayout.addWidget(self.radioExposure15,0,1)
+        groupExposureSetLayout.addWidget(self.radioExposure25,1,0)
+        groupExposureSetLayout.addWidget(self.radioExposure50,1,1)
 
         #Connect radio buttons to functions
         # self.radioExposure5.toggled.connect(self.createTriggerTask)
@@ -626,6 +671,25 @@ class Window(QWidget):
 
         #Add exposure settings group to tab layout
         self.cameraSettingsLayout.addWidget(groupExposureSettings)
+
+
+
+        # ---- Image save location ---- # 
+        #Layout for save location changing
+        self.grpSaveLocation = QGroupBox('Save location')
+        self.saveLocationLayout = QVBoxLayout()
+        self.grpSaveLocation.setLayout(self.saveLocationLayout)
+
+        self.btnChangeSaveLocation = QPushButton('Change save location')
+        self.btnChangeSaveLocation.clicked.connect(self.changeSaveLocation)
+        self.saveLocationLayout.addWidget(self.btnChangeSaveLocation)
+
+        self.txtSaveLocation = QLineEdit()
+        self.txtSaveLocation.setReadOnly(True)
+        self.saveLocationLayout.addWidget(self.txtSaveLocation)
+
+        #Add group to layout
+        self.cameraSettingsLayout.addWidget(self.grpSaveLocation)
 
     def createImageSlider(self):
         #h box
@@ -904,14 +968,45 @@ class Window(QWidget):
         self.txtCameraSN.setText(f'{self.mainPipeline.cameraFunctions.cameraSerialNum}')
         self.txtCameraName.setText(f'{self.mainPipeline.cameraFunctions.cameraModelName}')
 
+        #Update camera frame info
+        self.updateCameraFrameInfo()
+
         #Enable capture button
         self.btnCapture.setEnabled(True)
 
         self.okayInfoText('Camera initalised')
 
-            
+    def setCameraFrameSize(self):
+        self.newXFrameSize = self.numFrameX.value
+        self.newYFrameSize = self.numFrameY.value
+        self.newXFrameOffset = self.numFrameXOffset.value
+        self.newYFrameOffset = self.numFrameYOffset.value
+        try:
+            #Try updating camera frame size
+            self.mainPipeline.setCameraFrameSize(self.newXFrameSize, self.newYFrameSize, self.newXFrameOffset, self.newYFrameOffset)
+        except:
+            #If frame can't be changed display error
+            self.errorInfoText('Error updating frame')
 
+        #Update camera frame info
+        self.updateCameraFrameInfo()
 
+    def updateCameraFrameInfo(self):
+        self.lblCurrentFrameX.setText(f'X: {self.mainPipeline.cameraFunctions.currentWidth}')
+        self.lblCurrentFrameXOffset.setText(f'X Offset: {self.mainPipeline.cameraFunctions.currentOffsetX}')
+
+        self.lblCurrentFrameY.setText(f'Y: {self.mainPipeline.cameraFunctions.currentheight}')
+        self.lblCurrentFrameYOffset.setText(f'Y Offset: {self.mainPipeline.cameraFunctions.currentOffsetY}')
+
+    def updateCurrentFrameSize(self, width, height, xOffset, yOffset):
+        #Update labels to display new frame size
+        self.lblCurrentFrameX.setText(f'X: {width}')
+        self.lblCurrentFrameY.setText(f'X: {height}')
+        self.lblCurrentFrameXOffset.setText(f'X: {xOffset}')
+        self.lblCurrentFrameYOffset.setText(f'X: {yOffset}')
+
+        #Display okay message
+        self.okayInfoText('Frame size updated')
 
     def handlePlayPause(self):
         # try:
