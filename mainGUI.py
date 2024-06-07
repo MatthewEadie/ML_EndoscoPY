@@ -192,6 +192,9 @@ class Window(QWidget):
         self.createmachineLearningToggle()
         layout.addWidget(self.toggleMLGroup,0,1)
 
+        #Create toggle for demo mode
+        self.createDemoToggle()
+
 
         #Create display image
         self.createDisplayImage()
@@ -288,7 +291,7 @@ class Window(QWidget):
         # self.radioAcquisitionMode.toggled.connect(self.changeDisplayMode)
 
     def createmachineLearningToggle(self):
-         # ---- Toggle ML operation ---- #
+        # ---- Toggle ML operation ---- #
         self.toggleMLGroup = QGroupBox()
         self.toggleMLGroupLayout = QHBoxLayout()
         self.toggleMLGroup.setLayout(self.toggleMLGroupLayout)
@@ -303,6 +306,23 @@ class Window(QWidget):
         #Set variable to handle toggle ML, True by default
         self.TFmachineLearning = False
         pass
+
+    def createDemoToggle(self):
+        # ---- Toggle ML operation ---- #
+        self.toggleDemoGroup = QGroupBox()
+        self.toggleDemoGroupLayout = QHBoxLayout()
+        self.toggleDemoGroup.setLayout(self.toggleDemoGroupLayout)
+        #Button to turn ML on off
+        self.ckbToggleDemo = QCheckBox('Demo mode')
+        self.ckbToggleDemo.clicked.connect(self.handleToggleDemo)
+        self.toggleDemoGroupLayout.addWidget(self.ckbToggleDemo)
+
+
+        #Set variable to handle toggle ML, True by default
+        self.TFmachineLearning = False
+        pass
+        
+
 
     def createDisplayImage(self):
         #Layout to contain image display
@@ -956,6 +976,11 @@ class Window(QWidget):
             self.btnEnableML.setText('ML on')
         pass
 
+    def handleToggleDemo(self):
+        TFDemo = self.ckbToggleDemo.isChecked()
+        self.mainPipeline.toggleDemo(TFDemo)
+        self.okayInfoText(f'Demo mode set to {TFDemo}')
+
     def initaliseCamera(self):
         #CAMERA INITALISATION
         self.cameraInitialised = self.mainPipeline.initaliseCamera() #Initialise camera
@@ -990,10 +1015,11 @@ class Window(QWidget):
         self.newYFrameSize = self.numFrameY.value()
         self.newXFrameOffset = self.numFrameXOffset.value()
         self.newYFrameOffset = self.numFrameYOffset.value()
-        try:
-            #Try updating camera frame size
-            self.mainPipeline.setCameraFrameSize(self.newXFrameSize, self.newYFrameSize, self.newXFrameOffset, self.newYFrameOffset)
-        except:
+        #Try updating camera frame size
+        TFCameraFrame = self.mainPipeline.setCameraFrameSize(self.newXFrameSize, self.newYFrameSize, self.newXFrameOffset, self.newYFrameOffset)
+        if TFCameraFrame:
+            pass
+        else:
             #If frame can't be changed display error
             self.errorInfoText('Error updating frame')
 
@@ -1044,11 +1070,18 @@ class Window(QWidget):
             self.btnCapture.setText('Stop')
             self.playTF = False
 
+            #Disable set frame button
+            self.btnSetCameraFrame.setEnabled(False)
+
         else:
             self.mainPipeline.stopAcquisition()
             #Change button to display Play
             self.btnCapture.setText('Capture')
             self.playTF = True
+
+            #Re enable set frame size
+            self.btnSetCameraFrame.setEnabled(True)
+
 
     def updateDisplayPlayback(self,imgOut, imageNo):
         #Clear previous image from scene

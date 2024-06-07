@@ -33,6 +33,8 @@ class mainPipeline(QObject):
     stop_pressed = False #Default False
     TFML = False #Machine learning off by default
 
+    demo = False
+
 
 
     # ---- MACHINE LEARNING FUNCTIONS ---- #
@@ -80,7 +82,7 @@ class mainPipeline(QObject):
 
         while self.stop_pressed == False:
 
-            #Get image from dataset
+            #Get images from dataset
             outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
 
             #Process image
@@ -136,6 +138,11 @@ class mainPipeline(QObject):
         #When image recieved from camera:
         
         if self.TFML:
+            #check if on demo
+            #Demo will overlay 256x256 fibre bundle 
+            if self.demo:
+                cameraImage = self.applyFibereOverlay(cameraImage)
+
             #If ML on send image to stack
             self.sendImageToStack(cameraImage, imageNumber)
         else:
@@ -147,12 +154,107 @@ class mainPipeline(QObject):
 
         pass
 
+    def processCameraStack(self, cameraStack):
+        #run stack through ML model
+        processedImage = self.machineLearningFunctions.processStack(cameraStack)
 
+        #Convert to pix map
+        pix_output = self.prepareImageForDisplay(processedImage)
+
+        #Emit pixmap to GUI
+        self.updateImageAcquisition.emit(pix_output)
+
+        pass
 
 # ---- GENERAL FUNCTIONS ---- #
     def toggleML(self, tfPerformML):
         #Update local variable to check if performing ML
         self.TFML = tfPerformML
+
+    def toggleDemo(self, OnOff):
+        #Set local variable to tur or false
+        self.demo = OnOff
+        #Load fibre bundle image
+        self.fibreBundle = np.load('fibreMask256.png')
+        #Get core locations
+        self.preprocessFibre(self.fibreBundle)
+        return
+    
+    def preprocessFibre(self, fBundle):
+        self.im_denom_masked = fBundle
+
+        labeled_array, self.num_cores = label(self.im_denom_masked)
+
+        print('Labeled mask')
+
+        # Find non zero values which represent pixels that 
+        # are not interpolated
+        nzarry, nzarrx = np.nonzero(self.im_denom_masked)
+        values_known = self.im_denom_masked[nzarry,nzarrx]
+
+        # A meshgrid of pixel coordinates
+        self.m, self.n = self.im_denom_masked.shape[0], self.im_denom_masked.shape[1]
+        mi, ni = self.im_denom_masked.shape[0], self.im_denom_masked.shape[1]
+
+        [X,Y]=[nzarrx, nzarry]
+        [self.Xi,self.Yi]=np.meshgrid(np.arange(0, self.n, 1), np.arange(0, self.m, 1))
+
+        xy=np.zeros([X.shape[0],2])
+        xy[:,0]=Y.flatten()
+        xy[:,1]=X.flatten()
+
+        uv=np.zeros([self.Xi.shape[0]*self.Xi.shape[1],2])
+        uv[:,0]=self.Yi.flatten()
+        uv[:,1]=self.Xi.flatten()
+
+        print('Mesh grid created')
+
+        self.core_pixel_num = np.zeros(shape=(self.num_cores+1,1),dtype=int)
+
+
+        #Count cores
+        unique, self.core_pixel_num = np.unique(labeled_array, return_counts=True)
+
+        print('number of cores counted')
+
+
+            
+        # We need an array only of size determined by the maximum number of pixels per core    
+        max_num_pixels_per_core = np.max(self.core_pixel_num[1:])
+
+        if max_num_pixels_per_core < 10:
+            max_num_pixels_per_core = 10
+            print('Number of pixels per core appears to be small.')
+        elif max_num_pixels_per_core >100:
+            print('Number of pixels per core appears to be too big.')
+
+        self.core_arr_x = np.zeros(shape=(self.num_cores+1,max_num_pixels_per_core),dtype=int)
+        self.core_arr_y = np.zeros(shape=(self.num_cores+1,max_num_pixels_per_core),dtype=int)
+        self.core_arr_vals = np.zeros(shape=(self.num_cores+1,max_num_pixels_per_core),dtype=float)
+        self.core_arr_vals_bool = np.full((self.num_cores+1,max_num_pixels_per_core),False,dtype=bool)
+        self.core_arr_mean = np.zeros(shape=(self.num_cores+1,1),dtype=float)
+
+        #Core locations
+        self.core_arr_x, self.core_arr_y, self.core_arr_vals_bool = CF.core_locations(labeled_array, self.num_cores, self.core_pixel_num, self.core_arr_x, self.core_arr_y, self.core_arr_vals_bool)
+        print('core locations obtained')
+
+        self.idxpts=np.arange(1,self.num_cores+1)
+
+    def averageCores(self, im):
+        # ---- Average cores ---- #
+        # Copy core values from image to core array. The array is initialised to 0 beforehand.
+        self.core_arr_vals[self.idxpts,:] = im[self.core_arr_y[self.idxpts,:],self.core_arr_x[self.idxpts,:]]
+
+        # Calculate mean value per core. The boolean array within "where" was preset to be True
+        # for array locations where core values are expected and False for array locations where no
+        # no value is expected. With optics used, maximum 70-80 pixels per core is expected.
+        core_arr_mean = np.mean(self.core_arr_vals, axis=1, where=self.core_arr_vals_bool)
+
+        # Remap back to image the means of whole core back into image. For some reason, I could not vectorise 
+        # code below, hence the for loop. Trying to figure out the limitations of vectorisation.
+        im[self.core_arr_y[self.idxpts,:],self.core_arr_x[self.idxpts,:]] = core_arr_mean[self.idxpts, None]
+
+        
 
     def contrastChanged(self, minCont, maxCont):
         #Update thread contrast values
@@ -226,7 +328,7 @@ class mainPipeline(QObject):
         self.cameraThread.start()
 
         #Slot to recieve image from camera
-        self.cameraFunctions.imageAcquired.connect(self.processCameraImage)
+        self.cameraFunctions.imageAcquired.connect(self.processCameraStack)
 
         # RECORDER THREAD #
         self.recorderFunctions = ImageRecorder()
@@ -252,8 +354,19 @@ class mainPipeline(QObject):
         self.exposureTime = exposureTime
 
     def setCameraFrameSize(self, xFrameSize, yFrameSize, xFrameOffset, yFrameOffset):
-        self.cameraFunctions.configure_custom_image_settings(xFrameSize, yFrameSize, xFrameOffset, yFrameOffset)
-        pass
+        #Perform checks
+        #Camera frame goes outside X range
+        if xFrameSize + xFrameOffset > self.cameraFunctions.maxWidth:
+            return False
+        #Camera frame goes outside Y range
+        if yFrameSize + yFrameOffset > self.cameraFunctions.maxHeight:
+            return False
+        
+        try:
+            self.cameraFunctions.configure_custom_image_settings(xFrameSize, yFrameSize, xFrameOffset, yFrameOffset)
+            return True
+        except:
+            return False
 
     def createSaveStack(self):
         #Pass mlshape to image recorder class
@@ -270,3 +383,13 @@ class mainPipeline(QObject):
         #Tell image recorder thread to save stack
         self.recorderFunctions.saveImages(self.savePath)
         pass
+
+
+    def applyFibereOverlay(self, image):
+        #apply fibre bundle
+        imageOverlayed = image * self.fibreBundle
+
+        #Average cores
+        imageAveraged = CF.
+
+        return

@@ -11,9 +11,9 @@ print(image1.shape)
 
 stack = np.zeros((10,10,3))
 
-stack[:,:,0] = image1
-stack[:,:,1] = image2
-stack[:,:,2] = image3
+stack[0,:,:,0] = image1
+stack[0,:,:,1] = image2
+stack[0,:,:,2] = image3
 
 print(stack.shape)
 
