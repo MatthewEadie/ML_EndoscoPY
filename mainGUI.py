@@ -194,6 +194,7 @@ class Window(QWidget):
 
         #Create toggle for demo mode
         self.createDemoToggle()
+        layout.addWidget(self.toggleDemoGroup, 0,2)
 
 
         #Create display image
@@ -316,6 +317,9 @@ class Window(QWidget):
         self.ckbToggleDemo = QCheckBox('Demo mode')
         self.ckbToggleDemo.clicked.connect(self.handleToggleDemo)
         self.toggleDemoGroupLayout.addWidget(self.ckbToggleDemo)
+
+        #Disabled till camera in initalised
+        self.ckbToggleDemo.setEnabled(False)
 
 
         #Set variable to handle toggle ML, True by default
@@ -557,13 +561,28 @@ class Window(QWidget):
         self.cameraSettingsTab.setLayout(self.cameraSettingsLayout)
 
         # ----  CAMERA FUNCTION ---- #
+        self.cameraInitGroup = QGroupBox()
+        self.cameraInitGroupLayout = QHBoxLayout()
+        self.cameraInitGroup.setLayout(self.cameraInitGroupLayout)
         #Initalise camera button
         self.btnInitaliseCamera = QPushButton('Initalise')
         self.btnInitaliseCamera.setEnabled(False) #Defaulty disabled until swapped to acquisition mode
-        #Add button to camera tab layout
-        self.cameraSettingsLayout.addWidget(self.btnInitaliseCamera)
+        #Add button to camera init group
+        self.cameraInitGroupLayout.addWidget(self.btnInitaliseCamera)
         #Connect button to initalise camera function
         self.btnInitaliseCamera.clicked.connect(self.initaliseCamera)
+
+        #De-Initalise camera button
+        self.btnDeInitaliseCamera = QPushButton('De-Initalise')
+        self.btnDeInitaliseCamera.setEnabled(False) #Defaulty disabled until swapped to acquisition mode
+        #Add button to camera init group
+        self.cameraInitGroupLayout.addWidget(self.btnDeInitaliseCamera)
+        #Connect button to initalise camera function
+        self.btnDeInitaliseCamera.clicked.connect(self.deInitaliseCamera)
+        #Add group to camera tab layout
+        self.cameraSettingsLayout.addWidget(self.cameraInitGroup)
+
+
 
 
 
@@ -762,7 +781,8 @@ class Window(QWidget):
 
         #Button to save the last 100 images
         self.btnSave100 = QPushButton('Save 100')
-        # self.btnCapture.clicked.connect(self.handlePlayPause)
+        self.btnSave100.setEnabled(False)
+        self.btnSave100.clicked.connect(self.handleSaveImages)
 
 
         
@@ -963,23 +983,34 @@ class Window(QWidget):
 
     def handleToggleML(self):
         #Check if button is on or of
-        #Button on -> disable ML, turn button to off
+        #Button on -> disable ML
         if self.TFmachineLearning == True:
             self.mainPipeline.toggleML(False)
             self.TFmachineLearning = False
-            self.btnEnableML.setText('ML off')
+            self.btnEnableML.setText('ML on')
 
-        #Button off -> enable ML, turn button to on
+        #Button off -> enable ML
         elif self.TFmachineLearning == False:
             self.mainPipeline.toggleML(True)
             self.TFmachineLearning = True
-            self.btnEnableML.setText('ML on')
-        pass
+            self.btnEnableML.setText('ML off')
+
+        self.okayInfoText(f'Machine learning set to {self.TFmachineLearning}')
 
     def handleToggleDemo(self):
+        #Check the stack of the demo toggle
         TFDemo = self.ckbToggleDemo.isChecked()
-        self.mainPipeline.toggleDemo(TFDemo)
-        self.okayInfoText(f'Demo mode set to {TFDemo}')
+        try:
+            #Send state to main pipeline
+            self.mainPipeline.toggleDemo(TFDemo)
+            #Set camera frame to 256x256
+            #Offset X = 1536/2 - 128 (to capture center of camera frame)
+            #Offset Y = 2048/2 - 128 (to capture center of camera frame)
+            self.mainPipeline.setCameraFrameSize(256,256,0,0)
+            #Display okay text
+            self.okayInfoText(f'Demo mode set to {TFDemo}')
+        except:
+            self.errorInfoText('Error changing demo mode')
 
     def initaliseCamera(self):
         #CAMERA INITALISATION
@@ -988,6 +1019,12 @@ class Window(QWidget):
         if self.cameraInitialised == False:
             self.errorInfoText('Error initalising camera')
             return
+        
+        #Enable demo mode toggle
+        self.ckbToggleDemo.setEnabled(True)
+
+        #Enable de-init button
+        self.btnDeInitaliseCamera.setEnabled(True)
         
         #Update camera info
         self.txtCameraSN.setText(f'{self.mainPipeline.cameraFunctions.cameraSerialNum}')
@@ -1009,6 +1046,14 @@ class Window(QWidget):
         self.btnCapture.setEnabled(True)
 
         self.okayInfoText('Camera initalised')
+
+    def deInitaliseCamera(self):
+        #Check is camera is imaging
+        if self.playTF == True: #True = camera not imaging
+            #De-init camer
+            self.mainPipeline.cameraFunctions.endAcquisition()
+        else:
+            self.errorInfoText("Make sure the camera isn't imaging")
 
     def setCameraFrameSize(self):
         self.newXFrameSize = self.numFrameX.value()
@@ -1081,6 +1126,14 @@ class Window(QWidget):
 
             #Re enable set frame size
             self.btnSetCameraFrame.setEnabled(True)
+
+    def handleSaveImages(self):
+        #Tell main pipeline to save images in save stack
+        try:
+            self.mainPipeline.saveImageStack()
+            self.okayInfoText(f'Images tack saved to {self.acquisitionSaveLocation}')
+        except:
+            self.errorInfoText('Error saving images')
 
 
     def updateDisplayPlayback(self,imgOut, imageNo):

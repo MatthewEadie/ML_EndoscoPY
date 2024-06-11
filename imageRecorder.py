@@ -10,54 +10,68 @@ class ImageRecorder(QObject):
     
     mutex = QMutex()
 
-    def createDisplayStack(self,MLShape):
+    def createDisplayBuffer(self,MLShape):
         #Read shape of input layer
-        images, height, width, self.channels = MLShape.shape
+        self.images = MLShape[0]
+        self.height = MLShape[1] 
+        self.width = MLShape[2]
+        self.channels = MLShape[3]
         #Create empty array for storing images
-        self._imageDisplayBuffer = np.zeros((height,width,self.channels))
+        self._imageDisplayBuffer = np.zeros((1,self.height,self.width,self.channels))
         pass
 
     def addImageToDisplayStack(self, newImage, imageNumber):
         self.mutex.lock()
-        _image = newImage
+        _image = newImage/255 #needs to be reduced to between 0 and 1 before ML processing
 
         if imageNumber < self.channels:
             #Check to see if image buffer is full
-            self._imageDisplayBuffer[:,:,imageNumber] = _image #Append new image into buffer
+            self._imageDisplayBuffer[0,:,:,imageNumber] = _image #Append new image into buffer
         else:
             #Use np.roll to move first image to last image
             self._imageDisplayBuffer = np.roll(self._imageDisplayBuffer, -1)
             #rewrite last image as new image
-            self._imageDisplayBuffer[:,:,self.channels] = _image
+            self._imageDisplayBuffer[0,:,:,self.channels-1] = _image
             #Emit stack for processing
+            print('full stack emitted')
             self.stackFull.emit(self._imageDisplayBuffer)
+            #Send stack to save Buffer
+            print('Stack sent to save buffer')
+            self.addStackToSaveStack(self._imageDisplayBuffer, self.stackNo)
+            print('Stack appended to buffer')
+            #Increment stack number
+            self.stackNo += 1
 
         self.mutex.unlock()
 
 
         pass
 
-    def createSaveBuffer(self,MLShape):
-        #Read shape of input layer
-        images, height, width, channels = MLShape.shape
+    def destroyDisplayStack(self):
+        del self._imageDisplayBuffer
+
+    def createSaveBuffer(self):
         #Create empty array for storing images
-        self._stackBuffer = np.zeros((100,height,width,channels))
+        self._stackBuffer = np.zeros((100,self.height,self.width,self.channels))
+        #Set stack number to 0
+        self.stackNo = 0
 
 
-    def addStackToSaveStack(self, newImage, stackNumber):
-        self.mutex.lock()
-        _image = newImage
+    def addStackToSaveStack(self, newStack, stackNumber):
+        print('stack recieved')
+        _Stack = newStack
 
         if stackNumber < 100:
             #Check to see if image buffer has reached 300 images
-            self._stackBuffer[stackNumber,:,:,:] = _image #Append new image into buffer
+            self._stackBuffer[stackNumber,:,:,:] = _Stack #Append new image into buffer
         else:
             #Use np.roll to move first image to last image
             self._stackBuffer = np.roll(self._stackBuffer, [0, 0, 0, -1], axis=(1, 0, 0, 0))
             #rewrite last image as new image
-            self._stackBuffer[99,:,:,:] = _image
+            self._stackBuffer[99,:,:,:] = _Stack
 
-        self.mutex.unlock()
+        print('Finished storing stack')
+
 
 
     def saveImages(self, savePath):
@@ -66,7 +80,7 @@ class ImageRecorder(QObject):
         self._savingPath = savePath
         now = datetime.now()
         dateTime = now.strftime("%H-%M-%S_%d-%m-%Y")
-        np.save(f'{self._savingPath}+{dateTime}.npy', self._stackBuffer)
+        np.save(f'{self._savingPath}/{dateTime}.npy', self._stackBuffer)
 
         self.mutex.unlock()
         pass

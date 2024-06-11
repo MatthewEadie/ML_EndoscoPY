@@ -24,7 +24,7 @@ class CameraPipeline(QObject):
 
 
     def initialiseCamera(self):
-        try:
+        # try:
             # Retrieve singleton reference to system object
             self.system = PySpin.System.GetInstance()
 
@@ -57,9 +57,11 @@ class CameraPipeline(QObject):
             self.nodemap_tldevice = self.cam.GetTLDeviceNodeMap()
 
             # Initialize camera
+            print('Init camera')
             self.cam.Init()
 
             # Retrieve GenICam nodemap
+            print('get node map')
             self.nodemap = self.cam.GetNodeMap()
 
             self.cameraSerialNumC = self.nodemap_tldevice.GetNode("DeviceSerialNumber")
@@ -89,8 +91,8 @@ class CameraPipeline(QObject):
             self.currentOffsetX = self.node_offset_x.GetValue()
             self.currentOffsetY = self.node_offset_y.GetValue()
             return True
-        except:
-            return False
+        # except:
+        #     return False
     
     def stopCapture(self):
         self.captureStop = True
@@ -100,6 +102,11 @@ class CameraPipeline(QObject):
         # NOTE: Unlike the C++ examples, we cannot rely on pointer objects being automatically
         # cleaned up when going out of scope.
         # The usage of del is preferred to assigning the variable to None.
+
+        # # Deinitialize camera
+        self.cam.DeInit()
+        print('Camera De initalised')
+        
         del self.cam
 
         # Clear camera list before releasing system
@@ -230,6 +237,7 @@ class CameraPipeline(QObject):
         #  *** NOTES ***
         #  Ending acquisition appropriately helps ensure that devices clean up
         #  properly and do not need to be power-cycled to maintain integrity.
+        print('Acquisition Ended')
         self.cam.EndAcquisition()
 
         return True
@@ -412,9 +420,6 @@ class CameraPipeline(QObject):
             # Acquire images          
             result &= self.acquire_and_display_images(self.nodemap, self.nodemap_tldevice)
                 
-
-            # # Deinitialize camera
-            self.cam.DeInit()
 
         except PySpin.SpinnakerException as ex:
             print('Error: %s' % ex)

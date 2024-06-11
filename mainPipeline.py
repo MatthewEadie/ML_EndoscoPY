@@ -2,9 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import tensorflow as tf
-from cv2 import imwrite
+from cv2 import imread
 from math import floor
 import time
+from scipy.ndimage import label
 
 from utils import commonFunctions as CF
 
@@ -32,7 +33,7 @@ class mainPipeline(QObject):
 
     stop_pressed = False #Default False
     TFML = False #Machine learning off by default
-
+    modelLoaded = False
     demo = False
 
 
@@ -51,6 +52,8 @@ class mainPipeline(QObject):
         self.machineLearningFunctions.loadModel(modelFilepath)
         #Get shape of input layer for display
         self.firstLayerShape = self.machineLearningFunctions.firstLayerShape
+        #Variable to check a model is loaded
+        self.modelLoaded = True
 
 
 
@@ -124,6 +127,13 @@ class mainPipeline(QObject):
         #Reset image number to 0
         self.currentImageNum = 0
 
+        #Create buffers if ML is loaded
+        if self.modelLoaded == True:
+            #Create display buffer for acquisition
+            self.createDisplayStack()
+            #Create save buffer for acquisition
+            self.createSaveStack()
+    
         #Tell camera to beging acquiring
         self.cameraFunctions.run_single_camera()
 
@@ -132,21 +142,35 @@ class mainPipeline(QObject):
     def stopAcquisition(self):
         #Tell camera to stop acquiring
         self.cameraFunctions.stopCapture()
+
+        if self.modelLoaded == True:
+            #destroy the display buffer
+            self.recorderFunctions.destroyDisplayStack()
         pass
 
     def processCameraImage(self, cameraImage, imageNumber):
         #When image recieved from camera:
+        print('image from camera')
         
-        if self.TFML:
+        if self.TFML == True:
             #check if on demo
             #Demo will overlay 256x256 fibre bundle 
             if self.demo:
-                cameraImage = self.applyFibereOverlay(cameraImage)
+                #ML apply overlay
+                print('ML apply overlay')
+                cameraImage = self.applyFibreOverlay(cameraImage)
 
             #If ML on send image to stack
+            print('Send image to stack')
             self.sendImageToStack(cameraImage, imageNumber)
         else:
+            #Demo will overlay 256x256 fibre bundle 
+            if self.demo:
+                print('regular apply overlay')
+                cameraImage = self.applyFibreOverlay(cameraImage)
+
             #If ML off - Process image
+            print('Single image to pix')
             pix_output = self.singleImageFromCamera(cameraImage)
         
             # Draws an image on the current figure
@@ -175,7 +199,7 @@ class mainPipeline(QObject):
         #Set local variable to tur or false
         self.demo = OnOff
         #Load fibre bundle image
-        self.fibreBundle = np.load('fibreMask256.png')
+        self.fibreBundle = imread('fibreMask256.png',0)
         #Get core locations
         self.preprocessFibre(self.fibreBundle)
         return
@@ -253,8 +277,8 @@ class mainPipeline(QObject):
         # Remap back to image the means of whole core back into image. For some reason, I could not vectorise 
         # code below, hence the for loop. Trying to figure out the limitations of vectorisation.
         im[self.core_arr_y[self.idxpts,:],self.core_arr_x[self.idxpts,:]] = core_arr_mean[self.idxpts, None]
+        return im
 
-        
 
     def contrastChanged(self, minCont, maxCont):
         #Update thread contrast values
@@ -328,7 +352,7 @@ class mainPipeline(QObject):
         self.cameraThread.start()
 
         #Slot to recieve image from camera
-        self.cameraFunctions.imageAcquired.connect(self.processCameraStack)
+        self.cameraFunctions.imageAcquired.connect(self.processCameraImage)
 
         # RECORDER THREAD #
         self.recorderFunctions = ImageRecorder()
@@ -337,7 +361,7 @@ class mainPipeline(QObject):
         self.recorderThread.start()
 
         #Slot to recieve full stack from recorder
-        self.recorderFunctions.stackFull.connect(self.machineLearningFunctions.processStack)
+        self.recorderFunctions.stackFull.connect(self.processCameraStack)
 
     def stopCameraThread(self):
         #Exit camera thread
@@ -347,11 +371,11 @@ class mainPipeline(QObject):
         self.recorderThread.exit()
         pass
 
-    def setCameraSettings(self, MLInputShape, exposureTime):
-        #Copy ML shape for buffer shape
-        self.mlShape = MLInputShape
-        #Copy exposure time for initial setup
-        self.exposureTime = exposureTime
+    # def setCameraSettings(self, MLInputShape, exposureTime):
+    #     #Copy ML shape for buffer shape
+    #     self.mlShape = MLInputShape
+    #     #Copy exposure time for initial setup
+    #     self.exposureTime = exposureTime
 
     def setCameraFrameSize(self, xFrameSize, yFrameSize, xFrameOffset, yFrameOffset):
         #Perform checks
@@ -368,9 +392,14 @@ class mainPipeline(QObject):
         except:
             return False
 
+    def createDisplayStack(self):
+        #ML shape used to create buffer
+        self.recorderFunctions.createDisplayBuffer(self.firstLayerShape)
+
     def createSaveStack(self):
         #Pass mlshape to image recorder class
-        self.recorderFunctions.createSaveBuffer(self.mlShape)
+        self.recorderFunctions.createSaveBuffer()
+        pass
 
     def sendImageToStack(self, image, imageNum):
         self.recorderFunctions.addImageToDisplayStack(image, imageNum)
@@ -384,12 +413,11 @@ class mainPipeline(QObject):
         self.recorderFunctions.saveImages(self.savePath)
         pass
 
-
-    def applyFibereOverlay(self, image):
+    def applyFibreOverlay(self, image):
         #apply fibre bundle
         imageOverlayed = image * self.fibreBundle
 
         #Average cores
-        imageAveraged = CF.
+        imageAvg = self.averageCores(imageOverlayed)
 
-        return
+        return imageAvg

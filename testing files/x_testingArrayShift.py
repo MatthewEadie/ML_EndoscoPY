@@ -9,7 +9,7 @@ image3 = cv.imread('small images/3.png',0)
 
 print(image1.shape)
 
-stack = np.zeros((10,10,3))
+stack = np.zeros((1,10,10,3))
 
 stack[0,:,:,0] = image1
 stack[0,:,:,1] = image2
@@ -18,16 +18,16 @@ stack[0,:,:,2] = image3
 print(stack.shape)
 
 
-cv.imshow('image 1', stack[:,:,0])
-cv.imshow('image 2', stack[:,:,1])
-cv.imshow('image 3', stack[:,:,2])
+cv.imshow('image 1', stack[0,:,:,0])
+cv.imshow('image 2', stack[0,:,:,1])
+cv.imshow('image 3', stack[0,:,:,2])
 cv.waitKey(0)
 
 stack = np.roll(stack, -1)
 
-cv.imshow('image 1', stack[:,:,0])
-cv.imshow('image 2', stack[:,:,1])
-cv.imshow('image 3', stack[:,:,2])
+cv.imshow('image 1', stack[0,:,:,0])
+cv.imshow('image 2', stack[0,:,:,1])
+cv.imshow('image 3', stack[0,:,:,2])
 cv.waitKey(0)
 
 # import numpy as np 
