@@ -105,6 +105,20 @@ class WidgetGallery(QMainWindow):
             return
         
         self.mainWindow.newMLDatasetDirectory(self.datasetDirectoryPath)
+    
+    def closeEvent(self, event):
+        # Ask for confirmation before closing
+        confirmation = QMessageBox.question(self, "Confirmation", "Are you sure you want to close the application?", QMessageBox.Yes | QMessageBox.No)
+
+        if confirmation == QMessageBox.Yes:
+            try:
+                #Uninit camera if still initalised
+                self.mainWindow.mainPipeline.stopAcquisition()
+            except:
+                pass
+            event.accept()  # Close the app
+        else:
+            event.ignore()  # Don't close the app
 
 
 
@@ -149,7 +163,11 @@ class Window(QWidget):
 
         self.playTF = True #Initalise play stop button as true
 
+        self.recordTF = False #Initialise recording as false
+
         self.displayMode = 1 # 1 = ML playback, 2 = acquisition
+
+        self.acquisitionSaveLocation = '' #Initalise as empty for use later
 
         # ---- THREAD INSTANCES ---- #
         # ML THREAD #
@@ -402,8 +420,10 @@ class Window(QWidget):
     def changeControlsPlayback(self):
         #Remove capture and save buttons
         self.buttonControlGroupLayout.removeWidget(self.btnCapture)
+        self.buttonControlGroupLayout.removeWidget(self.btnRecord)
         self.buttonControlGroupLayout.removeWidget(self.btnSave100)
         self.btnCapture.setParent(None)
+        self.btnRecord.setParent(None)
         self.btnSave100.setParent(None)
 
         #Disable Initalise camera button
@@ -429,8 +449,9 @@ class Window(QWidget):
         self.btnPlayPause.setParent(None)
 
         #Add capture and save button
-        self.buttonControlGroupLayout.addWidget(self.btnCapture)
-        self.buttonControlGroupLayout.addWidget(self.btnSave100)
+        self.buttonControlGroupLayout.addWidget(self.btnCapture,0,0)
+        self.buttonControlGroupLayout.addWidget(self.btnRecord,1,0)
+        self.buttonControlGroupLayout.addWidget(self.btnSave100,1,1)
 
         #Disable buttons until camera is initalised and save stack created
         self.btnCapture.setEnabled(False)
@@ -764,7 +785,7 @@ class Window(QWidget):
 
     def createButtonControls(self):
         self.buttonControlGroup = QGroupBox()
-        self.buttonControlGroupLayout = QVBoxLayout()
+        self.buttonControlGroupLayout = QGridLayout()
         self.buttonControlGroup.setLayout(self.buttonControlGroupLayout)
 
         #Push button to control playback
@@ -772,12 +793,17 @@ class Window(QWidget):
         self.btnPlayPause.clicked.connect(self.handlePlayPause)
 
         #Add button to layout as playback is default
-        self.buttonControlGroupLayout.addWidget(self.btnPlayPause)
+        self.buttonControlGroupLayout.addWidget(self.btnPlayPause,0,0)
 
         #CREATE BUTTONS FOR ACQUISITION BUT DON'T ADD THEM
         #Button to tell camera to start capturing
         self.btnCapture = QPushButton('Capture')
         self.btnCapture.clicked.connect(self.handleAcquisition)
+
+        #Button to start recording
+        self.btnRecord = QPushButton('Start recording')
+        self.btnRecord.setEnabled(False)
+        self.btnRecord.clicked.connect(self.toggleRecording)
 
         #Button to save the last 100 images
         self.btnSave100 = QPushButton('Save 100')
@@ -820,6 +846,9 @@ class Window(QWidget):
 
             #Enable ML toggle button
             self.btnEnableML.setEnabled(True)
+
+            #Enable recording, stack based on ML shape
+            self.btnRecord.setEnabled(True)
         except:
             #Display error message in info box
             self.errorInfoText('Error loading ML model')
@@ -896,8 +925,6 @@ class Window(QWidget):
             QMessageBox.critical(self, "Missing folder path", "No folder path selected.")
             #Remove text from save box
             self.txtSaveLocation.setText('')
-            #Disable save button
-            self.btnSave100.setEnabled(False)
             return
         
         #Update text box with save location
@@ -905,9 +932,6 @@ class Window(QWidget):
 
         #Update save location in ML pipeline
         self.mainPipeline.setSaveLocation(self.acquisitionSaveLocation)
-
-        #Enable save button
-        self.btnSave100.setEnabled(True)
         pass
 
 
@@ -1004,9 +1028,9 @@ class Window(QWidget):
             #Send state to main pipeline
             self.mainPipeline.toggleDemo(TFDemo)
             #Set camera frame to 256x256
-            #Offset X = 1536/2 - 128 (to capture center of camera frame)
-            #Offset Y = 2048/2 - 128 (to capture center of camera frame)
             self.mainPipeline.setCameraFrameSize(256,256,0,0)
+            #Update cameraframe info
+            self.updateCameraFrameInfo()
             #Display okay text
             self.okayInfoText(f'Demo mode set to {TFDemo}')
         except:
@@ -1118,6 +1142,9 @@ class Window(QWidget):
             #Disable set frame button
             self.btnSetCameraFrame.setEnabled(False)
 
+            #Disable demo toggle
+            self.ckbToggleDemo.setEnabled(False)
+
         else:
             self.mainPipeline.stopAcquisition()
             #Change button to display Play
@@ -1126,6 +1153,35 @@ class Window(QWidget):
 
             #Re enable set frame size
             self.btnSetCameraFrame.setEnabled(True)
+
+            #Re enable demo toggle
+            self.ckbToggleDemo.setEnabled(True)
+
+    def toggleRecording(self):
+        if self.recordTF == True: #True = is recording
+            #Stop recording
+            self.mainPipeline.stopRecording()
+            #Change recordTF to False
+            self.recordTF = False
+            #Update button text
+            self.btnRecord.setText('Start recording')
+            pass
+
+        elif self.recordTF == False: #False = isn't recording
+            #Check if save location is set
+            if self.acquisitionSaveLocation != '':
+                #Start recording
+                if self.mainPipeline.startRecording():
+                    #Change recordTF to True
+                    self.recordTF = True
+                    #Update button text
+                    self.btnRecord.setText('Stop recording')
+                    #Enable save button if a location is set and recording enabled
+                    self.btnSave100.setEnabled(True)
+                else:
+                    self.errorInfoText('Error starting recording, make sure a ML model is loaded')
+            else:
+                self.errorInfoText('No save location set')
 
     def handleSaveImages(self):
         #Tell main pipeline to save images in save stack
@@ -1185,6 +1241,8 @@ class Window(QWidget):
         msg.setWindowTitle("Error")
         msg.exec_()
 
+
+
          
 if __name__ == '__main__':
 
@@ -1211,4 +1269,4 @@ if __name__ == '__main__':
     app.setPalette(palette)
     window = WidgetGallery()
     window.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())

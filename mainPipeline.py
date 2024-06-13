@@ -131,8 +131,7 @@ class mainPipeline(QObject):
         if self.modelLoaded == True:
             #Create display buffer for acquisition
             self.createDisplayStack()
-            #Create save buffer for acquisition
-            self.createSaveStack()
+
     
         #Tell camera to beging acquiring
         self.cameraFunctions.run_single_camera()
@@ -145,8 +144,8 @@ class mainPipeline(QObject):
 
         if self.modelLoaded == True:
             #destroy the display buffer
-            self.recorderFunctions.destroyDisplayStack()
-        pass
+            # self.recorderFunctions.destroyDisplayStack()
+            pass
 
     def processCameraImage(self, cameraImage, imageNumber):
         #When image recieved from camera:
@@ -392,13 +391,33 @@ class mainPipeline(QObject):
         except:
             return False
 
+    def startRecording(self):
+        #Create the save stack
+        if self.modelLoaded == True:
+            print('create save stack')
+            self.createSaveStack()
+            #Tell recorder function to start recording
+            self.recorderFunctions.recording = True
+            print('begin recording')
+            return True
+        else:
+            return False
+        pass
+
+    def stopRecording(self):
+        #Tell recorder function to stop recording
+        self.recorderFunctions.recording = False
+        #Destroy the save stack
+        self.recorderFunctions.destroySaveStack()
+        pass
+
     def createDisplayStack(self):
         #ML shape used to create buffer
         self.recorderFunctions.createDisplayBuffer(self.firstLayerShape)
 
     def createSaveStack(self):
         #Pass mlshape to image recorder class
-        self.recorderFunctions.createSaveBuffer()
+        self.recorderFunctions.createSaveBuffer(self.firstLayerShape)
         pass
 
     def sendImageToStack(self, image, imageNum):

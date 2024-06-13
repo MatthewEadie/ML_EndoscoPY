@@ -10,6 +10,8 @@ class ImageRecorder(QObject):
     
     mutex = QMutex()
 
+    recording = False
+
     def createDisplayBuffer(self,MLShape):
         #Read shape of input layer
         self.images = MLShape[0]
@@ -33,32 +35,38 @@ class ImageRecorder(QObject):
             #rewrite last image as new image
             self._imageDisplayBuffer[0,:,:,self.channels-1] = _image
             #Emit stack for processing
-            print('full stack emitted')
             self.stackFull.emit(self._imageDisplayBuffer)
-            #Send stack to save Buffer
-            print('Stack sent to save buffer')
-            self.addStackToSaveStack(self._imageDisplayBuffer, self.stackNo)
-            print('Stack appended to buffer')
-            #Increment stack number
-            self.stackNo += 1
+            
+            if self.recording == True:
+                try:
+                    #Send stack to save Buffer
+                    self.addStackToSaveStack(self._imageDisplayBuffer, self.stackNo)
+                    print('stack sent to save buffer')
+                    #Increment stack number
+                    self.stackNo += 1
+                except:
+                    pass
 
         self.mutex.unlock()
-
-
         pass
 
     def destroyDisplayStack(self):
         del self._imageDisplayBuffer
 
-    def createSaveBuffer(self):
+    def createSaveBuffer(self, MLShape):
+        #Read shape of input layer
+        self.images = MLShape[0]
+        self.height = MLShape[1] 
+        self.width = MLShape[2]
+        self.channels = MLShape[3]
         #Create empty array for storing images
+        print('create stackBuffer')
         self._stackBuffer = np.zeros((100,self.height,self.width,self.channels))
+        print('buffer created')
         #Set stack number to 0
         self.stackNo = 0
 
-
     def addStackToSaveStack(self, newStack, stackNumber):
-        print('stack recieved')
         _Stack = newStack
 
         if stackNumber < 100:
@@ -70,9 +78,9 @@ class ImageRecorder(QObject):
             #rewrite last image as new image
             self._stackBuffer[99,:,:,:] = _Stack
 
-        print('Finished storing stack')
 
-
+    def destroySaveStack(self):
+        del self._stackBuffer
 
     def saveImages(self, savePath):
         self.mutex.lock()
