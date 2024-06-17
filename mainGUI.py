@@ -32,6 +32,16 @@ class WidgetGallery(QMainWindow):
         self.mainWindow = Window()
         self.setCentralWidget(self.mainWindow)
 
+        #On init ask user to select ML model
+        openML = QMessageBox.question(self, "Open ML model", "Would you like to load an ML model. \n\nWarning not having an ML model loaded will disable some features. An ML model can be loaded later using file > open ML model.", QMessageBox.Yes | QMessageBox.No)
+
+        if openML == QMessageBox.Yes:
+            try:
+                #Uninit camera if still initalised
+                self.openMachineLearningModel()
+            except:
+                pass
+
 
     def createMenuBar(self):
         self.mainMenuBar = QMenuBar()
@@ -69,9 +79,7 @@ class WidgetGallery(QMainWindow):
         self.mainMenuBar.addMenu(self.fileMenu)
         self.mainMenuBar.addMenu(helpMenu)
 
-        self.setMenuBar(self.mainMenuBar)
-
-   
+        self.setMenuBar(self.mainMenuBar) 
 
     def openMachineLearningModel(self):
         dialog = QFileDialog(self)
@@ -85,7 +93,6 @@ class WidgetGallery(QMainWindow):
             return
 
         self.mainWindow.newMLModelOpened(self.modelDirectoryPath)
-
 
     def openMLDataset(self):
 
