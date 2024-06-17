@@ -208,8 +208,6 @@ class mainPipeline(QObject):
 
         labeled_array, self.num_cores = label(self.im_denom_masked)
 
-        print('Labeled mask')
-
         # Find non zero values which represent pixels that 
         # are not interpolated
         nzarry, nzarrx = np.nonzero(self.im_denom_masked)
@@ -230,16 +228,11 @@ class mainPipeline(QObject):
         uv[:,0]=self.Yi.flatten()
         uv[:,1]=self.Xi.flatten()
 
-        print('Mesh grid created')
-
         self.core_pixel_num = np.zeros(shape=(self.num_cores+1,1),dtype=int)
 
 
         #Count cores
         unique, self.core_pixel_num = np.unique(labeled_array, return_counts=True)
-
-        print('number of cores counted')
-
 
             
         # We need an array only of size determined by the maximum number of pixels per core    
@@ -259,7 +252,6 @@ class mainPipeline(QObject):
 
         #Core locations
         self.core_arr_x, self.core_arr_y, self.core_arr_vals_bool = CF.core_locations(labeled_array, self.num_cores, self.core_pixel_num, self.core_arr_x, self.core_arr_y, self.core_arr_vals_bool)
-        print('core locations obtained')
 
         self.idxpts=np.arange(1,self.num_cores+1)
 
@@ -434,7 +426,7 @@ class mainPipeline(QObject):
 
     def applyFibreOverlay(self, image):
         #apply fibre bundle
-        imageOverlayed = image * self.fibreBundle
+        imageOverlayed = image * (self.fibreBundle/255) #Fibre bundle to be between 0 and 1
 
         #Average cores
         imageAvg = self.averageCores(imageOverlayed)

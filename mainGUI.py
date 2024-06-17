@@ -1056,6 +1056,9 @@ class Window(QWidget):
 
         #Enable de-init button
         self.btnDeInitaliseCamera.setEnabled(True)
+
+        #Disable init button
+        self.btnInitaliseCamera.setEnabled(False)
         
         #Update camera info
         self.txtCameraSN.setText(f'{self.mainPipeline.cameraFunctions.cameraSerialNum}')
@@ -1081,8 +1084,12 @@ class Window(QWidget):
     def deInitaliseCamera(self):
         #Check is camera is imaging
         if self.playTF == True: #True = camera not imaging
-            #De-init camer
+            #De-init camera
             self.mainPipeline.cameraFunctions.endAcquisition()
+            #Enable init camera button
+            self.btnInitaliseCamera.setEnabled(True)
+            #Disable deinit button
+            self.btnDeInitaliseCamera.setEnabled(False)
         else:
             self.errorInfoText("Make sure the camera isn't imaging")
 
