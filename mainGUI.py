@@ -95,12 +95,6 @@ class WidgetGallery(QMainWindow):
         self.mainWindow.newMLModelOpened(self.modelDirectoryPath)
 
     def openMLDataset(self):
-
-        #CHANGE TO FILE SELECTION NOT FOLDER
-        #SELECTION NEEDS TO BE A 4D .npy STACK
-
-        # self.dataset_filepath = QFileDialog.getOpenFileName(self, "Open File", "./", "Numpy array (*.npy)")[0]
-
         dialog = QFileDialog(self, "Open dataset")
         dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
         dialog.setViewMode(QFileDialog.ViewMode.List)
@@ -164,17 +158,12 @@ class Window(QWidget):
 
 
         #----- GLOBAL VARIABLES -----
-
-
         self.sessionDirectory = ""
-
         self.playTF = True #Initalise play stop button as true
-
         self.recordTF = False #Initialise recording as false
-
         self.displayMode = 1 # 1 = ML playback, 2 = acquisition
-
         self.acquisitionSaveLocation = '' #Initalise as empty for use later
+        self.modelLoaded = False #Init ML model loaded as false
 
         # ---- THREAD INSTANCES ---- #
         # ML THREAD #
@@ -227,9 +216,8 @@ class Window(QWidget):
         layout.addWidget(self.singleDisplay,1,0,5,5)
 
 
-        #Create list to display datrasets in folder
-        self.createDatasetList()
-        layout.addWidget(self.grpSessionSettings,1,5)
+        #Create list to display machune learning info
+        self.createMachineLearningInfo()
 
 
 
@@ -239,11 +227,11 @@ class Window(QWidget):
         self.createContrastTab()
         self.settingsTabs.addTab(self.contrastTab, "Contrast")
 
-        self.createMachineLearningTab()
-        self.settingsTabs.addTab(self.machineLearningTab, "ML settings")
+        self.createDatasetTab()
+        self.settingsTabs.addTab(self.datasetTab, "Dataset")
 
         self.createCameraTab()
-        self.settingsTabs.addTab(self.cameraSettingsTab, "Camera Settings")
+        self.settingsTabs.addTab(self.cameraSettingsTab, "Camera")
 
         
 
@@ -253,7 +241,7 @@ class Window(QWidget):
 
 
         # Add widgets to the layout
-        layout.addWidget(self.grpSessionSettings,1,5,1,2)
+        layout.addWidget(self.grpMachineLearningModel,1,5,1,2)
         layout.addWidget(self.settingsTabs, 2,5,1,2)
         layout.addWidget(self.buttonControlGroup, 6,5)
 
@@ -273,16 +261,6 @@ class Window(QWidget):
         self.txtFPS.setAlignment(Qt.AlignRight)
         layout.addWidget(self.txtFPS,9,4)
 
-
-
-
-
-        #SET DEFAULT VALUES AT END OF WIDGET ALLOCATIONS
-        #----------------------------------------------
-        self.radioExposure25.setChecked(True) #Program default exposure setting is 25ms
-
-
-        #----------------------------------------------
 
         # Set the layout on the application's window
         self.setLayout(layout)
@@ -377,20 +355,47 @@ class Window(QWidget):
         #Add graphics view to layout
         singleDisplayLayout.addWidget(self.imageSingleDisplay,0,0)
 
-    def createDatasetList(self):
-        #Group layout for dataset list
-        self.grpSessionSettings = QGroupBox()
-        groupLayout = QGridLayout()
-        self.grpSessionSettings.setLayout(groupLayout)
+    def createMachineLearningInfo(self):
+        self.grpMachineLearningModel = QGroupBox()
+        self.machineLearningModelGroupLayout = QVBoxLayout()
+        self.grpMachineLearningModel.setLayout(self.machineLearningModelGroupLayout)
 
-        #List widget for datasets in selected folder
-        self.lstDatasetList = QListWidget()
-        self.btnSelectDataset = QPushButton("Load dataset")
-        self.btnSelectDataset.clicked.connect(self.openNewDataset)
+        # ---- Selected Model ---- #
+        #Text box for ML directory
+        self.lblChosenModel = QLabel('ML Model:')
+        self.txtChosenModel = QLineEdit('')
+        self.txtChosenModel.setReadOnly(True)
 
-        #Add dataset list widget to layout
-        groupLayout.addWidget(self.lstDatasetList, 0, 2, 2, 2)
-        groupLayout.addWidget(self.btnSelectDataset, 3, 2)
+        self.btnChangeMLModel = QPushButton('Change ML model')
+        self.btnChangeMLModel.clicked.connect(self.changeMLModel)
+
+        #Add label and txtbox to tab layout
+        self.machineLearningModelGroupLayout.addWidget(self.lblChosenModel)
+        self.machineLearningModelGroupLayout.addWidget(self.txtChosenModel)
+        self.machineLearningModelGroupLayout.addWidget(self.btnChangeMLModel)
+
+        # ---- Model input shape ---- #
+        #Text box for Dataset directory
+        self.lblModelInputShape = QLabel('Model input shape:')
+        self.txtModelInputShape = QLineEdit('')
+        self.txtModelInputShape.setReadOnly(True)
+
+        #Add label and txtbox to tab layout
+        self.machineLearningModelGroupLayout.addWidget(self.lblModelInputShape)
+        self.machineLearningModelGroupLayout.addWidget(self.txtModelInputShape)
+
+    def changeMLModel(self):
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setViewMode(QFileDialog.ViewMode.List)
+        self.modelDirectoryPath = dialog.getExistingDirectory()
+
+
+        if self.modelDirectoryPath == "":
+            QMessageBox.critical(self, "Missing folder path", "No folder path selected.")
+            return
+
+        self.newMLModelOpened(self.modelDirectoryPath)
 
     def changeDisplayMode(self):
         self.displayMode = self.modeButtonGroup.checkedId()
@@ -536,30 +541,33 @@ class Window(QWidget):
         self.contrastTabLayout.addWidget(self.grpContrastSliders)
         self.contrastTabLayout.addWidget(self.checkAutoContrast)
 
-    def createMachineLearningTab(self):
-        self.machineLearningTab = QWidget()
-        self.machineLearningTabLayout = QVBoxLayout()
-        self.machineLearningTab.setLayout(self.machineLearningTabLayout)
+    def createDatasetTab(self):
+        #Group layout for dataset list
+        self.datasetTab = QWidget()
+        self.datasetTabLayout = QVBoxLayout()
+        self.datasetTab.setLayout(self.datasetTabLayout)
 
-        # ---- Selected Model ---- #
-        #Text box for ML directory
-        self.lblChosenModel = QLabel('ML Model:')
-        self.txtChosenModel = QLineEdit('')
-        self.txtChosenModel.setReadOnly(True)
-
-        #Add label and txtbox to tab layout
-        self.machineLearningTabLayout.addWidget(self.lblChosenModel)
-        self.machineLearningTabLayout.addWidget(self.txtChosenModel)
-
-        # ---- Model input shape ---- #
         #Text box for Dataset directory
-        self.lblModelInputShape = QLabel('Model input shape:')
-        self.txtModelInputShape = QLineEdit('')
-        self.txtModelInputShape.setReadOnly(True)
+        self.lblChosenDatasetDirectory = QLabel('Dataset directory:')
+        self.txtChosenDatasetDirectory = QLineEdit('')
+        self.txtChosenDatasetDirectory.setReadOnly(True)
+        #Button to change dataset directory
+        self.btnChangeDatasetDirectory = QPushButton('Change dataset directory')
+        self.btnChangeDatasetDirectory.clicked.connect(self.changeDatasetDirectory)
 
         #Add label and txtbox to tab layout
-        self.machineLearningTabLayout.addWidget(self.lblModelInputShape)
-        self.machineLearningTabLayout.addWidget(self.txtModelInputShape)
+        self.datasetTabLayout.addWidget(self.lblChosenDatasetDirectory)
+        self.datasetTabLayout.addWidget(self.txtChosenDatasetDirectory)
+        self.datasetTabLayout.addWidget(self.btnChangeDatasetDirectory)
+
+        #List widget for datasets in selected folder
+        self.lstDatasetList = QListWidget()
+        self.btnSelectDataset = QPushButton("Load dataset")
+        self.btnSelectDataset.clicked.connect(self.openNewDataset)
+
+        #Add dataset list widget to layout
+        self.datasetTabLayout.addWidget(self.lstDatasetList)
+        self.datasetTabLayout.addWidget(self.btnSelectDataset)
 
         # ---- Chosen Dataset ---- #
         #Text box for Dataset directory
@@ -568,8 +576,8 @@ class Window(QWidget):
         self.txtChosenDataset.setReadOnly(True)
 
         #Add label and txtbox to tab layout
-        self.machineLearningTabLayout.addWidget(self.lblChosenDataset)
-        self.machineLearningTabLayout.addWidget(self.txtChosenDataset)
+        self.datasetTabLayout.addWidget(self.lblChosenDataset)
+        self.datasetTabLayout.addWidget(self.txtChosenDataset)
 
         # ---- Dataset shape ---- #
         #Text box for Dataset directory
@@ -578,8 +586,8 @@ class Window(QWidget):
         self.txtDatasetShape.setReadOnly(True)
 
         #Add label and txtbox to tab layout
-        self.machineLearningTabLayout.addWidget(self.lblDatasetShape)
-        self.machineLearningTabLayout.addWidget(self.txtDatasetShape)
+        self.datasetTabLayout.addWidget(self.lblDatasetShape)
+        self.datasetTabLayout.addWidget(self.txtDatasetShape)
         pass
 
     def createCameraTab(self):
@@ -707,15 +715,16 @@ class Window(QWidget):
 
         # ---- EXPOSURE SETTINGS ---- #
         #Layout for exposure settings
-        groupExposureSettings = QGroupBox('Exposure time (ms)')
-        groupExposureSetLayout = QGridLayout()
-        groupExposureSettings.setLayout(groupExposureSetLayout)
+        self.groupExposureSettings = QGroupBox('Exposure time (ms)')
+        self.groupExposureSetLayout = QGridLayout()
+        self.groupExposureSettings.setLayout(self.groupExposureSetLayout)
 
         #Button group and radio buttons for exposure presets
         self.btngrpExposure = QButtonGroup()
         self.radioExposure5 = QRadioButton('5')
         self.radioExposure15 = QRadioButton('15')
         self.radioExposure25 = QRadioButton('25')
+        self.radioExposure25.setChecked(True) #Program default exposure setting is 25ms
         self.radioExposure50 = QRadioButton('50')
 
         #Add buttons to group to work properly
@@ -725,19 +734,22 @@ class Window(QWidget):
         self.btngrpExposure.addButton(self.radioExposure50,50)
 
         #Add buttons to layout
-        groupExposureSetLayout.addWidget(self.radioExposure5,0,0)
-        groupExposureSetLayout.addWidget(self.radioExposure15,0,1)
-        groupExposureSetLayout.addWidget(self.radioExposure25,1,0)
-        groupExposureSetLayout.addWidget(self.radioExposure50,1,1)
+        self.groupExposureSetLayout.addWidget(self.radioExposure5,0,0)
+        self.groupExposureSetLayout.addWidget(self.radioExposure15,0,1)
+        self.groupExposureSetLayout.addWidget(self.radioExposure25,1,0)
+        self.groupExposureSetLayout.addWidget(self.radioExposure50,1,1)
 
         #Connect radio buttons to functions
-        # self.radioExposure5.toggled.connect(self.createTriggerTask)
-        # self.radioExposure15.toggled.connect(self.createTriggerTask)
-        # self.radioExposure25.toggled.connect(self.createTriggerTask)
-        # self.radioExposure50.toggled.connect(self.createTriggerTask)
+        self.radioExposure5.toggled.connect(lambda: self.changeCameraExposure(5))
+        self.radioExposure15.toggled.connect(lambda: self.changeCameraExposure(15))
+        self.radioExposure25.toggled.connect(lambda: self.changeCameraExposure(25))
+        self.radioExposure50.toggled.connect(lambda: self.changeCameraExposure(50))
+
+        #Disable group until camera init
+        self.groupExposureSettings.setEnabled(False)
 
         #Add exposure settings group to tab layout
-        self.cameraSettingsLayout.addWidget(groupExposureSettings)
+        self.cameraSettingsLayout.addWidget(self.groupExposureSettings)
 
 
 
@@ -820,22 +832,18 @@ class Window(QWidget):
 
         
 
-    def newSessionOpened(self, directoryPath):
-        #Obtain path to selected dataset folder
-        self.sessionDirectory = directoryPath
-        self.sessionImagingPath = f'{self.sessionDirectory}/'
+    def changeDatasetDirectory(self):
+        dialog = QFileDialog(self, "Open dataset")
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFiles)
+        dialog.setViewMode(QFileDialog.ViewMode.List)
+        self.datasetDirectoryPath = dialog.getExistingDirectory()
 
-        #Create list of all items in that folder
-        datasetFolders = os.listdir(self.sessionImagingPath)
 
-        self.lstDatasetList.clear() # remove previous entries
-        self.lstDatasetList.addItems(datasetFolders)
-
-        tfNewSession = self.playbackPipeline.newSession(folderPath=self.sessionDirectory)
-        if tfNewSession:
-            self.txtInfo.setText('New session opened.')
-        else:
-            self.txtInfo.setText('Error opening new session.')
+        if self.datasetDirectoryPath == "":
+            QMessageBox.critical(self, "Missing folder path", "No folder path selected.")
+            return
+        
+        self.newMLDatasetDirectory(self.datasetDirectoryPath)
 
     def newMLModelOpened(self, MLDirectoryPath):
         try:
@@ -844,21 +852,22 @@ class Window(QWidget):
 
             #Get shape of first layer
             self.firstLayerShape = self.mainPipeline.firstLayerShape
-            print(self.firstLayerShape)
 
             #Update info box and ML tab
             self.okayInfoText('ML model loaded')
             self.txtChosenModel.setText(MLDirectoryPath)
             self.txtModelInputShape.setText(f'{self.firstLayerShape}')
 
-            #Enable ML toggle button
-            self.btnEnableML.setEnabled(True)
-
             #Enable recording, stack based on ML shape
             self.btnRecord.setEnabled(True)
+
+            #Set model loaded to True
+            self.modelLoaded = True
         except:
             #Display error message in info box
             self.errorInfoText('Error loading ML model')
+            #Set model loaded to False
+            self.modelLoaded = False
         pass
 
     def newMLDatasetDirectory(self, MLDatasetPath):
@@ -875,6 +884,8 @@ class Window(QWidget):
         self.lstDatasetList.clear() 
         #Populate list with files
         self.lstDatasetList.addItems(self.datasets)
+        #Display selected directory
+        self.txtChosenDatasetDirectory.setText(f'{self.datasetPath}')
         
     def openNewDataset(self):
         try:
@@ -885,7 +896,7 @@ class Window(QWidget):
             self.datasetShape = self.mainPipeline.loadDataset(f'{self.datasetPath}/{selectedDataset}')
 
             #Display chosen dataset
-            self.txtChosenDataset.setText(f'{self.datasetPath}/{selectedDataset}')
+            self.txtChosenDataset.setText(f'{selectedDataset}')
 
             #Display shape of dataset
             self.txtDatasetShape.setText(f'{self.datasetShape}')
@@ -895,16 +906,22 @@ class Window(QWidget):
             self.configureImageSelector()
 
             #Check if dataset shape and ML input shape match
-            imageShape = self.datasetShape[1:4] #Ignore number of images
-            inputModelShape = self.firstLayerShape[1:4] #Ignore first number
-            if imageShape == inputModelShape:
-                pass
-            else:
-                #If they don't match display error
-                self.errorInfoText(f"Loaded dataset does not match model input shape")
-                #Disable play/pause to avoid break
-                self.btnPlayPause.setEnabled(False)
-                return
+            if self.modelLoaded == True:
+                imageShape = self.datasetShape[1:4] #Ignore number of images
+                inputModelShape = self.firstLayerShape[1:4] #Ignore first number
+                if imageShape == inputModelShape:
+                    #Enable ML button
+                    self.btnEnableML.setEnabled(True)
+                else:
+                    #If they don't match display error
+                    self.errorInfoText(f"Loaded dataset does not match model input shape")
+                    #Disable ML button to avoid break
+                    self.btnEnableML.setEnabled(False)
+                    #Disable ML in main pipeline
+                    self.mainPipeline.toggleML(False)
+                    self.TFmachineLearning = False
+                    self.btnEnableML.setText('ML on')
+                    return
 
             #Display okay message in info box
             self.okayInfoText(f'Dataset loaded: {selectedDataset}')
@@ -941,6 +958,18 @@ class Window(QWidget):
         self.mainPipeline.setSaveLocation(self.acquisitionSaveLocation)
         pass
 
+    def changeCameraExposure(self, exposureTime):
+        try:
+            #Set camera exposure
+            exposureTF, msg = self.mainPipeline.setCameraExposure(exposureTime)
+            if exposureTF == True:
+                #Display okay message
+                self.okayInfoText(msg)
+            else:
+                self.errorInfoText(msg)
+        except:
+            self.errorInfoText('Error setting exposure time')
+        
 
     def updateContrastSettings(self):
         #Get values of min slider
@@ -1040,8 +1069,13 @@ class Window(QWidget):
             self.updateCameraFrameInfo()
             #Display okay text
             self.okayInfoText(f'Demo mode set to {TFDemo}')
+
+            #Check if ML and camera frame are the same
+            self.checkCameraMatchesML()
         except:
             self.errorInfoText('Error changing demo mode')
+
+            
 
     def initaliseCamera(self):
         #CAMERA INITALISATION
@@ -1059,6 +1093,9 @@ class Window(QWidget):
 
         #Disable init button
         self.btnInitaliseCamera.setEnabled(False)
+
+        #Enable exposure group
+        self.groupExposureSettings.setEnabled(True)
         
         #Update camera info
         self.txtCameraSN.setText(f'{self.mainPipeline.cameraFunctions.cameraSerialNum}')
@@ -1090,6 +1127,8 @@ class Window(QWidget):
             self.btnInitaliseCamera.setEnabled(True)
             #Disable deinit button
             self.btnDeInitaliseCamera.setEnabled(False)
+            #Disable exposure group
+            self.groupExposureSettings.setEnabled(False)
         else:
             self.errorInfoText("Make sure the camera isn't imaging")
 
@@ -1099,15 +1138,17 @@ class Window(QWidget):
         self.newXFrameOffset = self.numFrameXOffset.value()
         self.newYFrameOffset = self.numFrameYOffset.value()
         #Try updating camera frame size
-        TFCameraFrame = self.mainPipeline.setCameraFrameSize(self.newXFrameSize, self.newYFrameSize, self.newXFrameOffset, self.newYFrameOffset)
+        TFCameraFrame, msg = self.mainPipeline.setCameraFrameSize(self.newXFrameSize, self.newYFrameSize, self.newXFrameOffset, self.newYFrameOffset)
         if TFCameraFrame:
             pass
         else:
             #If frame can't be changed display error
-            self.errorInfoText('Error updating frame')
+            self.errorInfoText(msg)
 
         #Update camera frame info
         self.updateCameraFrameInfo()
+        #Check if ML and camera frame are the same
+        self.checkCameraMatchesML()
 
     def updateCameraFrameInfo(self):
         #Set current frame text
@@ -1116,6 +1157,21 @@ class Window(QWidget):
 
         self.lblCurrentFrameY.setText(f'Y: {self.mainPipeline.cameraFunctions.currentheight}')
         self.lblCurrentFrameYOffset.setText(f'Y Offset: {self.mainPipeline.cameraFunctions.currentOffsetY}')
+
+    def checkCameraMatchesML(self):
+        #Check if camera frame shape matches ML model
+        TFCompatible, msg = self.mainPipeline.checkMLshapeCompatible()
+        if TFCompatible:
+            #Enabel ML button if same
+            self.btnEnableML.setEnabled(True)
+        else:
+            #Disable if different
+            self.btnEnableML.setEnabled(False)
+
+            self.mainPipeline.toggleML(False)
+            self.TFmachineLearning = False
+            self.btnEnableML.setText('ML on')
+        pass
 
     def updateCurrentFrameSize(self, width, height, xOffset, yOffset):
         #Update labels to display new frame size

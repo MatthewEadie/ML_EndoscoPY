@@ -108,8 +108,8 @@ class mainPipeline(QObject):
             time.sleep(1) # wait 1 second before looping
 
             #check if end of dataset has been reached
-            if self.currentImageNum == self.dataset.shape[0]: # 0th items in dataset is number of images (eg 10,256,256,11 dataset has 10 images)
-                self.currentImageNum = 0 #If end of dataset reached loop dataset
+            if self.currentImageNum == (self.dataset.shape[0]-1): # 0th items in dataset is number of images (eg 10,256,256,11 dataset has 10 images)
+                self.currentImageNum = 0 #If end of dataset reached, loop dataset
             else:
                 self.currentImageNum += 1 #Else iterate to next image
 
@@ -362,26 +362,41 @@ class mainPipeline(QObject):
         self.recorderThread.exit()
         pass
 
-    # def setCameraSettings(self, MLInputShape, exposureTime):
-    #     #Copy ML shape for buffer shape
-    #     self.mlShape = MLInputShape
-    #     #Copy exposure time for initial setup
-    #     self.exposureTime = exposureTime
-
     def setCameraFrameSize(self, xFrameSize, yFrameSize, xFrameOffset, yFrameOffset):
+        self.xFrameSize = xFrameSize
+        self.yFrameSize = yFrameSize
+        self.xFrameOffset = xFrameOffset
+        self.yFrameOffset = yFrameOffset
         #Perform checks
         #Camera frame goes outside X range
         if xFrameSize + xFrameOffset > self.cameraFunctions.maxWidth:
-            return False
+            return False, 'Camera frame dimensions exceed camera limit'
         #Camera frame goes outside Y range
         if yFrameSize + yFrameOffset > self.cameraFunctions.maxHeight:
-            return False
+            return False, 'Camera frame dimensions exceed camera limit'
         
         try:
+            #Set camera frame
             self.cameraFunctions.configure_custom_image_settings(xFrameSize, yFrameSize, xFrameOffset, yFrameOffset)
-            return True
+            return True, 'Camera frame changed.'
         except:
-            return False
+            return False, 'Error setting camera frame.'
+
+    def checkMLshapeCompatible(self):
+        #Check if frame size matched ML model
+        if self.modelLoaded == True:
+            #X axis
+            if self.firstLayerShape[1] != self.xFrameSize: 
+                return False,'Camera frame size does not match ML input shape.'
+            #Y Axis
+            if self.firstLayerShape[2] != self.yFrameSize:
+                return False,'Camera frame size does not match ML input shape.'
+
+    def setCameraExposure(self, exposure):
+        exposure_micro = exposure * 1000 #Camera uses microseconds for exposure
+        #Configure exposure
+        exposureTF, msg = self.cameraFunctions.configure_exposure(exposure_micro)
+        return exposureTF, msg
 
     def startRecording(self):
         #Create the save stack

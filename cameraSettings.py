@@ -242,7 +242,7 @@ class CameraPipeline(QObject):
 
         return True
 
-    def configure_exposure(cam, exposure_time_to_set):
+    def configure_exposure(self, exposure_time_to_set):
         """
         This function configures a custom exposure time. Automatic exposure is turned
         off in order to allow for the customization, and then the custom setting is
@@ -277,11 +277,11 @@ class CameraPipeline(QObject):
             # example turns automatic exposure off to set it manually and back
             # on to return the camera to its default state.
 
-            if cam.ExposureAuto.GetAccessMode() != PySpin.RW:
+            if self.cam.ExposureAuto.GetAccessMode() != PySpin.RW:
                 print('Unable to disable automatic exposure. Aborting...')
-                return False
+                return False, 'Unable to disable automatic exposure. Aborting...'
 
-            cam.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
+            self.cam.ExposureAuto.SetValue(PySpin.ExposureAuto_Off)
             print('Automatic exposure disabled...')
 
             # Set exposure time manually; exposure time recorded in microseconds
@@ -296,23 +296,21 @@ class CameraPipeline(QObject):
             # found out either by retrieving the unit with the GetUnit() method or
             # by checking SpinView.
 
-            if cam.ExposureTime.GetAccessMode() != PySpin.RW:
+            if self.cam.ExposureTime.GetAccessMode() != PySpin.RW:
                 print('Unable to set exposure time. Aborting...')
-                return False
+                return False, 'Unable to set exposure time. Aborting...'
 
             # Ensure desired exposure time does not exceed the maximum
-            exposure_time_to_set = 500000.0
-            exposure_time_to_set = min(cam.ExposureTime.GetMax(), exposure_time_to_set)
-            cam.ExposureTime.SetValue(exposure_time_to_set)
-            print('Shutter time set to %s us...\n' % exposure_time_to_set)
+            exposure_time_to_set = min(self.cam.ExposureTime.GetMax(), exposure_time_to_set)
+            self.cam.ExposureTime.SetValue(exposure_time_to_set)
 
         except PySpin.SpinnakerException as ex:
             print('Error: %s' % ex)
-            result = False
+            result = False, f'Error: {ex}'
 
-        return result
+        return result, f'Shutter time set to {exposure_time_to_set} us...'
     
-    def reset_exposure(cam):
+    def reset_exposure(self):
         """
         This function returns the camera to a normal state by re-enabling automatic exposure.
 
@@ -330,11 +328,11 @@ class CameraPipeline(QObject):
             # Automatic exposure is turned on in order to return the camera to its
             # default state.
 
-            if cam.ExposureAuto.GetAccessMode() != PySpin.RW:
+            if self.cam.ExposureAuto.GetAccessMode() != PySpin.RW:
                 print('Unable to enable automatic exposure (node retrieval). Non-fatal error...')
                 return False
 
-            cam.ExposureAuto.SetValue(PySpin.ExposureAuto_Continuous)
+            self.cam.ExposureAuto.SetValue(PySpin.ExposureAuto_Continuous)
 
             print('Automatic exposure enabled...')
 
