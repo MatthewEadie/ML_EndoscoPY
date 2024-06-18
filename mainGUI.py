@@ -164,6 +164,7 @@ class Window(QWidget):
         self.displayMode = 1 # 1 = ML playback, 2 = acquisition
         self.acquisitionSaveLocation = '' #Initalise as empty for use later
         self.modelLoaded = False #Init ML model loaded as false
+        self.currentFPS = 30 #Default fps is 30
 
         # ---- THREAD INSTANCES ---- #
         # ML THREAD #
@@ -213,7 +214,7 @@ class Window(QWidget):
 
         #Create display image
         self.createDisplayImage()
-        layout.addWidget(self.singleDisplay,1,0,5,5)
+        layout.addWidget(self.singleDisplay,1,0,5,6)
 
 
         #Create list to display machune learning info
@@ -241,26 +242,25 @@ class Window(QWidget):
 
 
         # Add widgets to the layout
-        layout.addWidget(self.grpMachineLearningModel,1,5,1,2)
-        layout.addWidget(self.settingsTabs, 2,5,1,2)
-        layout.addWidget(self.buttonControlGroup, 6,5)
+        layout.addWidget(self.grpMachineLearningModel,1,6,1,2)
+        layout.addWidget(self.settingsTabs, 2,6,1,2)
+        layout.addWidget(self.buttonControlGroup, 6,6)
 
 
 
         #Image selector slider
         self.createImageSlider()
-        layout.addWidget(self.groupImageSlider, 6, 0, 1, 5)
+        layout.addWidget(self.groupImageSlider, 6, 0, 1, 6)
 
 
         # LABEL FOR USING INFORMATION
         self.txtInfo = QLineEdit('info text')
         self.txtInfo.setReadOnly(True)
-        layout.addWidget(self.txtInfo,9,0,1,0)
+        layout.addWidget(self.txtInfo,9,0,1,4)
 
-        self.txtFPS = QLabel('fps counter')
-        self.txtFPS.setAlignment(Qt.AlignRight)
-        layout.addWidget(self.txtFPS,9,4)
-
+        self.lblFPS = QLabel(f'fps: {0}')
+        self.lblFPS.setAlignment(Qt.AlignRight)
+        layout.addWidget(self.lblFPS,9,5,1,1)
 
         # Set the layout on the application's window
         self.setLayout(layout)
@@ -588,6 +588,44 @@ class Window(QWidget):
         #Add label and txtbox to tab layout
         self.datasetTabLayout.addWidget(self.lblDatasetShape)
         self.datasetTabLayout.addWidget(self.txtDatasetShape)
+
+        # ---- PLAYBACK SETTINGS ---- #
+        #Layout for playback fps settings
+        self.groupPlaybackSettings = QGroupBox('Playback speed (fps)')
+        self.groupPlaybackSetLayout = QGridLayout()
+        self.groupPlaybackSettings.setLayout(self.groupPlaybackSetLayout)
+
+        #Button group and radio buttons for playback fps presets
+        self.btngrpPlayback = QButtonGroup()
+        self.radioPlayback10 = QRadioButton('10 fps')
+        self.radioPlayback20 = QRadioButton('20 fps')
+        self.radioPlayback30 = QRadioButton('30 fps')
+        self.radioExposure25.setChecked(True) #Program default fps 30fps
+        self.radioPlayback50 = QRadioButton('50 fps')
+
+        #Add buttons to group to work properly
+        self.btngrpPlayback.addButton(self.radioPlayback10,10)
+        self.btngrpPlayback.addButton(self.radioPlayback20,20)
+        self.btngrpPlayback.addButton(self.radioPlayback30,30)
+        self.btngrpPlayback.addButton(self.radioPlayback50,50)
+
+        #Add buttons to layout
+        self.groupPlaybackSetLayout.addWidget(self.radioPlayback10,0,0)
+        self.groupPlaybackSetLayout.addWidget(self.radioPlayback20,0,1)
+        self.groupPlaybackSetLayout.addWidget(self.radioPlayback30,1,0)
+        self.groupPlaybackSetLayout.addWidget(self.radioPlayback50,1,1)
+
+        #Connect radio buttons to functions
+        self.radioPlayback10.toggled.connect(lambda: self.changePlaybackFramerate(5))
+        self.radioPlayback20.toggled.connect(lambda: self.changePlaybackFramerate(15))
+        self.radioPlayback30.toggled.connect(lambda: self.changePlaybackFramerate(30))
+        self.radioPlayback50.toggled.connect(lambda: self.changePlaybackFramerate(50))
+
+        #Disable group until camera init
+        self.groupPlaybackSettings.setEnabled(False)
+
+        #Add playback rate to tab
+        self.datasetTabLayout.addWidget(self.groupPlaybackSettings)
         pass
 
     def createCameraTab(self):
@@ -936,6 +974,12 @@ class Window(QWidget):
             self.errorInfoText('Error loading data')
         pass
 
+    def changePlaybackFramerate(self, framerate):
+        self.mainPipeline.setPlaybackFramerate(framerate)
+        self.currentFPS = framerate
+        self.okayInfoText(f'Playback fps changed to {self.currentFPS}')
+        pass
+
     def changeSaveLocation(self):
         #Create fil dialog box to allow user to set folder path
         dialog = QFileDialog(self, "Open dataset")
@@ -1262,7 +1306,7 @@ class Window(QWidget):
             self.errorInfoText('Error saving images')
 
 
-    def updateDisplayPlayback(self,imgOut, imageNo):
+    def updateDisplayPlayback(self,imgOut, imageNo, maxFramerate):
         #Clear previous image from scene
         self.imageSingleScene.clear()
         #Add the pixmap of the new image to the scene
@@ -1276,9 +1320,12 @@ class Window(QWidget):
         self.currentImageNo = imageNo
         self.updateImageRangeCurrent()
 
+        #Update framerate
+        self.lblFPS.setText(f'Max fps: {maxFramerate}, Target fps: {self.currentFPS}')
+
         pass
 
-    def updateDisplayCamera(self, imgOut):
+    def updateDisplayCamera(self, imgOut, fps):
         #Clear previous image from scene
         self.imageSingleScene.clear()
         #Add the pixmap of the new image to the scene
@@ -1287,6 +1334,8 @@ class Window(QWidget):
         self.imageSingleScene.update()
         #Set the display to the new scene
         self.imageSingleDisplay.setScene(self.imageSingleScene)
+        #Update the fps
+        self.lblFPS.setText(f'fps: {fps}')
         pass
 
 

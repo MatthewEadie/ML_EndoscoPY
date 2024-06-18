@@ -6,6 +6,7 @@ from cv2 import imread
 from math import floor
 import time
 from scipy.ndimage import label
+from time import time
 
 from utils import commonFunctions as CF
 
@@ -21,15 +22,19 @@ from PyQt5.QtGui import QImage, QPixmap
 
 
 class mainPipeline(QObject):
-    updateImagePlayback = pyqtSignal(QPixmap, int)
-    updateImageAcquisition = pyqtSignal(QPixmap)
+    updateImagePlayback = pyqtSignal(QPixmap, int, int)
+    updateImageAcquisition = pyqtSignal(QPixmap, int)
 
     channels = 0
     model_path = ""
     dataset_path = ""
 
+    #Initial contrast values
     minContrast = 0
     maxContrast = 255
+
+    #Initial exposure 25ms
+    exposure = 25
 
     stop_pressed = False #Default False
     TFML = False #Machine learning off by default
@@ -85,6 +90,8 @@ class mainPipeline(QObject):
 
         while self.stop_pressed == False:
 
+            startTimePlayback = int(time() * 1000)
+
             #Get images from dataset
             outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
 
@@ -102,10 +109,17 @@ class mainPipeline(QObject):
             #Prepare image for display
             pix_output = self.prepareImageForDisplay(outputImage)
 
-            #Emit image back to main page for display
-            self.updateImagePlayback.emit(pix_output, self.currentImageNum)
+            stopTimePlayback = int(time() * 1000)
+            timeTaken = int((stopTimePlayback - startTimePlayback)) #time for processing + exposure time gives frame rate
+            fps = int(1000 / timeTaken) #1000ms (1 second) divided by time taken gives frames per second
 
-            time.sleep(1) # wait 1 second before looping
+            #delay show image if proccess too fase
+            if fps < self.playbackSpeed:
+                time.sleep(fps - self.playbackSpeed)
+            
+
+            #Emit image back to main page for display
+            self.updateImagePlayback.emit(pix_output, self.currentImageNum, fps)
 
             #check if end of dataset has been reached
             if self.currentImageNum == (self.dataset.shape[0]-1): # 0th items in dataset is number of images (eg 10,256,256,11 dataset has 10 images)
@@ -116,7 +130,9 @@ class mainPipeline(QObject):
     def stopPlayback(self):
         self.stop_pressed = True
 
-
+    def setPlaybackFramerate(self, framerate):
+        self.playbackSpeed = framerate
+        return 
 
 # ---- CAMERA FUNCTIONS ---- #
     def initaliseCamera(self):
@@ -150,6 +166,7 @@ class mainPipeline(QObject):
     def processCameraImage(self, cameraImage, imageNumber):
         #When image recieved from camera:
         print('image from camera')
+        outImage = cameraImage
         
         if self.TFML == True:
             #check if on demo
@@ -157,35 +174,55 @@ class mainPipeline(QObject):
             if self.demo:
                 #ML apply overlay
                 print('ML apply overlay')
-                cameraImage = self.applyFibreOverlay(cameraImage)
+                outImage = self.applyFibreOverlay(outImage)
 
             #If ML on send image to stack
             print('Send image to stack')
-            self.sendImageToStack(cameraImage, imageNumber)
+            self.sendImageToStack(outImage, imageNumber)
         else:
+            #Get acquisition start time
+            startTimeAcquisition = int(time() * 1000) #cvt to milliseconds
             #Demo will overlay 256x256 fibre bundle 
             if self.demo:
                 print('regular apply overlay')
-                cameraImage = self.applyFibreOverlay(cameraImage)
+                outImage = self.applyFibreOverlay(outImage)
 
-            #If ML off - Process image
-            print('Single image to pix')
-            pix_output = self.singleImageFromCamera(cameraImage)
-        
+            #Perform contrast adjustment
+            outImage = self.contrastAdjustment(outImage)
+
+            #If ML off - Convert image to pixmap
+            pix_output = self.singleImageFromCamera(outImage)
+
+            #Get end time of processing
+            stopTimeAcquisition = int(time() * 1000) #cvt to milliseconds
+            timeTaken = int((stopTimeAcquisition - startTimeAcquisition) + self.exposure) #time for processing + exposure time gives frame rate
+            fps = int(1000 / timeTaken) #1000ms (1 second) divided by time taken gives frames per second
+
             # Draws an image on the current figure
-            self.updateImageAcquisition.emit(pix_output)
+            self.updateImageAcquisition.emit(pix_output, fps)
 
         pass
 
     def processCameraStack(self, cameraStack):
+        #Get acquisition start time
+        startTimeAcquisition = int(time() * 1000) #cvt to milliseconds
+
         #run stack through ML model
         processedImage = self.machineLearningFunctions.processStack(cameraStack)
 
+        #Perform contrast adjustment
+        outImage = self.contrastAdjustment(processedImage)
+
         #Convert to pix map
-        pix_output = self.prepareImageForDisplay(processedImage)
+        pix_output = self.prepareImageForDisplay(outImage)
+
+        #Get end time of processing
+        stopTimeAcquisition = int(time() * 1000) #cvt to milliseconds
+        timeTaken = int((stopTimeAcquisition - startTimeAcquisition) + self.exposure) #time for processing + exposure time gives frame rate
+        fps = int(1000 / timeTaken) #1000ms (1 second) divided by time taken gives frames per second
 
         #Emit pixmap to GUI
-        self.updateImageAcquisition.emit(pix_output)
+        self.updateImageAcquisition.emit(pix_output, fps)
 
         pass
 
@@ -396,6 +433,11 @@ class mainPipeline(QObject):
         exposure_micro = exposure * 1000 #Camera uses microseconds for exposure
         #Configure exposure
         exposureTF, msg = self.cameraFunctions.configure_exposure(exposure_micro)
+
+        #If successfully changed update local variable
+        if exposureTF:
+            self.exposure = exposure
+
         return exposureTF, msg
 
     def startRecording(self):
