@@ -51,7 +51,7 @@ class WidgetGallery(QMainWindow):
         self.mlModelAction = QAction("Select ML model")
         self.mlModelAction.triggered.connect(self.openMachineLearningModel)
 
-        self.mlDatasetAction = QAction("Select Dataset folder")
+        self.mlDatasetAction = QAction("Select dataset folder")
         self.mlDatasetAction.triggered.connect(self.openMLDataset)
 
         self.saveImagesAction = QAction("Save images")
@@ -600,7 +600,7 @@ class Window(QWidget):
         self.radioPlayback10 = QRadioButton('10 fps')
         self.radioPlayback20 = QRadioButton('20 fps')
         self.radioPlayback30 = QRadioButton('30 fps')
-        self.radioExposure25.setChecked(True) #Program default fps 30fps
+        self.radioPlayback30.setChecked(True) #Program default fps 30fps
         self.radioPlayback50 = QRadioButton('50 fps')
 
         #Add buttons to group to work properly
@@ -1107,15 +1107,21 @@ class Window(QWidget):
         try:
             #Send state to main pipeline
             self.mainPipeline.toggleDemo(TFDemo)
+            print('Main pipeline changed')
             #Set camera frame to 256x256
             self.mainPipeline.setCameraFrameSize(256,256,0,0)
+            print('Camera changed')
             #Update cameraframe info
             self.updateCameraFrameInfo()
+            print('Camera frame updated')
+            
+            #Check if ML and camera frame are the same
+            self.checkCameraMatchesML()
+
             #Display okay text
             self.okayInfoText(f'Demo mode set to {TFDemo}')
 
-            #Check if ML and camera frame are the same
-            self.checkCameraMatchesML()
+            
         except:
             self.errorInfoText('Error changing demo mode')
 
@@ -1215,6 +1221,8 @@ class Window(QWidget):
             self.mainPipeline.toggleML(False)
             self.TFmachineLearning = False
             self.btnEnableML.setText('ML on')
+
+            self.errorInfoText(msg)
         pass
 
     def updateCurrentFrameSize(self, width, height, xOffset, yOffset):

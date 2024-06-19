@@ -6,7 +6,7 @@ from cv2 import imread
 from math import floor
 import time
 from scipy.ndimage import label
-from time import time
+from time import time, sleep
 
 from utils import commonFunctions as CF
 
@@ -40,6 +40,7 @@ class mainPipeline(QObject):
     TFML = False #Machine learning off by default
     modelLoaded = False
     demo = False
+    playbackSpeed = 30 #30fps playback speed by default
 
 
 
@@ -66,14 +67,14 @@ class mainPipeline(QObject):
 
 # ---- PLAYBACK FUNCTIONS ---- #
     def singleImagePlayback(self):
-        outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
+        imageStack = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
         
         #Process image
         if self.TFML == True:
-            outputImage = self.machineLearningFunctions.processStack(outputImage)
+            outputImage = self.machineLearningFunctions.processStack(imageStack)
         else:
             #Need to put 4D image into 1D array
-            outputImage = self.singleFrameFromStack(outputImage)
+            outputImage = self.singleFrameFromStack(imageStack)
             pass
         
         #Perform contrast adjustment
@@ -83,25 +84,33 @@ class mainPipeline(QObject):
         pixOutputImage = self.prepareImageForDisplay(outputImage)
         
         #Emit image back to main page for display
-        self.updateImagePlayback.emit(pixOutputImage, self.currentImageNum)
+        self.updateImagePlayback.emit(pixOutputImage, self.currentImageNum, 1)
 
     def runPlayback(self):
         self.stop_pressed = False
+
+        datasetShape = self.dataset.shape
+
+        x = datasetShape[1]
+        y = datasetShape[2]
+        channels = datasetShape[3]
+
+
+        imageStack = np.zeros((x,y,channels))
 
         while self.stop_pressed == False:
 
             startTimePlayback = int(time() * 1000)
 
             #Get images from dataset
-            outputImage = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
+            imageStack[:,:,:] = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
 
             #Process image
             if self.TFML == True:
-                outputImage = self.machineLearningFunctions.processStack(outputImage)
+                outputImage = self.machineLearningFunctions.processStack(imageStack)
             else:
                 #Need to put 4D image into 1D array
-                outputImage = self.singleFrameFromStack(outputImage)
-                pass
+                outputImage = self.singleFrameFromStack(imageStack)
 
             #Perform contrast adjustment
             outputImage = self.contrastAdjustment(outputImage)
@@ -110,12 +119,21 @@ class mainPipeline(QObject):
             pix_output = self.prepareImageForDisplay(outputImage)
 
             stopTimePlayback = int(time() * 1000)
-            timeTaken = int((stopTimePlayback - startTimePlayback)) #time for processing + exposure time gives frame rate
-            fps = int(1000 / timeTaken) #1000ms (1 second) divided by time taken gives frames per second
+            timeTaken = int((stopTimePlayback - startTimePlayback)) #time for processing
+
+            if timeTaken != 0:
+                fps = int(1000 / timeTaken) #1000ms (1 second) divided by time taken gives frames per second
+            else:
+                fps = 999 #Set to 1ms
 
             #delay show image if proccess too fase
-            if fps < self.playbackSpeed:
-                time.sleep(fps - self.playbackSpeed)
+            if fps > self.playbackSpeed:
+                sleep((1/(self.playbackSpeed)) - (timeTaken/1000))
+                #Convert playback speed into seconds
+                #1000/playback speed = requested time per frame
+                #minus timeTake gives time to wait
+                #Set fps to playback speed as it's now corrected
+                fps = self.playbackSpeed
             
 
             #Emit image back to main page for display
@@ -123,6 +141,8 @@ class mainPipeline(QObject):
 
             #check if end of dataset has been reached
             if self.currentImageNum == (self.dataset.shape[0]-1): # 0th items in dataset is number of images (eg 10,256,256,11 dataset has 10 images)
+                print(f'{self.currentImageNum}')
+                print(f'{self.dataset.shape[0]-1}')
                 self.currentImageNum = 0 #If end of dataset reached, loop dataset
             else:
                 self.currentImageNum += 1 #Else iterate to next image
@@ -165,7 +185,6 @@ class mainPipeline(QObject):
 
     def processCameraImage(self, cameraImage, imageNumber):
         #When image recieved from camera:
-        print('image from camera')
         outImage = cameraImage
         
         if self.TFML == True:
@@ -173,18 +192,15 @@ class mainPipeline(QObject):
             #Demo will overlay 256x256 fibre bundle 
             if self.demo:
                 #ML apply overlay
-                print('ML apply overlay')
                 outImage = self.applyFibreOverlay(outImage)
 
             #If ML on send image to stack
-            print('Send image to stack')
             self.sendImageToStack(outImage, imageNumber)
         else:
             #Get acquisition start time
             startTimeAcquisition = int(time() * 1000) #cvt to milliseconds
             #Demo will overlay 256x256 fibre bundle 
             if self.demo:
-                print('regular apply overlay')
                 outImage = self.applyFibreOverlay(outImage)
 
             #Perform contrast adjustment
@@ -273,19 +289,20 @@ class mainPipeline(QObject):
 
             
         # We need an array only of size determined by the maximum number of pixels per core    
-        max_num_pixels_per_core = np.max(self.core_pixel_num[1:])
+        self.max_num_pixels_per_core = np.max(self.core_pixel_num[1:])
 
-        if max_num_pixels_per_core < 10:
-            max_num_pixels_per_core = 10
+        if self.max_num_pixels_per_core < 10:
+            self.max_num_pixels_per_core = 10
             print('Number of pixels per core appears to be small.')
-        elif max_num_pixels_per_core >100:
+        elif self.max_num_pixels_per_core >100:
             print('Number of pixels per core appears to be too big.')
 
-        self.core_arr_x = np.zeros(shape=(self.num_cores+1,max_num_pixels_per_core),dtype=int)
-        self.core_arr_y = np.zeros(shape=(self.num_cores+1,max_num_pixels_per_core),dtype=int)
-        self.core_arr_vals = np.zeros(shape=(self.num_cores+1,max_num_pixels_per_core),dtype=float)
-        self.core_arr_vals_bool = np.full((self.num_cores+1,max_num_pixels_per_core),False,dtype=bool)
+        self.core_arr_x = np.zeros(shape=(self.num_cores+1,self.max_num_pixels_per_core),dtype=int)
+        self.core_arr_y = np.zeros(shape=(self.num_cores+1,self.max_num_pixels_per_core),dtype=int)
+        self.core_arr_vals_bool = np.full((self.num_cores+1,self.max_num_pixels_per_core),False,dtype=bool)
+        self.core_arr_vals = np.zeros(shape=(self.num_cores+1,self.max_num_pixels_per_core),dtype=float)
         self.core_arr_mean = np.zeros(shape=(self.num_cores+1,1),dtype=float)
+        
 
         #Core locations
         self.core_arr_x, self.core_arr_y, self.core_arr_vals_bool = CF.core_locations(labeled_array, self.num_cores, self.core_pixel_num, self.core_arr_x, self.core_arr_y, self.core_arr_vals_bool)
@@ -293,6 +310,8 @@ class mainPipeline(QObject):
         self.idxpts=np.arange(1,self.num_cores+1)
 
     def averageCores(self, im):
+        #Create empty array to store array values
+
         # ---- Average cores ---- #
         # Copy core values from image to core array. The array is initialised to 0 beforehand.
         self.core_arr_vals[self.idxpts,:] = im[self.core_arr_y[self.idxpts,:],self.core_arr_x[self.idxpts,:]]
@@ -300,13 +319,12 @@ class mainPipeline(QObject):
         # Calculate mean value per core. The boolean array within "where" was preset to be True
         # for array locations where core values are expected and False for array locations where no
         # no value is expected. With optics used, maximum 70-80 pixels per core is expected.
-        core_arr_mean = np.mean(self.core_arr_vals, axis=1, where=self.core_arr_vals_bool)
+        self.core_arr_mean = np.mean(self.core_arr_vals, axis=1, where=self.core_arr_vals_bool)
 
         # Remap back to image the means of whole core back into image. For some reason, I could not vectorise 
         # code below, hence the for loop. Trying to figure out the limitations of vectorisation.
-        im[self.core_arr_y[self.idxpts,:],self.core_arr_x[self.idxpts,:]] = core_arr_mean[self.idxpts, None]
+        im[self.core_arr_y[self.idxpts,:],self.core_arr_x[self.idxpts,:]] = self.core_arr_mean[self.idxpts, None]
         return im
-
 
     def contrastChanged(self, minCont, maxCont):
         #Update thread contrast values
@@ -351,7 +369,7 @@ class mainPipeline(QObject):
 
     def singleFrameFromStack(self, imageStack):
         #Get the first image in the stack with only the first channel
-        singleFrame = imageStack[0,:,:,0]
+        singleFrame = imageStack[:,:,0]
         #Multiply by 255 to get values between 1 and 256 instead of 0 and 1
         singleFrame *= 255
         return singleFrame
@@ -428,6 +446,12 @@ class mainPipeline(QObject):
             #Y Axis
             if self.firstLayerShape[2] != self.yFrameSize:
                 return False,'Camera frame size does not match ML input shape.'
+
+            #If both axis match return true
+            return True, 'Camera matches model'
+        
+        #If not model is loaded return false
+        return False, 'Model not loaded'
 
     def setCameraExposure(self, exposure):
         exposure_micro = exposure * 1000 #Camera uses microseconds for exposure
