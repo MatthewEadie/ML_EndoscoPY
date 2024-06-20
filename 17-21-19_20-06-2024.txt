@@ -1,0 +1,628 @@
+ML input shape: (None, 256, 256, 3)
+Image Number: 3mstimeTakenOverall: 2295mstimeTakenML: 2270mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 4mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 5mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 6mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 7mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 8mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 9mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 10mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 11mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 12mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 13mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 14mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 15mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 16mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 17mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 18mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 19mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 20mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 21mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 22mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 23mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 24mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 25mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 26mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 27mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 28mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 29mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 30mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 31mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 32mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 33mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 34mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 35mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 36mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 37mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 38mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 39mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 40mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 41mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 42mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 43mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 44mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 45mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 46mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 47mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 48mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 49mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 50mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 51mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 52mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 53mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 54mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 55mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 56mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 57mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 58mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 59mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 60mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 61mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 62mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 63mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 64mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 65mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 66mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 67mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 68mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 69mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 70mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 71mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 72mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 73mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 74mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 75mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 76mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 77mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 78mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 79mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 80mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 81mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 82mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 83mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 84mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 85mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 86mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 87mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 88mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 89mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 90mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 91mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 92mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 93mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 94mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 95mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 96mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 97mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 98mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 99mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 100mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 101mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 102mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 103mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 104mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 105mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 106mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 107mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 108mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 109mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 110mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 111mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 112mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 113mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 114mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 115mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 116mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 117mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 118mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 119mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 120mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 121mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 122mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 123mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 124mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 125mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 126mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 127mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 128mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 129mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 130mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 131mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 132mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 133mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 134mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 135mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 136mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 137mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 138mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 139mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 140mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 141mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 142mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 143mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 144mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 145mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 146mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 147mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 148mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 149mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 150mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 151mstimeTakenOverall: 61mstimeTakenML: 36mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 152mstimeTakenOverall: 43mstimeTakenML: 17mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 153mstimeTakenOverall: 73mstimeTakenML: 48mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 154mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 155mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 156mstimeTakenOverall: 57mstimeTakenML: 31mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 157mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 158mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 159mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 160mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 161mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 162mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 163mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 164mstimeTakenOverall: 51mstimeTakenML: 26mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 165mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 166mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 167mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 168mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 169mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 170mstimeTakenOverall: 54mstimeTakenML: 28mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 171mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 172mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 173mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 174mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 175mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 176mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 177mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 178mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 179mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 180mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 181mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 182mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 183mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 184mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 185mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 186mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 187mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 188mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 189mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 190mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 191mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 192mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 193mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 194mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 195mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 196mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 197mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 198mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 199mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 200mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 201mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 202mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 203mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 204mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 205mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 206mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 207mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 208mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 209mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 210mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 211mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 212mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 213mstimeTakenOverall: 45mstimeTakenML: 19mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 214mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 215mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 216mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 217mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 218mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 219mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 220mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 221mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 222mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 223mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 224mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 225mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 226mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 227mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 228mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 229mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 230mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 231mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 232mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 233mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 234mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 235mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 236mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 237mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 238mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 239mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 240mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 241mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 242mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 243mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 244mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 245mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 246mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 247mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 248mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 249mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 250mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 251mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 252mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 253mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 254mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 255mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 256mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 257mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 258mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 259mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 260mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 261mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 262mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 263mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 264mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 265mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 266mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 267mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 268mstimeTakenOverall: 44mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 269mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 270mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 271mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 272mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 273mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 274mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 275mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 276mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 277mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 278mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 279mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 280mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 281mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 282mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 283mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 284mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 285mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 286mstimeTakenOverall: 43mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 287mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 288mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 289mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 290mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 291mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 292mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 293mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 294mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 295mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 296mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 297mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 298mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 299mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 300mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 301mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 302mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 303mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 304mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 305mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 306mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 307mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 308mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 309mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 310mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 311mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 312mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 313mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 314mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 315mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 316mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 317mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 318mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 319mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 320mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 321mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 322mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 323mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 324mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 325mstimeTakenOverall: 73mstimeTakenML: 48mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 326mstimeTakenOverall: 62mstimeTakenML: 37mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 327mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 328mstimeTakenOverall: 46mstimeTakenML: 21mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 329mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 330mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 331mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 332mstimeTakenOverall: 38mstimeTakenML: 12mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 333mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 334mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 335mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 336mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 337mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 338mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 339mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 340mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 341mstimeTakenOverall: 44mstimeTakenML: 19mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 342mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 343mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 344mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 345mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 346mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 347mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 348mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 349mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 350mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 351mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 352mstimeTakenOverall: 44mstimeTakenML: 18mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 353mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 354mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 355mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 356mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 357mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 358mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 359mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 360mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 361mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 362mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 363mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 364mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 365mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 366mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 367mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 368mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 369mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 370mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 371mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 372mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 373mstimeTakenOverall: 44mstimeTakenML: 19mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 374mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 375mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 376mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 377mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 378mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 379mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 380mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 381mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 382mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 383mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 384mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 385mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 386mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 387mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 388mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 389mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 390mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 391mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 392mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 393mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 394mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 395mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 396mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 397mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 398mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 399mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 400mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 401mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 402mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 403mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 404mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 405mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 406mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 407mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 408mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 409mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 410mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 411mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 412mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 413mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 414mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 415mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 416mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 417mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 418mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 419mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 420mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 421mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 422mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 423mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 424mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 425mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 426mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 427mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 428mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 429mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 430mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 431mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 432mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 433mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 434mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 435mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 436mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 437mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 438mstimeTakenOverall: 43mstimeTakenML: 17mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 439mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 440mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 441mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 442mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 443mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 444mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 445mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 446mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 447mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 448mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 449mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 450mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 451mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 452mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 453mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 454mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 455mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 456mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 457mstimeTakenOverall: 41mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 458mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 459mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 460mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 461mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 462mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 463mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 464mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 465mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 466mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 467mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 468mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 469mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 470mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 471mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 472mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 473mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 474mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 475mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 476mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 477mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 478mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 479mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 480mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 481mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 482mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 483mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 484mstimeTakenOverall: 41mstimeTakenML: 13mstimeTakenContrast: 2mstimeTakenPixmap: 1ms
+Image Number: 485mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 486mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 487mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 488mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 489mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 490mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 491mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 492mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 493mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 494mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 495mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 496mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 497mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 498mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 499mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 500mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 501mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 502mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 503mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 504mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 505mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 506mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 507mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 508mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 509mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 510mstimeTakenOverall: 60mstimeTakenML: 35mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 511mstimeTakenOverall: 44mstimeTakenML: 19mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 512mstimeTakenOverall: 65mstimeTakenML: 40mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 513mstimeTakenOverall: 52mstimeTakenML: 27mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 514mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 515mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 516mstimeTakenOverall: 57mstimeTakenML: 32mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 517mstimeTakenOverall: 52mstimeTakenML: 27mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 518mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 519mstimeTakenOverall: 63mstimeTakenML: 38mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 520mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 521mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 522mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 523mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 524mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 525mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 526mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 527mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 528mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 529mstimeTakenOverall: 45mstimeTakenML: 19mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 530mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 531mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 532mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 533mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 534mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 535mstimeTakenOverall: 43mstimeTakenML: 17mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 536mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 537mstimeTakenOverall: 48mstimeTakenML: 23mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 538mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 539mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 540mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 541mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 542mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 543mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 544mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 545mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 546mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 547mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 548mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 549mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 550mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 551mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 552mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 553mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 554mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 555mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 556mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 557mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 558mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 559mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 560mstimeTakenOverall: 43mstimeTakenML: 18mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 561mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 562mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 563mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 564mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 565mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 566mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 567mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 568mstimeTakenOverall: 42mstimeTakenML: 16mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 569mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 570mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 571mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 572mstimeTakenOverall: 62mstimeTakenML: 36mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 573mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 574mstimeTakenOverall: 54mstimeTakenML: 29mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 575mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 576mstimeTakenOverall: 65mstimeTakenML: 40mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 577mstimeTakenOverall: 47mstimeTakenML: 22mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 578mstimeTakenOverall: 74mstimeTakenML: 49mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 579mstimeTakenOverall: 74mstimeTakenML: 48mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 580mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 581mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 582mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 583mstimeTakenOverall: 66mstimeTakenML: 41mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 584mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 585mstimeTakenOverall: 48mstimeTakenML: 22mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 586mstimeTakenOverall: 42mstimeTakenML: 17mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 587mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 588mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 589mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 590mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 591mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 592mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 593mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 594mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 595mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 596mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 597mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 598mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 599mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 600mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 601mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 602mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 603mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 604mstimeTakenOverall: 39mstimeTakenML: 13mstimeTakenContrast: 1mstimeTakenPixmap: 0ms
+Image Number: 605mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 606mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 607mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 608mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 609mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 610mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 611mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 612mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 613mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 614mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 615mstimeTakenOverall: 37mstimeTakenML: 12mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 616mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 617mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 618mstimeTakenOverall: 41mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 619mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 620mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 621mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 622mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 623mstimeTakenOverall: 38mstimeTakenML: 13mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 624mstimeTakenOverall: 40mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 1ms
+Image Number: 625mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 626mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 627mstimeTakenOverall: 39mstimeTakenML: 14mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 628mstimeTakenOverall: 40mstimeTakenML: 15mstimeTakenContrast: 0mstimeTakenPixmap: 0ms
+Image Number: 629mstimeTakenOverall: 41mstimeTakenML: 16mstimeTakenContrast: 0mstimeTakenPixmap: 0ms

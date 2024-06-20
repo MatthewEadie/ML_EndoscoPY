@@ -7,6 +7,7 @@ from math import floor
 import time
 from scipy.ndimage import label
 from time import time, sleep
+from datetime import datetime
 
 from utils import commonFunctions as CF
 
@@ -67,7 +68,15 @@ class mainPipeline(QObject):
 
 # ---- PLAYBACK FUNCTIONS ---- #
     def singleImagePlayback(self):
-        imageStack = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
+        datasetShape = self.dataset.shape
+
+        x = datasetShape[1]
+        y = datasetShape[2]
+        channels = datasetShape[3]
+
+        imageStack = np.zeros((1,x,y,channels))
+
+        imageStack[0,:,:,:] = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
         
         #Process image
         if self.TFML == True:
@@ -96,14 +105,14 @@ class mainPipeline(QObject):
         channels = datasetShape[3]
 
 
-        imageStack = np.zeros((x,y,channels))
+        imageStack = np.zeros((1,x,y,channels))
 
         while self.stop_pressed == False:
 
             startTimePlayback = int(time() * 1000)
 
             #Get images from dataset
-            imageStack[:,:,:] = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
+            imageStack[0,:,:,:] = self.dataset[self.currentImageNum:self.currentImageNum+1,:,:,:]
 
             #Process image
             if self.TFML == True:
@@ -168,9 +177,18 @@ class mainPipeline(QObject):
             #Create display buffer for acquisition
             self.createDisplayStack()
 
+            #Create notepad for timings
+            now = datetime.now()
+            dateTime = now.strftime("%H-%M-%S_%d-%m-%Y")
+            self.timingsTXT = open(f'{dateTime}.txt', "w+")
+            self.timingsTXT.write(f'ML input shape: {self.firstLayerShape}\r\n')
+            
+
     
         #Tell camera to beging acquiring
         self.cameraFunctions.run_single_camera()
+
+        
 
         pass
 
@@ -184,6 +202,7 @@ class mainPipeline(QObject):
             pass
 
     def processCameraImage(self, cameraImage, imageNumber):
+        self.imageNumber = imageNumber
         #When image recieved from camera:
         outImage = cameraImage
         
@@ -223,19 +242,35 @@ class mainPipeline(QObject):
         #Get acquisition start time
         startTimeAcquisition = int(time() * 1000) #cvt to milliseconds
 
+        startTimeAcquisitionML = int(time() * 1000) #cvt to milliseconds
         #run stack through ML model
         processedImage = self.machineLearningFunctions.processStack(cameraStack)
+        stopTimeAcquisitionML = int(time() * 1000) #cvt to milliseconds
 
+        startTimeAcquisitionContrast = int(time() * 1000) #cvt to milliseconds
         #Perform contrast adjustment
         outImage = self.contrastAdjustment(processedImage)
+        stopTimeAcquisitionContrast = int(time() * 1000) #cvt to milliseconds
 
+        startTimeAcquisitionPixmap = int(time() * 1000) #cvt to milliseconds
         #Convert to pix map
         pix_output = self.prepareImageForDisplay(outImage)
+        stopTimeAcquisitionPixmap = int(time() * 1000) #cvt to milliseconds
 
         #Get end time of processing
         stopTimeAcquisition = int(time() * 1000) #cvt to milliseconds
-        timeTaken = int((stopTimeAcquisition - startTimeAcquisition) + self.exposure) #time for processing + exposure time gives frame rate
-        fps = int(1000 / timeTaken) #1000ms (1 second) divided by time taken gives frames per second
+        timeTakenAcquisition = int((stopTimeAcquisition - startTimeAcquisition) + self.exposure) #time for processing + exposure time gives frame rate
+        fps = int(1000 / timeTakenAcquisition) #1000ms (1 second) divided by time taken gives frames per second
+
+        timeTakenML = int(stopTimeAcquisitionML - startTimeAcquisitionML)
+        timeTakenContrast = int(stopTimeAcquisitionContrast - startTimeAcquisitionContrast)
+        timeTakenPixmap = int(stopTimeAcquisitionPixmap - startTimeAcquisitionPixmap)
+
+        self.timingsTXT.write(f'Image Number: {self.imageNumber}ms\r')
+        self.timingsTXT.write(f'timeTakenOverall: {timeTakenAcquisition}ms\r')
+        self.timingsTXT.write(f'timeTakenML: {timeTakenML}ms\r')
+        self.timingsTXT.write(f'timeTakenContrast: {timeTakenContrast}ms\r')
+        self.timingsTXT.write(f'timeTakenPixmap: {timeTakenPixmap}ms\r\n')
 
         #Emit pixmap to GUI
         self.updateImageAcquisition.emit(pix_output, fps)
@@ -369,7 +404,7 @@ class mainPipeline(QObject):
 
     def singleFrameFromStack(self, imageStack):
         #Get the first image in the stack with only the first channel
-        singleFrame = imageStack[:,:,0]
+        singleFrame = imageStack[0,:,:,0]
         #Multiply by 255 to get values between 1 and 256 instead of 0 and 1
         singleFrame *= 255
         return singleFrame
